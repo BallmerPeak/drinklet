@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
     category = models.CharField(max_length=30)
     uom = models.CharField(max_length=10)
 

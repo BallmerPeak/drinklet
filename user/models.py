@@ -83,7 +83,7 @@ class UserRecipeRating(models.Model):
 
         if created:
             recipe.ratings_sum += rating
-            recipe.total_ratings += 1
+            recipe.num_ratings += 1
 
         else:
             recipe.ratings_sum = recipe.ratings_sum - recipe_rating.rating + rating
@@ -97,6 +97,9 @@ class UserIngredients(models.Model):
     user = models.ForeignKey(UserProfile)
     ingredient = models.ForeignKey(Ingredient)
     quantity = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('user', 'ingredient', )
 
     def __str__(self):
         return "User:{user} -> Ingredient:{ingredient} -> Quantity:{quantity}".format(user=self.user,
