@@ -1,36 +1,34 @@
+{% load staticfiles %}
+
 <html>
 <head>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="./navbar.css">
-  <link rel="stylesheet" href="./login.css">
+  <link rel="stylesheet" href="{% static 'user/form.css' %}">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>   
+  <script src="{% static 'user/form.js' %}"></script>
 </head>
 <body>
 	<nav class="indigo">
 		<div class="container">
     <div class="nav-wrapper">
-      <a href="/" class="brand-logo right">Drinklet</a>
       <ul id="nav-mobile" class="left hide-on-med-and-down">
         <li><a href="/">Ingredients</a></li>
         <li><a href="#">Recipes</a></li>
         <li><a href="#">Profile</a></li>
-        <li>
-	      	<div>
-			      <form>
-			        <div class="input-field">
-			          <input id="search" type="search" required>
-			          <label for="search"><i class="material-icons">search</i></label>
-			          <i class="material-icons">close</i>
-			        </div>
-			      </form>
-		     	</div>
-        </li>
+      </ul>
+      <ul class="right">
+        <li><a class="modal-trigger" rel="loginModal" href="#loginModal">Login</a></li>
+        <li><a class="modal-trigger" rel="registerModal" href="#registerModal">Register</a></li>
+        <li><a href="/" class="brand-logo">Drinklet</a></li>
       </ul>
     </div>
-    {% block content %}{% endblock %}
     </div>
-	</nav>
+  </nav>
+  {% block content %}{% endblock %}
+  {% include 'user/login.html' %}
+  {% include 'user/register.html' %}
 </body>
 </html>
