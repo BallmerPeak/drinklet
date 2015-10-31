@@ -20,7 +20,6 @@ class Recipe(models.Model):
 
         :return:
         """
-        pass
 
     @classmethod
     def add_recipes(cls, recipe_info):
@@ -47,7 +46,7 @@ class RecipeIngredients(models.Model):
     ingredient = models.ForeignKey(Ingredient)
     quantity = models.PositiveSmallIntegerField()
 
-    def __get_recipe_by_ingredient(self):
+    def _get_recipe_by_ingredient(self):
         pass
 
 

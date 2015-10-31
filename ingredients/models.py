@@ -10,11 +10,4 @@ class Ingredient(models.Model):
 
     @classmethod
     def get_all_ingredients(cls):
-        """
-        get_all_ingredients:
-        Parameters: None
-        Return: List of ingredient objects
-
-        :return:
-        """
-        pass
+        return list(cls.objects.all())
