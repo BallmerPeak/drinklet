@@ -9,10 +9,14 @@ from django.core.validators import MaxValueValidator
 
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True)
-    favorites = models.ManyToManyField(Recipe)
+    favorites = models.ManyToManyField(Recipe, related_name='user_favorites')
     recipe_ratings = models.ManyToManyField(Recipe, through='UserRecipeRating', related_name='user_ratings')
     ingredients = models.ManyToManyField(Ingredient, through='UserIngredients', related_name='user_ingredients')
-    created_recipes = models.ManyToManyField(Recipe, through='UserCreatedRecipes', related_name='user_created_recipes')
+    created_recipes = models.ManyToManyField(Recipe, related_name='user_created_recipes')
+    user_recipe_comments = models.ManyToManyField(Recipe, through='RecipeComment', related_name='recipe_comments')
+
+    def __str__(self):
+        return self.user.username
 
     @classmethod
     def create_or_get_profile(cls, user):
@@ -45,6 +49,12 @@ class UserProfile(models.Model):
 
         return self._create_dict(user_ingredients, 'ingredient_id', 'quantity')
 
+    def create_recipe(self, recipe_info):
+        recipe = Recipe._add_recipe(recipe_info['name'], recipe_info['instructions'], recipe_info['ingredients'])
+        self.created_recipes.add(recipe)
+
+        return self.created_recipes.all()
+
     @staticmethod
     def _create_dict(obj_list, rel_key, rel_value):
         ret = {}
@@ -59,6 +69,10 @@ class UserRecipeRating(models.Model):
     user = models.ForeignKey(UserProfile)
     recipe = models.ForeignKey(Recipe)
     rating = models.PositiveSmallIntegerField(validators=[MaxValueValidator(5)], default=0)
+
+    def __str__(self):
+        return "User:{user} -> Recipe:{recipe} ->  Rating:{rating}".format(user=self.user,
+                                                                           recipe=self.recipe, rating=self.rating)
 
     @classmethod
     def _set_rating(cls, user, recipe_id, rating):
@@ -82,6 +96,11 @@ class UserIngredients(models.Model):
     ingredient = models.ForeignKey(Ingredient)
     quantity = models.PositiveIntegerField(default=0)
 
+    def __str__(self):
+        return "User:{user} -> Ingredient:{ingredient} -> Quantity:{quantity}".format(user=self.user,
+                                                                                      ingredient=self.ingredient,
+                                                                                      quantity=self.quantity)
+
     @classmethod
     def _add_user_ingredients(cls, user, ingredient_ids):
         ingredients = list(Ingredient.objects.in_bulk(ingredient_ids).values())
@@ -96,6 +115,11 @@ class UserIngredients(models.Model):
         cls.objects.filter(user=user, ingredient_id=ingredient_id).delete()
 
 
-class UserCreatedRecipes(models.Model):
+class RecipeComment(models.Model):
     user = models.ForeignKey(UserProfile)
     recipe = models.ForeignKey(Recipe)
+    comment_text = models.CharField(max_length=500)
+
+    def __str__(self):
+        return "Author:{user} -> Recipe:{recipe} -> Comment:({comment})".format(user=self.user, recipe=self.recipe,
+                                                                                comment=self.comment_text[:10])
