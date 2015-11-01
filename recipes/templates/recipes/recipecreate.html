@@ -1,0 +1,94 @@
+<!-- Modal Structure -->
+<div id="recipeCreateModal" class="modal modal-fixed-footer">
+	<div class="modal-content">
+		<div class="form">
+			<!-- Recipe Name Field -->
+			<div class="row">
+				<div class="col s12 m6 l4 offset-m3 offset-l4 input-field">
+					<input id="recipeCreateName" type="text" class="validate">
+					<label for="recipeCreateName">Name of Recipe</label>
+				</div>
+			</div>
+
+			<div class="row">
+				<!-- Ingredient Add Fields -->
+				<div class="col s12 m12 l6">
+
+					<!-- Ingredient #1 -->
+					<div class="row">
+						<div class="col s8">
+							<label>Ingredient #1</label>
+							<select id="recipeCreateIngredient1" class="browser-default">
+								<option value="" selected>Choose an ingredient</option>
+								<option value="vodka">Vodka</option>
+								<option value="gin">Gin</option>
+								<option value="juice-orange">Orange Juice</option>
+							</select>
+						</div>
+						<div class="col s3 input-field">
+							<input id="recipeCreateQuantity1" type="text">
+							<label for="recipeCreateQuantity1">Quantity</label>
+						</div>		
+					</div>
+
+					<!-- Ingredient #2 -->
+					<div class="row">
+						<div class="col s8">
+							<label>Ingredient #2</label>
+							<select id="recipeCreateIngredient2" class="browser-default">
+								<option value="" selected>Choose an ingredient</option>
+								<option value="vodka">Vodka</option>
+								<option value="gin">Gin</option>
+								<option value="juice-orange">Orange Juice</option>
+							</select>
+						</div>
+						<div class="col s3 input-field">
+							<input id="recipeCreateQuantity2" type="text">
+							<label for="recipeCreateQuantity2">Quantity</label>
+						</div>		
+					</div>
+
+					<!-- Ingredient #3 -->
+					<div class="row">
+						<div class="col s8">
+							<label>Ingredient #3</label>
+							<select id="recipeCreateIngredient3" class="browser-default">
+								<option value="" selected>Choose an ingredient</option>
+								<option value="vodka">Vodka</option>
+								<option value="gin">Gin</option>
+								<option value="juice-orange">Orange Juice</option>
+							</select>
+						</div>
+						<div class="col s3 input-field">
+							<input id="recipeCreateQuantity3" type="text">
+							<label for="recipeCreateQuantity3">Quantity</label>
+						</div>		
+					</div>
+
+				</div>
+
+				<!-- Instruction Add Fields -->
+				<div class="col s12 m12 l6">
+					<!-- Instruction #1 -->
+					<div class="row input-field">
+						<input id="recipeCreateInstruction1" type="text">
+						<label for="recipeCreateInstruction1">Step #1</label>
+					</div>
+
+					<!-- Instruction #1 -->
+					<div class="row input-field">
+						<input id="recipeCreateInstruction2" type="text">
+						<label for="recipeCreateInstruction2">Step #2</label>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<!-- Create Button -->
+		<a class="waves-effect waves-light btn blue">Create</a>
+		<!-- Cancel Button -->
+		<a class="modal-action modal-close waves-effect waves-light btn-flat grey lighten-2">Cancel</a>
+	</div>
+</div>
