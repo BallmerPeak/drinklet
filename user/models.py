@@ -27,6 +27,8 @@ class UserProfile(models.Model):
         favorite = Recipe.objects.get(id=recipe_id)
         self.favorites.add(favorite)
 
+        return self.get_favorites()
+
     def get_favorites(self):
         return self.favorites.all()
 
