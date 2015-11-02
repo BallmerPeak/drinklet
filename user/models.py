@@ -28,7 +28,7 @@ class UserProfile(models.Model):
         self.favorites.add(favorite)
 
     def get_favorites(self):
-        return self.favorites
+        return self.favorites.all()
 
     def set_rating(self, recipe_id, rating):
 
