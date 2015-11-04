@@ -13,16 +13,20 @@
   <!-- What gets displayed when there is no selected ingredients -->
   <p id="inventoryEmpty" class="grey-text text-darken-1">Selected ingredients from below will appear here.</p>
   <!-- What gets displayed when there are selected ingredients -->
-  <div id="inventoryButtons" style="display: none;">
-    <a id="ingredientClear" class="waves-effect waves-light btn blue">
-      Clear
-      <i class="material-icons right">delete</i>
-    </a>
-    <a id="ingredientSearch" class="waves-effect waves-light btn blue">
-      Search
-      <i class="material-icons right">search</i>
-    </a>
-  </div>
+  <form action="{% url 'recipes.search' %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" id="ingredient_ids" name="ingredient_ids" value="[]"/>
+    <div id="inventoryButtons">
+      <a id="ingredientClear" class="waves-effect waves-light btn blue">
+        Clear
+        <i class="material-icons right">delete</i>
+      </a>
+      <button type="submit" name="submitIngredients" class="waves-effect waves-light btn blue">
+        Search
+        <i class="material-icons right">search</i>
+      </button>
+    </div>
+  </form>
   <input type="hidden" id="ingredientsJSON" name="ingredientsJSON" value="{{ ingredientsJSON }}"/>
   <!-- Key corresponds to Category and Value corresponds to array of Ingredients -->
   {% for key, value in categories.items %}

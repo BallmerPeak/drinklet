@@ -1,0 +1,14 @@
+{% extends "navbar.html" %}
+
+{% block content %}
+
+<div class="container">
+  <h3 class="black-text">Recipes</h3>
+  <hr>
+  <!-- Key corresponds to Category and Value corresponds to array of Ingredients -->
+  {% for recipe in results %}
+    {% include 'recipes/recipeRow.html' %}
+  {% endfor %}
+</div>
+
+{% endblock %}

@@ -15,14 +15,24 @@ document.addEventListener('DOMContentLoaded', function() {
 		 * First things that happen when DOM is loaded
 		 */
 		function init() {
-			// Grab the search and clear buttons
-			var ingredientSearch = document.getElementById('ingredientSearch');
+			// Grab the clear button
 			var ingredientClear = document.getElementById('ingredientClear');
 
-			// Add respective event handlers for search and clear buttons
-			if(ingredientSearch) ingredientSearch.addEventListener('click', performSearch);
+			// Add respective event handlers for clear button
 			if(ingredientClear) ingredientClear.addEventListener('click', clearIngredients);
 
+			// Grab the ingredientsJSON with ingredient objects
+			getIngredientObjects();
+
+			// Grab the ingredients list from local storage
+			getLocalIngredients();
+		}
+
+		/**
+		 * @method getIngredientObjects
+		 * Grab the JSON string of the list of Ingredient objects
+		 */
+		function getIngredientObjects() {
 			// Grab the ingredientsJSON hidden input's value
 			ingredients = document.getElementById('ingredientsJSON');
 
@@ -59,6 +69,105 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 
 		/**
+		 * @method getLocalIngredients
+		 * Query the local storage for the list of ingredients
+		 */
+		function getLocalIngredients() {
+			// Grab the ingredients list from local storage
+			var localIngredients = localStorage.ingredientList;
+
+			// Check if there was an existing list of ingredients in local storage
+			if(localIngredients) {
+				// Parse the local ingredients into an Array if it is a String
+				if(toString.call(localIngredients) === '[object String]') {
+					try {
+						localIngredients = JSON.parse(localIngredients);
+					} catch(_error) {
+						console.error('Invalid local storage list of ingredients.');
+					}
+				}
+				// Grab the contents of the local ingredients and update inventory
+				if(toString.call(localIngredients) === '[object Array]') {
+					ingredientList = localIngredients;
+
+					// Update the DOM with the list of ingredients
+					updateInventory();
+				}
+			}
+		}
+
+		/**
+		 * @method addIngredient
+		 * Add an ingredient from the ingredient list
+		 * @param {Object} _data The ingredient to add
+		 */
+		function addIngredient(_data) {
+			// Add ingredient to ingredient list
+			ingredientList.push(_data);
+
+			// Add the selected ingredients to local storage
+			localStorage.setItem('ingredientList', JSON.stringify(ingredientList));
+		}
+
+		/**
+		 * @method removeIngredient
+		 * Remove an ingredient from the ingredient list
+		 * @param {Number} _id The id of the ingredient to remove
+		 */
+		function removeIngredient(_id) {
+			// Add ingredient to ingredient list
+			ingredientList.splice(_id,1);
+
+			// Add the selected ingredients to local storage
+			localStorage.setItem('ingredientList', JSON.stringify(ingredientList));
+		}
+
+		/**
+		 * @method updateIngredient
+		 * Either adds or removes an ingredient from the selected ingredient list.
+		 * @param {Object} _id The ingredient to update
+		 */
+		function updateIngredient(_id) {
+			// Make sure the data passed in is a non null object
+			if(_id !== undefined
+			&& !isNaN(_id)) {
+				// Find the index of the ingredient in the ingredient list
+				var ingredientIndex = getIngredientIndex(_id);
+
+				// If the ingredient was in the list, remove it
+				if(ingredientIndex >= 0) removeIngredient(ingredientIndex);
+
+				// Otherwise add it to the list
+				else addIngredient(ingredients[_id]);
+
+				// Update the DOM with the list of ingredients
+				updateInventory();
+			}
+		}
+
+		/**
+		 * @method clearIngredients
+		 * Unchecks all selected ingredients and clears ingredient list.
+		 */
+		function clearIngredients() {
+			// Uncheck each currently selected ingredient's checkbox
+			for(var i=0; i<ingredientList.length; i++) {
+				// Grab the ingredient's checkbox
+				var checkBox = document.getElementById(ingredientList[i].id+'_ingredient');
+				// Uncheck the checkbox
+				if(checkBox) checkBox.checked = false;
+			}
+			// Clear the ingredient list
+			ingredientList = [];
+
+			// Add the selected ingredients to local storage
+			localStorage.setItem('ingredientList', JSON.stringify(ingredientList));
+
+			// Update the DOM with the list of ingredients
+			updateInventory();
+		}
+
+		/**
 		 * @method getIngredientIDList
 		 * Retrieve an array of just ingredient ids.
 		 * @returns {Array} Array of ingredient ids.
@@ -73,6 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			// Return the list of ingredient ids
 			return idList;
 		}
+
 		/**
 		 * @method getIngredientIndex
 		 * Get the index of an ingredient in the ingredient list.
@@ -138,6 +248,37 @@ document.addEventListener('DOMContentLoaded', function() {
 			// Assume invalid ingredient passed in
 			return null;
 		}
+
+		/**
+		 * @method removeChip
+		 * Removes a chip and its corresponding ingredient
+		 * @param {Number} _id The ingredient id
+		 */
+		function removeChip(_id) {
+			var checkBox,
+				ingredientIndex;
+			if(_id !== undefined) {
+				// If the ingredient id was passed in, grab its checkbox
+				checkBox = document.getElementById(_id+'_ingredient');
+
+				// Find the index of the ingredient in the ingredient list
+				ingredientIndex = getIngredientIndex(_id);
+
+				// Check if the ingredient was found and has a checkbox
+				if(ingredientIndex !== undefined 
+				&& checkBox) {
+					// Uncheck the ingredient's checkbox
+					checkBox.checked = false;
+
+					// Remove the ingredient from the ingredient list
+					removeIngredient(ingredientIndex);
+				}
+			}
+
+			// Update the DOM with the list of ingredients
+			updateInventory();
+		}
+
 		/**
 		 * @method updateInventory
 		 * Given what is in the list of ingredients, update the DOM element
@@ -147,7 +288,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			// Grab the inventory DOM element
 			var inventory = document.getElementById('inventory'),
 				buttons = document.getElementById('inventoryButtons'),
-				emptyMessage = document.getElementById('inventoryEmpty');
+				emptyMessage = document.getElementById('inventoryEmpty'),
+				idListField = document.getElementById('ingredient_ids');
 
 			// Check if the inventory DOM element exists
 			if(inventory) {
@@ -157,33 +299,16 @@ document.addEventListener('DOMContentLoaded', function() {
 				// Create a chip for each ingredient in the ingredient list
 				for(var i=0; i<ingredientList.length; i++) {
 					// Call the makeChip function with the ingredient and click handler
-					var chip = makeChip(ingredientList[i], function(_id) {
-						var checkBox,
-							ingredientIndex;
-						if(_id !== undefined) {
-							// If the ingredient id was passed in, grab its checkbox
-							checkBox = document.getElementById(_id+'_ingredient');
+					var chip = makeChip(ingredientList[i], removeChip);
 
-							// Find the index of the ingredient in the ingredient list
-							ingredientIndex = getIngredientIndex(_id);
-
-							// Check if the ingredient was found and has a checkbox
-							if(ingredientIndex !== undefined 
-							&& checkBox) {
-								// Uncheck the ingredient's checkbox
-								checkBox.checked = false;
-
-								// Remove the ingredient from the ingredient list
-								ingredientList.splice(ingredientIndex,1);
-							}
-						}
-
-						// Update the DOM with the list of ingredients
-						updateInventory();
-					});
+					// Grab the checkbox for the current ingredient
+					var checkBox = document.getElementById(ingredientList[i].id+'_ingredient');
 
 					// Add the chip to the inventory DOM element
 					if(chip) inventory.appendChild(chip);
+
+					// Make sure the checkbox for the current ingredient is checked
+					if(checkBox) checkBox.checked = true;
 				}
 				// Check if the inventoryButtons and inventoryEmpty DOM elements exist
 				if(buttons
@@ -200,55 +325,11 @@ document.addEventListener('DOMContentLoaded', function() {
 					}	
 				}
 			}
+			// Set the list of id DOM element's value to be the list of ingredient ids
+			if(idListField) idListField.value = JSON.stringify(getIngredientIDList());
 		}
-		/**
-		 * @method updateIngredient
-		 * Either adds or removes an ingredient from the selected ingredient list.
-		 * @param {Object} _ingredient The ingredient to update
-		 */
-		function updateIngredient(_id) {
-			// Make sure the data passed in is a non null object
-			if(_id !== undefined
-			&& !isNaN(_id)) {
-				// Find the index of the ingredient in the ingredient list
-				var ingredientIndex = getIngredientIndex(_id);
 
-				// If the ingredient was in the list, remove it
-				if(ingredientIndex >= 0) ingredientList.splice(ingredientIndex,1);
-
-				// Otherwise add it to the list
-				else ingredientList.push(ingredients[_id]);
-
-				// Update the DOM with the list of ingredients
-				updateInventory();
-			}
-		}
-		/**
-		 * @method clearIngredients
-		 * Unchecks all selected ingredients and clears ingredient list.
-		 */
-		function clearIngredients() {
-			// Uncheck each currently selected ingredient's checkbox
-			for(var i=0; i<ingredientList.length; i++) {
-				// Grab the ingredient's checkbox
-				var checkBox = document.getElementById(ingredientList[i].id+'_ingredient');
-				// Uncheck the checkbox
-				if(checkBox) checkBox.checked = false;
-			}
-			// Clear the ingredient list
-			ingredientList = [];
-
-			// Update the DOM with the list of ingredients
-			updateInventory();
-		}
-		/**
-		 * @method performSearch
-		 * Grabs the list of ingredient ids and sends them to server.
-		 */
-		function performSearch() {
-			// Currently, just alerting the list of ids
-			alert(JSON.stringify(getIngredientIDList()));
-		}
+		// Initialize the application once all JS file is serialized
 		init();
 	})();
 });
