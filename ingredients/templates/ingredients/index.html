@@ -14,15 +14,16 @@
   <p id="inventoryEmpty" class="grey-text text-darken-1">Selected ingredients from below will appear here.</p>
   <!-- What gets displayed when there are selected ingredients -->
   <div id="inventoryButtons" style="display: none;">
-    <a onclick="clearIngredients()" class="waves-effect waves-light btn blue">
+    <a id="ingredientClear" class="waves-effect waves-light btn blue">
       Clear
       <i class="material-icons right">delete</i>
     </a>
-    <a onclick="performSearch()" class="waves-effect waves-light btn blue">
+    <a id="ingredientSearch" class="waves-effect waves-light btn blue">
       Search
       <i class="material-icons right">search</i>
     </a>
   </div>
+  <input type="hidden" id="ingredientsJSON" name="ingredientsJSON" value="{{ ingredientsJSON }}"/>
   <!-- Key corresponds to Category and Value corresponds to array of Ingredients -->
   {% for key, value in categories.items %}
     <h3 class="black-text">{{ key.capitalize }}</h3>
@@ -33,7 +34,7 @@
       {% for ingredient in value %}
         {% with ingredient.id|stringformat:'s'|add:'_ingredient' as ingredient_id %}
         <span class="col m4 l2">
-          <input type="checkbox" onclick="updateIngredient({name:'{{ ingredient.name }}',id:'{{ingredient.id}}'})" id="{{ ingredient_id }}" />
+          <input type="checkbox" data-id='{{ ingredient.id }}' id="{{ ingredient_id }}" />
           <label class="flow-text" for="{{ ingredient_id }}">{{ ingredient.name.capitalize }}</label>
         </span>
         {% endwith %}
