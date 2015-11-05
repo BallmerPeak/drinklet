@@ -10,6 +10,7 @@ from user.models import UserProfile
 
 
 class UserProfileTestCase(TestCase):
+    # noinspection PyUnresolvedReferences
     def setUp(self):
         self.user = User.objects.create_user('testuser', 'email@email.com', 'password')
         self.profile = UserProfile.objects.create(user=self.user)
@@ -44,7 +45,7 @@ class UserProfileTestCase(TestCase):
                                                       (Ingredient.objects.get(name='Gin'), 2)])
 
     def test_create_or_get_profile(self):
-        profile = UserProfile.create_or_get_profile(self.user)
+        profile = UserProfile.get_or_create_profile(self.user)
         self.assertEqual(self.profile, profile)
         self.assertEqual('testuser', profile.user.username)
         self.assertEqual('email@email.com', profile.user.email)
@@ -52,11 +53,13 @@ class UserProfileTestCase(TestCase):
 
     def test_set_favorites(self):
         # Test set 1 favorite
+        # noinspection PyUnresolvedReferences
         def set_one_favorite():
             favorites = self.profile.set_favorites(self.screwdriver.id)
             self.assertIn(self.screwdriver, favorites)
 
         # Test set duplicate favorite
+        # noinspection PyUnresolvedReferences
         def set_duplicate_favorite():
             expected_favorites = self.profile.favorites.all()
             favorites = self.profile.set_favorites(self.screwdriver.id)
@@ -65,6 +68,7 @@ class UserProfileTestCase(TestCase):
             self.assertListEqual(list(expected_favorites), list(favorites))
 
         # Test set 2nd favorite
+        # noinspection PyUnresolvedReferences
         def set_second_favorite():
             favorites = self.profile.set_favorites(self.gin_and_vodka.id)
             self.assertEqual(2, favorites.count())
@@ -76,12 +80,14 @@ class UserProfileTestCase(TestCase):
 
     def test_get_favorites(self):
         # Test get favorite with 1 favorite
+        # noinspection PyUnresolvedReferences
         def get_one_favorite():
             self.assertListEqual([], list(self.profile.get_favorites()))
             self.profile.favorites.add(self.screwdriver)
             self.assertListEqual([self.screwdriver], list(self.profile.get_favorites()))
 
         # Test get favorite with 2 favorites
+        # noinspection PyUnresolvedReferences
         def get_two_favorites():
             self.profile.favorites.add(self.gin_and_vodka)
             self.assertListEqual([self.screwdriver, self.gin_and_vodka], list(self.profile.get_favorites()))
@@ -89,6 +95,7 @@ class UserProfileTestCase(TestCase):
         get_one_favorite()
         get_two_favorites()
 
+    # noinspection PyUnresolvedReferences
     def test_set_rating(self):
         self.assertEqual(120, self.screwdriver.ratings_sum)
         self.assertEqual(40, self.screwdriver.num_ratings)
@@ -273,3 +280,38 @@ class UserProfileTestCase(TestCase):
         recipes = create_one_recipe()
         create_second_recipe()
         create_duplicately_named_recipe(recipes)
+
+    def test_delete_recipe(self):
+        Recipe.objects.all().delete()
+        vodka_id = Ingredient.objects.get(name='Vodka').id
+        oj_id = Ingredient.objects.get(name='Orange Juice').id
+
+        screwdriver_recipe = {
+            'name': 'Screwdriver',
+            'instructions': [
+                'Fill glass with ice',
+                'Add 2 parts Orange Juice',
+                'Add 1 part Vodka',
+                'Shake well'
+            ],
+            'ingredients': {
+                vodka_id: 1,
+                oj_id: 2
+            }
+        }
+
+        recipes = self.profile.create_recipe(screwdriver_recipe)
+        screwdriver = recipes.get(name='Screwdriver')
+
+        profile = self.profile.delete_recipe(screwdriver.id)
+
+        with self.assertRaises(Recipe.DoesNotExist):
+            with transaction.atomic():
+                profile.created_recipes.get(id=screwdriver.id)
+
+        with self.assertRaises(Recipe.DoesNotExist):
+            with transaction.atomic():
+                Recipe.objects.get(id=screwdriver.id)
+
+        recipes = Recipe.objects.all()
+        self.assertEqual(0, recipes.count())

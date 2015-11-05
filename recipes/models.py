@@ -36,6 +36,9 @@ class Recipe(models.Model):
         RecipeIngredients._add_ingredients(recipe, ingredients_info)
         return recipe
 
+    def _delete_recipe(self):
+        self.delete()
+
 
 class RecipeIngredients(models.Model):
     recipe = models.ForeignKey(Recipe)
