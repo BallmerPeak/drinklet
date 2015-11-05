@@ -6,12 +6,13 @@
 <script src="{% static 'ingredients/index.js' %}"></script>
 
 <div class="container">
-  <h3 class="black-text">Current Ingredients</h3>
+  <h3 class="black-text">Find Recipes</h3>
   <hr>
   <!-- List of selected ingredients -->
   <div id="inventory"></div>
   <!-- What gets displayed when there is no selected ingredients -->
   <p id="inventoryEmpty" class="grey-text text-darken-1">Selected ingredients from below will appear here.</p>
+  <br>
   <!-- What gets displayed when there are selected ingredients -->
   <form action="{% url 'recipes.search' %}" method="POST">
     {% csrf_token %}

@@ -3,12 +3,26 @@
 {% block content %}
 
 <div class="container">
-  <h3 class="black-text">Recipes</h3>
+  <h3 class="black-text">Recipe Results</h3>
   <hr>
-  <!-- Key corresponds to Category and Value corresponds to array of Ingredients -->
-  {% for recipe in results %}
-    {% include 'recipes/recipeRow.html' %}
-  {% endfor %}
+  <!-- List the ingredients being searched with -->
+  {% for ingredient in parameters %}<div class="chip">{{ ingredient.name }}</div>{% endfor %}
+  <br>
+  <br>
+  <a href="{% url 'ingredients.search' %}" class="waves-effect waves-light btn blue">
+    Reselect
+    <i class="material-icons right">list</i>
+  </a>
+  <!-- Check if there were any matching recipes -->
+  {% if results %}
+    <!-- Add a row for each recipe -->
+    {% for recipe in results %}
+      {% include 'recipes/recipeRow.html' %}
+    {% endfor %}
+  <!-- No results, inform the user -->
+  {% else %}
+    <p> There were no results matching your ingredients </p>
+  {% endif %}
 </div>
 
 {% endblock %}
