@@ -14,6 +14,7 @@ class SearchRecipes(View):
         """
         Searches for recipes given a list of ingredients
         """
+        print("InPOST")
         ingredient_ids = json.loads(request.POST['ingredient_ids'])
         context = {
             'results': Recipe.get_recipes_by_ingredients(ingredient_ids),

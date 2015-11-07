@@ -4,7 +4,7 @@ $(document).ready(function(){
 		// Modal complete event handler
 		complete: function() { 
 			// Remove all overlays
-			$('.lean-overlay').remove();
+
 		 }	
 	});
 
