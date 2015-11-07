@@ -19,6 +19,7 @@ class UserProfile(models.Model):
         return self.user.username
 
     @classmethod
+<<<<<<< HEAD
     def get_or_create_profile(cls, user):
         profile, _ = cls.objects.get_or_create(user=user)
         return profile
@@ -30,6 +31,15 @@ class UserProfile(models.Model):
             self.favorites.remove(favorite)
         else:
             self.favorites.add(favorite)
+=======
+    def create_or_get_profile(cls, user):
+        profile, _ = cls.objects.get_or_create(user=user)
+        return profile
+
+    def set_favorites(self, recipe_id):
+        favorite = Recipe.objects.get(id=recipe_id)
+        self.favorites.add(favorite)
+>>>>>>> dev
 
         return self.get_favorites()
 
@@ -61,6 +71,7 @@ class UserProfile(models.Model):
 
         return self.created_recipes.all()
 
+<<<<<<< HEAD
     def delete_recipe(self, recipe_id):
         recipe = self.created_recipes.get(id=recipe_id)
         recipe._delete_recipe()
@@ -69,6 +80,8 @@ class UserProfile(models.Model):
 
         return self
 
+=======
+>>>>>>> dev
     @staticmethod
     def _create_dict(obj_list, rel_key, rel_value):
         ret = {}

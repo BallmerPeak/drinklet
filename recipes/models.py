@@ -35,9 +35,12 @@ class Recipe(models.Model):
         recipe.save()
         RecipeIngredients._add_ingredients(recipe, ingredients_info)
         return recipe
+<<<<<<< HEAD
 
     def _delete_recipe(self):
         self.delete()
+=======
+>>>>>>> dev
 
 
 class RecipeIngredients(models.Model):

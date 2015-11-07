@@ -1,0 +1,8 @@
+#recipeCreateModal .modal-footer a {
+	margin-right: 10px;
+}
+
+.fixed-action-btn {
+	bottom: 24px;
+	right: 45px;
+}

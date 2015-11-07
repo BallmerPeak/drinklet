@@ -10,7 +10,11 @@ from user.models import UserProfile
 class RecipeTestCase(TestCase):
     def setUp(self):
         user = User.objects.create_user('testuser')
+<<<<<<< HEAD
         profile = UserProfile.get_or_create_profile(user)
+=======
+        profile = UserProfile.create_or_get_profile(user)
+>>>>>>> dev
         Ingredient.objects.bulk_create([Ingredient(name='Vodka', category='alcohol'),
                                         Ingredient(name='Rum', category='alcohol'),
                                         Ingredient(name='Gin', category='alcohol'),
