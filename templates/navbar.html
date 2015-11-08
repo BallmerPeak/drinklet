@@ -1,43 +1,30 @@
-{% load staticfiles %}
-
-<html>
-<head>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'Drinklet/navbar.css' %}">
-  <link rel="stylesheet" href="{% static 'user/form.css' %}">
-  <link rel="stylesheet" href="{% static 'recipes/recipes.css' %}">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>   
-  <script src="{% static 'user/form.js' %}"></script>
-  <script src="{% static 'Drinklet/navbar.js' %}"></script>
-</head>
-<body>
-	<nav class="indigo">
-		<div class="container">
-      <div class="nav-wrapper">
-        <a href="/" class="center brand-logo">Drinklet</a>
-        <a href="#" data-activates="mobile-list" class="button-collapse"><i class="material-icons">menu</i></a>
-        <ul class="left hide-on-med-and-down">
-          <li><a href="{% url 'ingredients.search' %}">Search</a></li>
-          <li><a href="#">Profile</a></li>
-        </ul>
-        <ul class="right hide-on-med-and-down">
-          <li><a class="modal-trigger" rel="loginModal" href="#loginModal">Login</a></li>
-          <li><a class="modal-trigger" rel="registerModal" href="#registerModal">Register</a></li>
-        </ul>
-        <ul class="side-nav" id="mobile-list">
-          <li><a href="{% url 'ingredients.search' %}">Search</a></li>
-          <li><a href="#">Profile</a></li>
-          <li><a class="modal-trigger" rel="loginModal" href="#loginModal">Login</a></li>
-          <li><a class="modal-trigger" rel="registerModal" href="#registerModal">Register</a></li>
-        </ul>
-      </div>
+<nav class="indigo" id="navbar">
+    <div class="container">
+        <div class="nav-wrapper">
+            <a href="/" class="center brand-logo">Drinklet</a>
+            <a href="#" data-activates="mobile-list" class="button-collapse"><i class="material-icons">menu</i></a>
+            <ul class="left hide-on-med-and-down">
+                <li><a href="{% url 'ingredients.search' %}">Search</a></li>
+                <li><a href="#">Profile</a></li>
+            </ul>
+            <ul class="right hide-on-med-and-down">
+                {% if user.is_authenticated %}
+                    <li><a class="modal-trigger" href="{% url 'user.logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a class="modal-trigger" rel="loginModal" href="#loginModal">Login</a></li>
+                    <li><a class="modal-trigger" rel="registerModal" href="#registerModal">Register</a></li>
+                {% endif %}
+            </ul>
+            <ul class="side-nav" id="mobile-list">
+                <li><a href="{% url 'ingredients.search' %}">Search</a></li>
+                <li><a href="#">Profile</a></li>
+                {% if user.is_authenticated %}
+                    <li><a class="modal-trigger" href="{% url 'user.logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a class="modal-trigger" rel="loginModal" href="#loginModal">Login</a></li>
+                    <li><a class="modal-trigger" rel="registerModal" href="#registerModal">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
-  </nav>
-  {% block content %}{% endblock %}
-  {% include 'user/login.html' %}
-  {% include 'user/register.html' %}
-  {% include 'fab.html' %}
-</body>
-</html>
+</nav>
