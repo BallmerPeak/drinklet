@@ -69,7 +69,7 @@ $(document).ready(function(){
             .fail(function (data) {
                 loginModalContent = $('#loginModal > .modal-content');
                 replaceHtml = $(data.responseText).find('.modal-content').html();
-                loginModalContent.replaceWith(replaceHtml);
+                loginModalContent.html(replaceHtml);
             })
         });
 
