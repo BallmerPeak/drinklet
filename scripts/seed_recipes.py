@@ -36,7 +36,6 @@ recipe_array = [
 			"tequila":"1",
 			"orange liqueur":"0.5",
 			"lime juice":"2",
-			"crushed ice":"4",
 			"lime":"1",
 			"salt":"1"
 		},
@@ -44,7 +43,7 @@ recipe_array = [
 			"Rub rim of a chilled rocks glass with lime.",
 			"Dip glass into salt to coat.",
 			"Fill shaker with ice.",
-			"Add orange liqeuer, tequila, and lime juice.",
+			"Add orange liqueur, tequila, and lime juice.",
 			"Shake well.",
 			"Strain drink into the rocks glass filled with ice.",
 			"Garnish with lime wedge."
@@ -67,6 +66,111 @@ recipe_array = [
 			"Muddle all ingredients.",
 			"Add ice and top with club soda.",
 			"Garnish with a lime wedge."
+		]
+	},
+
+	## White Russian
+	{
+		"name": "white russian",
+		"ingredients": {
+			"coffee liqueur":"0.66",
+			"vodka":"1.66",
+			"fresh cream":"1"
+		},
+		"instructions": [
+			"Pour coffee liqueur and vodka into an Old Fashioned glass filled with ice.",
+			"Float fresh cream on top and stir slowly."
+		]
+	},
+
+	## Mud Slide
+	{
+		"name": "mud slide",
+		"ingredients": {
+			"coffee liqueur":"1",
+			"vodka":"1",
+			"cream liqueur":"1",
+			"fresh cream":"1"
+		},
+		"instructions": [
+			"Add all the ingredients to a blender and blend until smooth.",
+			"Pour the Mudslide into a Martini or Hurricane glass.",
+			"If desired, drizzle with chocolate syrup."
+		]
+	},
+
+	## Bahama Mama
+	{
+		"name": "bahama mama",
+		"ingredients": {
+			"rum":"0.5",
+			"coconut rum":"0.5",
+			"grenadine syrup":"0.5",
+			"orange juice":"1",
+			"pineapple juice":"1"
+		},
+		"instructions": [
+			"Combine regular rum, rum with coconut flavoring, grenadine, orange juice, pineapple juice and crushed ice in an electric blender.",
+			"Blend until the drink's consistency is slushy."
+		]
+	},
+
+	## Cosmopolitan
+	{
+		"name": "Cosmopolitan",
+		"ingredients": {
+			"lime juice":"0.5",
+			"cranberry juice":"1", 
+			"orange liqueur":"0.5",
+			"vodka":"1.5"
+		},
+		"instructions": [
+			"Add all ingredients into cocktail shaker filled with ice.",
+			"Shake well and double strain into large cocktail glass.",
+			"Garnish with lime wheel."
+		]
+	},
+
+	## Screwdriver
+	{
+		"name": "screwdriver",
+		"ingredients": {
+			"vodka":"1.75",
+			"orange juice":"3.5"
+		},
+		"instructions": [
+			"Mix in a highball glass with ice.",
+			"Garnish and serve."
+		]
+	},
+
+	# Martini
+	{
+		"name": "Martini",
+		"ingredients": {
+			"dry vermouth":"0.5",
+			"gin":"3"
+		},
+		"instructions": [
+			"Pour all ingredients into mixing glass with ice cubes.",
+			"Stir well.",
+			"Strain in chilled martini cocktail glass.",
+			"Squeeze oil from lemon peel onto the drink or garnish with olive."
+		]
+	},
+
+	# Daiquiri
+	{
+		"name": "daiquiri",
+		"ingredients": {
+			"white rum":"1.5",
+			"simple syrup":"0.5",
+			"lime juice":"1"
+		},
+		"instructions": [
+			"Pour all ingredients into shaker with ice cubes.",
+			"Shake well.",
+			"Strain in chilled cocktail glass."
 		]
 	}
 ]
