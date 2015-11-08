@@ -16,7 +16,7 @@
   <!-- What gets displayed when there are selected ingredients -->
   <form action="{% url 'recipes.search' %}" method="POST">
     {% csrf_token %}
-    <input type="hidden" id="userIngredientsJSON" name="userIngredientsJSON" value="{{ userIngredientsJSON }}"/>
+    <input type="hidden" id="ingredient_ids" name="ingredient_ids" value="[]"/>
     <div id="inventoryButtons">
       <a id="ingredientClear" class="waves-effect waves-light btn blue">
         Clear
@@ -28,11 +28,9 @@
       </button>
     </div>
   </form>
-  <form action="{% url 'ingredients.search' %}" method="POST">
-    {% csrf_token %}
-    <input type="hidden" id="ingredientsJSON" name="ingredientsJSON" value="{{ ingredientsJSON }}"/>
-      <!-- Key corresponds to Category and Value corresponds to array of Ingredients -->
-        {% for key, value in categories.items %}
+  <input type="hidden" id="ingredientsJSON" name="ingredientsJSON" value="{{ ingredientsJSON }}"/>
+  <!-- Key corresponds to Category and Value corresponds to array of Ingredients -->
+  {% for key, value in categories.items %}
     <h3 class="black-text">{{ key.capitalize }}</h3>
     <hr>
     <!-- Make a checkbox for each Ingredient in this Category -->
@@ -41,7 +39,7 @@
       {% for ingredient in value %}
         {% with ingredient.id|stringformat:'s'|add:'_ingredient' as ingredient_id %}
         <span class="col m4 l2">
-          <input type="checkbox" name="selectedIngredients" data-id='{{ ingredient.id }}' id="{{ ingredient_id }}" value="{{ ingredient.id }}"/>
+          <input type="checkbox" data-id='{{ ingredient.id }}' id="{{ ingredient_id }}" />
           <label class="flow-text" for="{{ ingredient_id }}">{{ ingredient.name.capitalize }}</label>
         </span>
         {% endwith %}
@@ -52,12 +50,6 @@
       <p class="grey-text text-darken-1">No {{ key }} ingredients are available.</p>
     {% endif %}
   {% endfor %}
-    <button type="submit" name="addIngredients" class="waves-effect waves-light btn blue">
-        Add Ingredients
-        <i class="material-icons right">add</i>
-      </button>
-  </form>
-
 </div>
 
 {% endblock %}

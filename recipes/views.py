@@ -4,6 +4,7 @@ import json
 
 from .models import Recipe
 from .models import Ingredient
+from user.models import UserProfile
 
 
 class SearchRecipes(View):
@@ -16,6 +17,13 @@ class SearchRecipes(View):
         """
         print("InPOST")
         ingredient_ids = json.loads(request.POST['ingredient_ids'])
+        useringredients = list(UserProfile.get_or_create_profile(self.request.user).ingredients.values_list('id', flat=True))
+        ingredientstoremove = list(set(useringredients) - set(ingredient_ids))
+        ingredientstoadd = list(set(ingredient_ids) - set(useringredients))
+        for ingredient in ingredientstoremove:
+            self.request.user.userprofile.delete_user_ingredient(ingredient)
+        if len(ingredientstoadd) > 0:
+            self.request.user.userprofile.add_user_ingredients(ingredientstoadd)
         context = {
             'results': Recipe.get_recipes_by_ingredients(ingredient_ids),
             'parameters': []
