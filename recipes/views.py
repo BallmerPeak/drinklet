@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.core.context_processors import csrf
@@ -41,8 +42,8 @@ class CreateRecipe(View):
         """
         context = {
             'categories': Ingredient.get_all_ingredients(),
-            'error_message': '',
-            'success_message': ''
+            'error_message': request.GET.get('error_message', ''),
+            'success_message': request.GET.get('success_message', '')
         }
 
         context.update(csrf(request))
@@ -53,8 +54,23 @@ class CreateRecipe(View):
         Creates new recipe 
         """
         recipe_name = request.POST['post_recipe_name']
-        print(recipe_name)
-        ingredients_id_quantity = request.POST['post_ingredients_id_quantity']
-        instructions = request.POST['post_instructions']
-        print("recipes.create POST : " + recipe_name + " " + ingredients_id_quantity + " " + instructions)
-        return redirect('recipes.create')
+        ingredients_id_quantity = json.loads(request.POST['post_ingredients_id_quantity'])
+        instructions_array = json.loads(request.POST['post_instructions'])
+
+        error = ''
+        success = ''
+
+        try:
+           Recipe._add_recipe(name=recipe_name, instructions=instructions_array, ingredients_info=ingredients_id_quantity)
+        except IntegrityError as e:
+            error = 'There is already a recipe by the name of ' + recipe_name + '.'
+        else:
+            success = 'Successfully created ' + recipe_name + '.'
+
+        context = {
+            'categories': Ingredient.get_all_ingredients(),
+            'error_message': error,
+            'success_message': success
+        }
+
+        return render(request, 'recipes/create.html', context)
