@@ -43,7 +43,7 @@ class Recipe(models.Model):
 class RecipeIngredients(models.Model):
     recipe = models.ForeignKey(Recipe)
     ingredient = models.ForeignKey(Ingredient)
-    quantity = models.PositiveSmallIntegerField()
+    quantity = models.FloatField()
 
     def __str__(self):
         return 'Recipe:{recipe} -> Ingredient:{ingredient} -> Quantity:{qty}'.format(recipe=self.recipe,
