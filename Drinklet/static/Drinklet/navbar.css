@@ -1,3 +1,8 @@
 nav li>div {
 	height: 100%;
 }
+
+.fixed-action-btn {
+	bottom: 24px;
+	right: 45px;
+}
