@@ -1,0 +1,76 @@
+{% extends "navbar.html" %}
+
+{% block content %}
+
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'recipes/recipes.css' %}" />
+<script src="{% static 'recipes/create.js' %}"></script>
+
+<div class="container">
+	<h3 class="black-text">Create a Recipe</h3>
+	<hr>
+
+	{% if error_message %}
+		<h6 class="red-text">{{error_message}}</h6>
+		<hr>
+	{% endif %}
+
+	{% if success_message %}
+		<h6 class="green-text">{{success_message}}</h6>
+		<hr>
+	{% endif %}
+
+
+	<form action="{% url 'recipes.create' %}" method="POST">
+  	{% csrf_token %}
+  	<input type="hidden" id="post_ingredients_id_quantity" name="post_ingredients_id_quantity" value="[]"/>
+  	<input type="hidden" id="post_instructions" name="post_instructions" value="[]"/>
+
+  	<!-- Recipe Name -->
+  	<div class="row">
+  		<div class="col s10 m6 l6 offset-s1 offset-m3 offset-l3 input-field">
+  			<input id="post_recipe_name" name="post_recipe_name" type="text" class="validate" required>
+  			<label for="post_recipe_name">Name of Recipe</label>
+  		</div>
+  	</div>
+
+  	<div class="row">
+  		<!-- Recipe Ingredients -->
+	  	<div id="ingredient-input-wrapper" class="col s10 m10 l6 offset-s1 offset-m1">
+	  		<h4>Ingredients</h4>
+		  	<div class="row ingredient-input">
+		  		<!-- Ingredient -->
+		  		<div class="col s8">
+		  			<label>Ingredient - Unit of Measurement</label>
+		  			<select class="browser-default">
+		  				<option value="" selected hidden>Choose an ingredient</option>
+		  				{% for _, ingredients in categories.items %}
+		  				{% for ingredient in ingredients %}
+		  				<option value="{{ingredient.id}}">{{ingredient.name.capitalize}} - {{ingredient.uom}}</option>
+		  				{% endfor %}
+		  				{% endfor %}
+		  			</select>
+		  		</div>
+		  		<!-- Quantity -->
+		  		<div class="col s3 input-field">
+		  			<input type="text"/>
+		  			<label>Quantity</label>
+		  		</div>
+		  	</div>
+	  	</div>
+
+	  	<!-- Recipe Instructions -->
+	  	<div id="instruction-input-wrapper" class="col s10 m10 l6 offset-s1 offset-m1">
+	  		<h4>Instructions</h4>
+	  		<div class="row input-field instruction-input">
+	  			<input type="text"/>
+	  			<label><span>Step</span></label>
+	  		</div>
+	  	</div>
+  	</div>
+
+  	<!-- Submit Button -->
+  	<hr>
+  	<button class="btn waves-effect waves-light blue right" type="submit" name="action">Create</button>
+	</form>
+{% endblock %}
