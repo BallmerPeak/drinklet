@@ -59,7 +59,7 @@ $(document).ready(function(){
 	});
 
     $('#login_button').click(function() {
-        username = $('#loginUsername').val();
+        username = $('#loginUsername').val().toLowerCase();
         password = $('#loginPassword').val();
         user.login(username, password)
             .done(function (data) {
