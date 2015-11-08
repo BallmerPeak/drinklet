@@ -65,6 +65,8 @@ $(document).ready(function(){
             .done(function (data) {
                 $('#loginModal').closeModal();
                 $('#navbar').replaceWith(data);
+                csrftoken = $.cookie('csrftoken');
+                $('input[name="csrfmiddlewaretoken"]').val(csrftoken);
             })
             .fail(function (data) {
                 loginModalContent = $('#loginModal > .modal-content');

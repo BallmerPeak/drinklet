@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.generic import View
+from django.core.context_processors import csrf
 import json
 
 from .models import Recipe
@@ -43,6 +44,8 @@ class CreateRecipe(View):
             'error_message': '',
             'success_message': ''
         }
+
+        context.update(csrf(request))
         return render(request, 'recipes/create.html', context)
 
     def post(self, request):
