@@ -23,3 +23,27 @@ class SearchRecipes(View):
         for i in ingredient_ids:
             context['parameters'].append(Ingredient.objects.get(id=i))
         return render(request, 'recipes/index.html', context)
+
+class CreateRecipe(View):
+    def get(self, request):
+        """
+        Retrieves the list of ingredients and renders
+        the form to Create a recipe.
+        """
+        context = {
+            'categories': Ingredient.get_all_ingredients(),
+            'error_message': '',
+            'success_message': ''
+        }
+        return render(request, 'recipes/create.html', context)
+
+    def post(self, request):
+        """ 
+        Creates new recipe 
+        """
+        recipe_name = request.POST['post_recipe_name']
+        print(recipe_name)
+        ingredients_id_quantity = request.POST['post_ingredients_id_quantity']
+        instructions = request.POST['post_instructions']
+        print("recipes.create POST : " + recipe_name + " " + ingredients_id_quantity + " " + instructions)
+        return redirect('recipes.create')

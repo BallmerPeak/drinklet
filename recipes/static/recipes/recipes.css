@@ -1,8 +1,9 @@
-#recipeCreateModal .modal-footer a {
-	margin-right: 10px;
+/* Create Recipe */
+body {
+	counter-reset: instructions;
 }
 
-.fixed-action-btn {
-	bottom: 24px;
-	right: 45px;
+.instruction-input>label>span:after {
+	counter-increment: instructions;
+	content: ' #' counter(instructions);
 }
