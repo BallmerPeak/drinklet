@@ -1,2 +1,2 @@
-import seed_ingredients
-import seed_recipes
+from scripts import seed_ingredients
+from scripts import seed_recipes

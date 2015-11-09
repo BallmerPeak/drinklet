@@ -183,7 +183,7 @@ for recipe in recipe_array:
 		print(recipe.get("name") + " is already in the database.")
 		continue
 
-	for _ingredient, _quantity in recipe.get("ingredients").iteritems():
+	for _ingredient, _quantity in recipe.get("ingredients").items():
 		i = RecipeIngredients(recipe=r, ingredient=get_ingredient(_ingredient), quantity=_quantity)
 		try:
 			i.save()
