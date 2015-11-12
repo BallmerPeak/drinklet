@@ -27,52 +27,52 @@ class RecipeTestCase(TestCase):
         self.white_rum_id = Ingredient.objects.get(name='White Rum').id
         self.coconut_cream_id = Ingredient.objects.get(name='Coconut Cream').id
 
-        screwdriver_recipe_info = {
-            'name': 'Screwdriver',
-            'instructions': [
+        screwdriver_recipe_info = (
+            'Screwdriver',
+            [
                 'Fill glass with ice',
                 'Add 2 parts Orange Juice',
                 'Add 1 part Vodka',
                 'Shake well'
             ],
-            'ingredients': {
+            {
                 self.vodka_id: 1,
                 self.oj_id: 2
             }
-        }
+        )
 
-        gin_vodka_recipe_info = {
-            'name': 'Gin and Vodka',
-            'instructions': [
+        gin_vodka_recipe_info = (
+            'Gin and Vodka',
+            [
                 'Add 1 part Gin',
                 'Add 1 part Vodka',
                 'Enjoy!'
             ],
-            'ingredients': {
+            {
                 self.vodka_id: 1,
                 self.gin_id: 1
             }
-        }
+        )
 
-        pina_colada_recipe_info = {
-            'name': 'Pina Colada',
-            'instructions': [
+        pina_colada_recipe_info = (
+            'Pina Colada',
+            [
                 'Add 3 parts pineapple juice',
                 'Add 1 part white rum',
                 'Add 1 part coconut cream',
                 'Mixed with crushed ice until smooth',
                 'Pour into chilled glass'
             ],
-            'ingredients': {
+            {
                 self.pineapple_juice_id: 3,
                 self.white_rum_id: 1,
                 self.coconut_cream_id: 1
             }
-        }
+        )
 
-        profile.create_recipe(pina_colada_recipe_info)
-        profile.create_recipe(gin_vodka_recipe_info)
-        profile.create_recipe(screwdriver_recipe_info)
+        profile.create_recipe(*pina_colada_recipe_info)
+        profile.create_recipe(*gin_vodka_recipe_info)
+        profile.create_recipe(*screwdriver_recipe_info)
         self.screwdriver = Recipe.objects.get(name='Screwdriver')
         self.gin_vodka = Recipe.objects.get(name='Gin and Vodka')
         self.pina_colada = Recipe.objects.get(name='Pina Colada')

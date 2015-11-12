@@ -4,6 +4,7 @@ from recipes.models import Recipe
 from ingredients.models import Ingredient
 from django.core.validators import MaxValueValidator
 
+
 # Create your models here.
 
 
@@ -56,15 +57,28 @@ class UserProfile(models.Model):
         return self._create_dict(user_ingredients, 'ingredient_id', 'quantity')
 
     def update_user_ingredient_quantity(self, ingredient_id, quantity):
-        #Call user ingredients to update the quantity of the ingredient with the given id
-        #with the given quantity
-        UserIngredients
+        # Call user ingredients to update the quantity of the ingredient with the given id
+        # with the given quantity
+        pass
 
-    def create_recipe(self, recipe_info):
-        recipe = Recipe._add_recipe(recipe_info['name'], recipe_info['instructions'], recipe_info['ingredients'])
+    def create_recipe(self, recipe_name, instructions, ingredients):
+        new_ingredients = []
+        recipe_ingredients = []
+
+        for key, info in ingredients.items():
+            if isinstance(key, str):
+                category, quantity, uom = info
+                new_ingredients.append((key, category, quantity, uom))
+            else:
+                recipe_ingredients.append((key, info))
+
+        recipe_ingredients + Ingredient._get_ingredient_objs(new_ingredients)
+
+        recipe = Recipe._add_recipe(recipe_name, instructions, recipe_ingredients)
+
         self.created_recipes.add(recipe)
 
-        return self.created_recipes.all()
+        return recipe
 
     def delete_recipe(self, recipe_id):
         recipe = self.created_recipes.get(id=recipe_id)
@@ -116,7 +130,7 @@ class UserIngredients(models.Model):
     quantity = models.PositiveIntegerField(default=0)
 
     class Meta:
-        unique_together = ('user', 'ingredient', )
+        unique_together = ('user', 'ingredient',)
 
     def __str__(self):
         return "User:{user} -> Ingredient:{ingredient} -> Quantity:{quantity}".format(user=self.user,

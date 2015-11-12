@@ -91,6 +91,7 @@ class SearchRecipesByIngredients(View):
         for i in ingredient_ids:
             context['parameters'].append(Ingredient.objects.get(id=i))
         return render(request, 'recipes/index.html', context)
+    
 
 class ListRecipes(View):
     def get(self, request):
