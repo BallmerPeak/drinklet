@@ -13,6 +13,9 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
+    def get_instructions(self):
+        return self.instructions_blob.split('~~~')
+
     @classmethod
     def get_recipes_by_ingredients(cls, ingredient_ids):
         found_recipes = []
@@ -43,7 +46,7 @@ class Recipe(models.Model):
 class RecipeIngredients(models.Model):
     recipe = models.ForeignKey(Recipe)
     ingredient = models.ForeignKey(Ingredient)
-    quantity = models.FloatField()
+    quantity = models.DecimalField(default=0, decimal_places=2, max_digits=4)
 
     def __str__(self):
         return 'Recipe:{recipe} -> Ingredient:{ingredient} -> Quantity:{qty}'.format(recipe=self.recipe,

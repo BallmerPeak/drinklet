@@ -72,10 +72,9 @@ class UserProfile(models.Model):
             else:
                 recipe_ingredients.append((key, info))
 
-        recipe_ingredients + Ingredient._get_ingredient_objs(new_ingredients)
+        recipe_ingredients + Ingredient._create_ingredient_objs(new_ingredients)
 
         recipe = Recipe._add_recipe(recipe_name, instructions, recipe_ingredients)
-
         self.created_recipes.add(recipe)
 
         return recipe
@@ -127,7 +126,7 @@ class UserRecipeRating(models.Model):
 class UserIngredients(models.Model):
     user = models.ForeignKey(UserProfile)
     ingredient = models.ForeignKey(Ingredient)
-    quantity = models.PositiveIntegerField(default=0)
+    quantity = models.DecimalField(default=0, decimal_places=2, max_digits=8)
 
     class Meta:
         unique_together = ('user', 'ingredient',)

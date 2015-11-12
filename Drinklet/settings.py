@@ -86,16 +86,7 @@ DATABASES = {
     }
 }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost', # Or something like this
-        'PORT': '5432',
-    }
-}
+LOGIN_URL = 'ingredients.search'
 
 
 # Internationalization

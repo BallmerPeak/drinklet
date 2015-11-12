@@ -1,16 +1,20 @@
+from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.core.context_processors import csrf
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
+from django.utils.http import urlencode
 import json
 
+from .forms.recipes.create_forms import CreateRecipeForm
 from .models import Recipe
 from .models import RecipeIngredients
 from .models import Ingredient
 from user.models import UserProfile
 from user.models import UserIngredients
+
 
 def _filterRecipes(ingredients, query, limit, order, page):
     """
@@ -137,49 +141,77 @@ class SearchRecipes(View):
             'categories': Ingredient.get_all_ingredients(),
             'results': filterRes['results'],
             'favorites': favorites
+
         }
         return render(request, 'recipes/list.html', context)
 
-class CreateRecipe(View):
-    def get(self, request):
-        """
-        Retrieves the list of ingredients and renders
-        the form to Create a recipe.
-        """
-        context = {
-            'categories': Ingredient.get_all_ingredients(),
-            'error_message': request.GET.get('error_message', ''),
-            'success_message': request.GET.get('success_message', '')
-        }
 
-        context.update(csrf(request))
-        return render(request, 'recipes/create.html', context)
+class CreateRecipe(View):
+    form_class = CreateRecipeForm
+    context = {}
+
+    def get(self, request):
+        form = self.form_class(None)
+        self.context = {'form': form}
+
+        self.context.update(self.fill_context(request))
+
+        success_recipe_name = request.GET.get('success_message', None)
+
+        if success_recipe_name:
+            self.context['success_message'] = '{} successfully created!'.format(success_recipe_name)
+
+        return render(request, 'recipes/create.html', self.context)
 
     def post(self, request):
-        """ 
-        Creates new recipe 
-        """
-        recipe_name = request.POST['post_recipe_name']
-        ingredients_id_quantity = json.loads(request.POST['post_ingredients_id_quantity'])
-        instructions_array = json.loads(request.POST['post_instructions'])
+        profile = UserProfile.get_or_create_profile(request.user)
+        self.context = {}
 
-        error = ''
-        success = ''
+        def create_recipe():
+            recipe_name = form.get_name()
+            instructions = form.get_clean_instructions()
+            ingredients = form.get_clean_ingredients()
 
-        try:
-           Recipe._add_recipe(name=recipe_name, instructions=instructions_array, ingredients_info=ingredients_id_quantity)
-        except IntegrityError as e:
-            error = 'There is already a recipe by the name of ' + recipe_name + '.'
+            return profile.create_recipe(recipe_name, instructions, ingredients)
+
+        form = self.form_class(request.POST)
+
+        if form.is_valid():
+            self.context['form'] = form
+            url_stub = reverse('recipes.create')
+            try:
+                recipe = create_recipe()
+                success_message = {'success_message': recipe.name}
+                query_string = urlencode(success_message)
+                return redirect('{}?{}'.format(url_stub, query_string))
+            except IntegrityError:
+                self.context.update(self.fill_context(request))
+                self.context['error_message'] = 'A recipe with that name already exists!'
+                return render(request, 'recipes/create.html', self.context)
         else:
-            success = 'Successfully created ' + recipe_name + '.'
+            self.context['form'] = form
+            self.context.update(self.fill_context(request))
 
-        context = {
-            'categories': Ingredient.get_all_ingredients(),
-            'error_message': error,
-            'success_message': success
-        }
+            return render(request, 'recipes/create.html', self.context)
 
-        return render(request, 'recipes/create.html', context)
+    def fill_context(self, request):
+        context = {}
+        form = self.context['form']
+        categories = form.get_category_fields()
+        ingredients = form.get_ingredient_fields()
+        qtys = form.get_qty_fields()
+        uoms = form.get_uom_fields()
+        instructions = form.get_instruction_fields()
+
+        uom_lookup = Ingredient.get_uom_lookup()
+
+        context['ingredient_fields'] = list(zip(categories, ingredients, qtys, uoms))
+        context['uom_lookup'] = json.dumps(uom_lookup)
+        context['instructions'] = instructions
+        context.update(csrf(request))
+
+        return context
+
 
 class FavoriteRecipe(View):
     def post(self, request):

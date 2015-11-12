@@ -1,139 +1,241 @@
 // Wait until the DOM is ready
 $(document).ready(function() {
 
-	/**
-	* @class RecipeCreating
-	* Namespace for the functions that handle creating recipes
-	*/
-	(function RecipeCreating() {
+    $('select').material_select();
 
-		// empty html input stubs that get appended
-		var ingredientInputStub = null;
-		var instructionInputStub = null;
+    /**
+     * @class RecipeCreating
+     * Namespace for the functions that handle creating recipes
+     */
+    (function RecipeCreating() {
 
-		/**
-		 * @method init
-		 * Initial initialization
-		 */
-		function init() {
-			// get the empty html stub for ingredients
-			ingredientInputStub = captureInputHTML('#ingredient-input-wrapper');
-			// get the empty html stub for instructions
-			instructionInputStub = captureInputHTML('#instruction-input-wrapper');
-			// set the initial onChange event for the ingredient select
-			$('.ingredient-input').first().find('select').first().change(ingredientChange);
-			// set the initial onChange event for the 
-			$('.instruction-input').first().find('input').first().on('input', instructionChange);
-			// set the onSubmit event for the form
-			$('#create-recipe-form').submit(formSubmit);
-		}
+        // empty html input stubs that get appended
+        var ingredientInputStub, instructionInputStub, ingrIndex,
+            instIndex, ingredientName, categoryName, instructionName,
+            qtyName, uomName, numIngredientInputs, numInstructionInputs,
+            $ingredientInput, $instructionInput, maxIngredients, maxInstructions,
+            $instructionAdd, $ingredientAdd, uomLookup;
 
-		/**
-		 * @method captureInputHTML
-		 * Returns the inner html for the given wrapper id
-		 */
-		function captureInputHTML(wrapper) {
-			return $(wrapper).html();
-		}
+        function ingredientRemove() {
+            numIngredientInputs--;
+            $(this).closest('.ingredient-input').remove();
 
-		/**
-		 * @method appendInput
-		 * Appends child to parent
-		 */
-		function appendInput(parent, child) {
-			$(parent).append(child);
-		}
+            if ( numIngredientInputs < 2){
+                $("#ingredient-input-wrapper").off();
+                $('.ingredient-remove').addClass('disabled');
+            }
 
-		/**
-		 * @method swapIngredientOnChange
-		 * Removes the onChange event from the previous select
-		 * Adds the onChange event to the current select
-		 * Adds a 'required' property to the last quantity field
-		 */
-		function swapIngredientOnChange() {
-			var last = $('.ingredient-input').last();
-			last.prev().find('input').first().prop('required', true);
-			last.prev().find('select').first().unbind('change');
-			last.find('select').first().change(ingredientChange);
-		}
+            if ( numIngredientInputs < maxIngredients) {
+                $ingredientAdd.removeClass('disabled');
+                $ingredientAdd.off().click(ingredientAdd);
+            }
+        }
 
-		/**
-		 * @method ingredientChange 
-		 * Appends a new ingredient input row to the end
-		 * Swaps the onChange events
-		 */
-		function ingredientChange() {
-			appendInput('#ingredient-input-wrapper', ingredientInputStub);
-			swapIngredientOnChange();
-		}
+        function instructionRemove() {
 
-		/**
-		 * @method swapInstructionOnChange
-		 * Removes the onChange event from the previous input box
-		 * Adds the onChange event to the current input box
-		 */
-		function swapInstructionOnChange() {
-			var last = $('.instruction-input').last();
-			last.prev().find('input').first().unbind('input');
-			last.find('input').first().on('input', instructionChange);
-		}
+            numInstructionInputs--;
 
-		/**
-		 * @method instructionChange
-		 * Appends a new instruction input row to the end
-		 * Swaps the onChange events
-		 */
-		function instructionChange() {
-			appendInput('#instruction-input-wrapper', instructionInputStub);
-			swapInstructionOnChange();
-		}
+            $(this).closest('.instruction-input').remove();
 
-		/**
-		 * @method formSubmit
-		 * Puts a map of ingredient_id:quantity into the hidden POST field
-		 * Puts an array of string instructions into the hidden POST field
-		 */
-		function formSubmit() {
-			$('#post_ingredients_id_quantity').val(getAllIngredientJSONMap());
-			$('#post_instructions').val(getAllInstructionJSONArray());
-			
-			// little validation for now
-			return true;
-		}
+            if ($('.instruction-input').length < 2){
+                $('.instruction-remove').addClass('disabled');
+                $('#instruction-input-wrapper').off();
+            }
 
-		/**
-		 * @method getAllIngredientJSONMap
-		 * Agregates all input ingredients into a 'id':'quantity' map
-		 */
-		function getAllIngredientJSONMap() {
-			// TODO
-			// need to add additional validation and behavior for
-			//	possible negative quantities
+            if (numInstructionInputs < maxInstructions) {
+                $instructionAdd.removeClass('disabled');
+                $instructionAdd.off().click(instructionAdd);
+            }
+        }
 
-			var ingredientMap = {};
-			$('.ingredient-input').each(function(index, element) {
-				var id = parseInt($(element).find('select').first().val());
-				var quantity = Math.abs(parseFloat($(element).find('input').first().val()));
-				if(id && quantity)
-					ingredientMap[id] = "" + quantity;
-			});
-			return JSON.stringify(ingredientMap);
-		}
+        function setUOM() {
+            var $ingredient = $(this),
+                ingredientName = $ingredient.val().toLowerCase(),
+                uom = uomLookup[ingredientName],
+                $uomInput = $ingredient.closest('.row').find('.units');
 
-		/**
-		 * @method getAllInstructionJSONArray
-		 * Agregates all input instructions into an array
-		 */
-		function getAllInstructionJSONArray() {
-			var instructionArray = [];
-			$('.instruction-input').each(function(index, element) {
-				var instruction = $(element).find('input').first().val();
-				if(instruction)
-					instructionArray.push(instruction);
-			});
-			return JSON.stringify(instructionArray);
-		}
+            if (uom) {
+                $uomInput.val(uom)
+                    .prop('disabled', false)
+                    .prop('readonly', true)
+                    .siblings('label')
+                    .addClass('active');
+            } else if(ingredientName.trim()) {
+                $uomInput.prop('disabled', false)
+                    .prop('readonly', false)
+                    .siblings('label')
+                    .addClass('active');
+            } else {
+                $uomInput.prop('readonly', false)
+                    .prop('disabled', true)
+                    .siblings('label')
+                    .removeClass('active');
+            }
+        }
 
-		init();
-	})();
+        function initializeUOM() {
+            $('.units').each(function () {
+                var $uom = $(this),
+                    unit = $uom.val(),
+                    ingredient = $uom.closest('.row').find('.ingredients').val().toLowerCase();
+                if (unit && uomLookup[ingredient]){
+                    $uom.prop('disabled', false)
+                        .prop('readonly', true);
+                }
+            })
+        }
+
+        /**
+         * @method init
+         * Initial initialization
+         */
+        function init() {
+            var $ingredientWrapper = $('#ingredient-input-wrapper');
+            ingrIndex = $('#ingr-index').val();
+            instIndex = $('#inst-index').val();
+            ingredientName = $('#ingredient-name').val();
+            categoryName = $('#category-name').val();
+            instructionName = $('#instruction-name').val();
+            qtyName = $('#qty-name').val();
+            uomName = $('#uom-name').val();
+            uomLookup = JSON.parse($('#uom-lookup').val());
+            $ingredientInput = $('.ingredient-input');
+            $instructionInput = $('.instruction-input');
+            $ingredientAdd = $('#ingredient-add');
+            $instructionAdd = $('#instruction-add');
+            numIngredientInputs = $ingredientInput.length;
+            numInstructionInputs = $instructionInput.length;
+            maxIngredients = 10;
+            maxInstructions = 15;
+
+            $('#categories').change(function () {
+                $('#ingredient').attr('list', $(this).val()).prop('disabled', false);
+            });
+
+            $('body').on('blur', '.ingredients', setUOM);
+            initializeUOM();
+
+            // get the empty html stub for ingredients
+            ingredientInputStub = captureInputHTML('#ingredient-input-wrapper');
+
+            ingredientInputStub = updateStub(ingredientInputStub, 'ingredient', ingredientName + ingrIndex);
+            ingredientInputStub = updateStub(ingredientInputStub, 'categories', categoryName + ingrIndex);
+            ingredientInputStub = updateStub(ingredientInputStub, 'ingredient_qty', qtyName + ingrIndex);
+            ingredientInputStub = updateStub(ingredientInputStub, 'uom', uomName + ingrIndex);
+
+            // get the empty html stub for instructions
+            instructionInputStub = captureInputHTML('#instruction-input-wrapper');
+
+            instructionInputStub = updateStub(instructionInputStub, 'instruction', instructionName + instIndex);
+            // set the initial onChange event for the ingredient select
+            if (numIngredientInputs < maxIngredients) $ingredientAdd.click(ingredientAdd);
+            if (numIngredientInputs > 1)
+                $ingredientWrapper.on('click', '.ingredient-remove', ingredientRemove);
+
+            // set the initial onChange event for the
+            if (numInstructionInputs < maxInstructions) $instructionAdd.click(instructionAdd);
+            if (numInstructionInputs > 1)
+                $('#instruction-input-wrapper').on('click', '.instruction-remove', instructionRemove);
+            // set the onSubmit event for the form
+            //$('#create-recipe-form').submit(formSubmit);
+        }
+
+        function updateStub(stub, id, name){
+            var jStub = $(stub);
+            jStub.find('#' + id)
+                .attr('id', name)
+                .removeAttr('name');
+            jStub.find('label[for="' + id + '"]')
+                .attr('for', name);
+
+            return jStub.prop("outerHTML");
+        }
+
+        /**
+         * @method captureInputHTML
+         * Returns the inner html for the given wrapper id
+         */
+        function captureInputHTML(wrapper) {
+            return $(wrapper).children().first().prop('outerHTML');
+        }
+
+        /**
+         * @method appendInput
+         * Appends child to parent
+         */
+        function appendInput(parent, child) {
+            $(parent).append(child);
+        }
+
+        /**
+         * @method ingredientAdd
+         * Appends a new ingredient input row to the end
+         * Swaps the onChange events
+         */
+        function ingredientAdd() {
+            var currentIndex, futureIndex;
+            appendInput('#ingredient-input-wrapper', ingredientInputStub);
+            numIngredientInputs++;
+
+            if (numIngredientInputs > 1) {
+                $('#ingredient-input-wrapper').off().on('click', '.ingredient-remove', ingredientRemove);
+                $('.ingredient-remove').removeClass('disabled');
+            }
+
+            if (numIngredientInputs >= maxIngredients) {
+                $ingredientAdd.off().addClass('disabled');
+            }
+
+            currentIndex = ingrIndex;
+
+            $('#' + categoryName + currentIndex).change(function () {
+                $('#' + ingredientName + currentIndex).attr('list', $(this).val()).prop('disabled', false);
+            });
+
+            ingrIndex++;
+            futureIndex = ingrIndex;
+            initializeNames([ingredientName + currentIndex,
+                categoryName + currentIndex,
+                qtyName + currentIndex,
+                uomName + currentIndex]);
+            ingredientInputStub = updateStub(ingredientInputStub, ingredientName + currentIndex, ingredientName + futureIndex);
+            ingredientInputStub = updateStub(ingredientInputStub, categoryName + currentIndex, categoryName + futureIndex);
+            ingredientInputStub = updateStub(ingredientInputStub, qtyName + currentIndex, qtyName + futureIndex);
+            ingredientInputStub = updateStub(ingredientInputStub, uomName + currentIndex, uomName + futureIndex);
+        }
+
+        /**
+         * @method instructionAdd
+         * Appends a new instruction input row to the end
+         * Swaps the onChange events
+         */
+        function instructionAdd() {
+            var currentIndex, futureIndex;
+            appendInput('#instruction-input-wrapper', instructionInputStub);
+            numInstructionInputs++;
+
+            if (numInstructionInputs > 1) {
+                $('#instruction-input-wrapper').off().on('click', '.instruction-remove', instructionRemove);
+                $('.instruction-remove').removeClass('disabled');
+            }
+
+            if (numInstructionInputs >= maxInstructions) {
+                $instructionAdd.off().addClass('disabled');
+            }
+
+            currentIndex = instIndex;
+            instIndex++;
+            futureIndex = instIndex;
+            initializeNames([instructionName + currentIndex]);
+            instructionInputStub = updateStub(instructionInputStub, instructionName + currentIndex, instructionName + futureIndex);
+        }
+
+        function initializeNames(names){
+            $.each(names, function (_, name) {
+                $('#' + name).attr('name', name);
+            })
+        }
+
+        init();
+    })();
 });

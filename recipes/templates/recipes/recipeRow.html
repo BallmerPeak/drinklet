@@ -56,7 +56,7 @@
         <div class="col s12 m12 l6 recipe-card-instructions">
           <h5>Instructions</h5>
           <ol>
-          {% for instruction in recipe.instruction %}
+          {% for instruction in recipe.get_instruction %}
             <li>{{ instruction }}</li>
           {% endfor %}
           </ol>

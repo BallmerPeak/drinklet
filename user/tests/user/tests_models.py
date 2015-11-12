@@ -198,6 +198,7 @@ class UserProfileTestCase(TestCase):
         vodka_id = Ingredient.objects.get(name='Vodka').id
         oj_id = Ingredient.objects.get(name='Orange Juice').id
         gin_id = Ingredient.objects.get(name='Gin').id
+        pineapple_juice_id = Ingredient.objects.get(name='Pineapple Juice').id
 
         screwdriver_recipe = (
             'Screwdriver',
@@ -235,6 +236,23 @@ class UserProfileTestCase(TestCase):
             {
                 vodka_id: 1,
                 gin_id: 1
+            }
+        )
+
+        # Recipe with new ingredients
+        pina_colada_recipe = (
+            'Pina Colada',
+            [
+                'Add 3 parts pineapple juice',
+                'Add 1 part white rum',
+                'Add 1 part coconut cream',
+                'Mixed with crushed ice until smooth',
+                'Pour into chilled glass'
+            ],
+            {
+                pineapple_juice_id: 3,
+                'White Rum': ('alcohol', 1, 'oz'),
+                'Coconut Cream': ('Miscellaneous', 1, 'oz')
             }
         )
 
@@ -277,9 +295,32 @@ class UserProfileTestCase(TestCase):
             self.assertEqual(2, self.profile.created_recipes.count())
             self.assertEqual(recipe1, self.profile.created_recipes.get(name='Screwdriver'))
 
-        recipes = create_one_recipe()
+        # Test create recipe with new ingredients
+        def create_with_new_ingredients():
+            ingredient_count = Ingredient.objects.count()
+
+            with self.assertRaises(Ingredient.DoesNotExist):
+                with transaction.atomic():
+                    Ingredient.objects.get(name='White Rum')
+
+            with self.assertRaises(Ingredient.DoesNotExist):
+                with transaction.atomic():
+                    Ingredient.objects.get(name='Coconut Cream')
+
+            with self.assertRaises(Recipe.DoesNotExist):
+                with transaction.atomic():
+                    Recipe.objects.get(name='Pina Colada')
+
+            recipe = self.profile.create_recipe(*pina_colada_recipe)
+            pina_colada = Recipe.objects.get(name='Pina Colada')
+
+            self.assertEqual(recipe, pina_colada)
+            self.assertEqual(ingredient_count + 2, Ingredient.objects.count())
+
+        new_recipe = create_one_recipe()
         create_second_recipe()
-        create_duplicately_named_recipe(recipes)
+        create_duplicately_named_recipe(new_recipe)
+        create_with_new_ingredients()
 
     def test_delete_recipe(self):
         Recipe.objects.all().delete()
