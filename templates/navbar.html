@@ -5,7 +5,9 @@
             <a href="#" data-activates="mobile-list" class="button-collapse"><i class="material-icons">menu</i></a>
             <ul class="left hide-on-med-and-down">
                 <li><a href="{% url 'ingredients.search' %}">Search</a></li>
-                <li><a class="hide" href="#">Profile</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'user.profile' %}">Profile</a></li>
+                {% endif %}
             </ul>
             <ul class="right hide-on-med-and-down">
                 {% if user.is_authenticated %}

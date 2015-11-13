@@ -31,7 +31,9 @@ class Profile(View):
     def get(self, request):
         user = self.request.user
         if user.is_authenticated():
-            profile = UserProfile.create_or_get_profile(user)
+            profile = UserProfile.get_or_create_profile(user)
+            return render(request, 'user/profile.html', {'profile': profile})
+        return HttpResponseRedirect(reverse('ingredients.search'))
 
 
 class Login(View):

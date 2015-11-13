@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+  <h3 class="black-text">Profile</h3>
+  <hr>
+  
+  <!-- Display User's Account Details -->
+  <h5 class="activator grey-text text-darken-4">Account Details</h5>
+  <div class="card grey lighten-5">
+    <div class="card-content">
+      <span class="black-text">Username:</span> <span class="grey-text text-darken-1">{{ profile.user.username }}</span>
+      <br>
+      <span class="black-text">Email:</span> <span class="grey-text text-darken-1">{{ profile.user.email }}</span>
+    </div>
+  </div>
+
+  <!-- Display a list of User's Favorited Recipes -->
+  <h5 class="black-text">Favorite Recipes</h5>
+  {% for recipe in profile.favorites.items %}
+    <!-- Add the Recipe Row template -->
+    {% include 'recipes/recipeRow.html' %}
+  {% empty %}
+    <!-- User doesn't have any Favorited Recipes -->
+    There are no Favorite Recipes.
+  {% endfor %}
+
+  <!-- Display a list of User's Created Recipes  -->
+  <h5 class="black-text">Created Recipes</h5>
+  {% for recipe in profile.created_recipes.items %}
+    <!-- Add the Recipe Row template -->
+    {% include 'recipes/recipeRow.html' %}
+  {% empty %}
+    <!-- User doesn't have any Create Recipes -->
+    There are no Created Recipes.
+  {% endfor %}
+</div>
+
+{% endblock %}
