@@ -7,6 +7,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.utils.http import urlencode
 import json
+from django.core.urlresolvers import reverse
+from django.core.exceptions import ObjectDoesNotExist
+
 
 from .forms.recipes.create_forms import CreateRecipeForm
 from .models import Recipe
@@ -14,6 +17,7 @@ from .models import RecipeIngredients
 from .models import Ingredient
 from user.models import UserProfile
 from user.models import UserIngredients
+from .forms.recipes.forms import RecipeForm
 
 
 def _filterRecipes(ingredients, query, limit, order, page):
@@ -248,6 +252,7 @@ class RateRecipe(View):
 
         return redirect('recipes.search')
 
+
 def MakeDrink(request):
     user = request.user
     quantityUpdates = []
@@ -277,3 +282,71 @@ def MakeDrink(request):
         for submission in quantityUpdates:
             profile.update_user_ingredient_quantity(submission.get("ingredient_id"), submission.get("quantity"))
         return HttpResponse("success")
+
+
+class deleteRecipe(View):
+    def post(self,request):
+        user = request.user
+        result = 0
+        if user.is_authenticated:
+            recipe = request['recipe_name']
+            profile = UserProfile.get_or_create_profile(user)
+            try:
+                recipe_id = profile.created_recipes.get(name = recipe).id
+            except ObjectDoesNotExist:
+                render(request,"",{'result':result,'msg':'This recipe does not exist'})
+
+            result = 1
+            profile.delete_recipe(recipe_id)
+
+        render(request,"",{'result':result ,'msg':'Successfully deleted'})
+
+class editRecipe(View):
+    def get (self ,request):
+        user  = request.user
+        result = 0
+        if user.is_authenticated:
+            recipe_name = request['recipe_name']
+            profile = UserProfile.get_or_create_profile(user)
+            try:
+                recipe = profile.created_recipes.get(name = recipe_name)
+                recipe_id = recipe.id
+            except ObjectDoesNotExist:
+                render(request,"",{'result':result,'msg':'The recipe with name %s does not exist'%recipe_name})
+
+            result = 1
+            f = RecipeForm(instance = recipe)
+            context = {
+                'recipeform' : f,
+                'exist':result
+            }
+
+        return render(request, reverse('recipe.edit'), context)
+
+    def post(self,request):
+        user = request.user
+        result = 0
+        if user.is_authenticated:
+            recipe_name = request['recipe_name']
+            profile = UserProfile.get_or_create_profile(user)
+
+            extraStep = [value for  key,value in request.items() if key.startswith('xstep')]
+            extraIQ = [value for  key,value in request.items() if key.startswith('xiq')]
+
+            try:
+                recipe = profile.created_recipes.get(name = recipe_name)
+                recipe_id = recipe.id
+            except ObjectDoesNotExist:
+                render(request,"",{'result':result,'msg':'The recipe with name %s does not exist'%recipe_name})
+
+            f  = RecipeForm(data = request, instance = recipe, extraStep= extraStep,extraIQ=extraIQ)
+            if f.is_valid():
+                f.save()
+                result = 1
+            context = {
+                'recipeform' : f,
+                'success':result
+            }
+
+        return render(request, reverse('recipe.edit'), context)
+

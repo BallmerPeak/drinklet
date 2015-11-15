@@ -11,6 +11,8 @@ from user.models import UserIngredients
 from ingredients.models import Ingredient
 
 import json
+from django.core.exceptions import ObjectDoesNotExist
+
 
 # Create your views here.
 
@@ -25,10 +27,13 @@ class Register(View):
             email = form.cleaned_data.get('email')
             User.objects.create_user(username, email, password)
             user = authenticate(username=username, password=password)
+            UserProfile.get_or_create_profile(user)
             login(request,user)
-            return HttpResponseRedirect(reverse('recipes.search'))
+
+            return render(request,'navbar.html')
         else:
-            return render(request, 'recipes/list.html', {'form': form})
+            return HttpResponse(render(request, 'user/register.html', {'form': form}),status = 401)
+
 
 
 class Profile(View):
@@ -135,5 +140,9 @@ def logout_view(request):
     logout(request)
 
     return HttpResponseRedirect(reverse('recipes.search'))
+
+
+
+
 
 

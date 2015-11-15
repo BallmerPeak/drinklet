@@ -8,4 +8,6 @@ urlpatterns = [
     url(r'^favorite/$', FavoriteRecipe.as_view(), name='recipes.favorite'),
     url(r'^rate/$', RateRecipe.as_view(), name='recipes.rate'),
     url(r'^makedrink', MakeDrink, name='recipes.makedrink'),
+    url(r'^edit/$'),editRecipe.as_view(),name = 'recipes.edit'),
 ]
+

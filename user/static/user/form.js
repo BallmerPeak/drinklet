@@ -50,6 +50,8 @@ var user = function () {
 $(document).ready(function(){
     var username, password, loginModalContent, replaceHtml;
 	// Open the modal
+
+
 	$('.modal-trigger').leanModal({
 		// Modal complete event handler
 		complete: function() { 
@@ -57,6 +59,7 @@ $(document).ready(function(){
 
 		 }	
 	});
+
 
     $('#login_button').click(function() {
         username = $('#loginUsername').val().toLowerCase();
@@ -74,6 +77,25 @@ $(document).ready(function(){
                 loginModalContent.html(replaceHtml);
             })
         });
+
+     $('#regBut').click(function() {
+        username = $('#regUsername').val().toLowerCase();
+        pwd1 = $('#regPassword').val();
+        pwd2 = $('#regConfirmPassword').val();
+        email = $('#regEmail').val();
+
+        $.post('user/register', {'username':username,'pwd':pwd1,'pwd2':pwd2,'email':email})
+            .done(function (data) {
+                $('#registerModal').closeModal();
+                $('#navbar').replaceWith(data);
+            })
+            .fail(function (data) {
+                registerModalContent = $('#registerModal > .modal-content');
+                replaceHtml = $(data.responseText).find('.modal-content').html();
+                registerModalContent.html(replaceHtml);
+            })
+        });
+
 
 
 });
