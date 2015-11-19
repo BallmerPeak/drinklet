@@ -2,6 +2,9 @@
 
 {% block content %}
 
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static 'user/profile.css' %}">
+
 <div class="container">
   <h3 class="black-text">Profile</h3>
   <hr>
@@ -15,26 +18,34 @@
       <span class="black-text">Email:</span> <span class="grey-text text-darken-1">{{ profile.user.email }}</span>
     </div>
   </div>
-
-  <!-- Display a list of User's Favorited Recipes -->
-  <h5 class="black-text">Favorite Recipes</h5>
-  {% for recipe in profile.favorites.items %}
-    <!-- Add the Recipe Row template -->
-    {% include 'recipes/recipeRow.html' %}
-  {% empty %}
-    <!-- User doesn't have any Favorited Recipes -->
-    There are no Favorite Recipes.
-  {% endfor %}
-
-  <!-- Display a list of User's Created Recipes  -->
-  <h5 class="black-text">Created Recipes</h5>
-  {% for recipe in profile.created_recipes.items %}
-    <!-- Add the Recipe Row template -->
-    {% include 'recipes/recipeRow.html' %}
-  {% empty %}
-    <!-- User doesn't have any Create Recipes -->
-    There are no Created Recipes.
-  {% endfor %}
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs grey lighten-5 z-depth-1">
+        <li class="tab col s3"><a class="active black-text" href="#favoriteRecipes">Favorites</a></li>
+        <li class="tab col s3"><a class="black-text" href="#createdRecipes">Created</a></li>
+      </ul>
+    </div>
+    <div id="favoriteRecipes" class="col s12">
+      <!-- Display a list of User's Favorited Recipes -->
+      {% for recipe in profile.favorites.all %}
+        <!-- Add the Recipe Row template -->
+        {% include 'recipes/recipeRow.html' %}
+      {% empty %}
+        <!-- User doesn't have any Favorited Recipes -->
+        There are no Favorite Recipes.
+      {% endfor %}
+    </div>
+    <div id="createdRecipes" class="col s12">
+      <!-- Display a list of User's Created Recipes  -->
+      {% for recipe in profile.created_recipes.all %}
+        <!-- Add the Recipe Row template -->
+        {% include 'recipes/recipeRow.html' %}
+      {% empty %}
+        <!-- User doesn't have any Create Recipes -->
+        There are no Created Recipes.
+      {% endfor %}
+    </div>
+  </div>
 </div>
 
 {% endblock %}

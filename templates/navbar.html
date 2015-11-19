@@ -1,32 +1,35 @@
-<nav class="indigo" id="navbar">
-    <div class="container">
-        <div class="nav-wrapper">
-            <a href="/" class="center brand-logo">Drinklet</a>
-            <a href="#" data-activates="mobile-list" class="button-collapse"><i class="material-icons">menu</i></a>
-            <ul class="left hide-on-med-and-down">
-                <li><a href="{% url 'ingredients.search' %}">Search</a></li>
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'user.profile' %}">Profile</a></li>
-                {% endif %}
-            </ul>
-            <ul class="right hide-on-med-and-down">
-                {% if user.is_authenticated %}
-                    <li><a class="modal-trigger" href="{% url 'user.logout' %}">Logout</a></li>
-                {% else %}
-                    <li><a class="modal-trigger" rel="loginModal" href="#loginModal">Login</a></li>
-                    <li><a class="modal-trigger" rel="registerModal" href="#registerModal">Register</a></li>
-                {% endif %}
-            </ul>
-            <ul class="side-nav" id="mobile-list">
-                <li><a href="{% url 'ingredients.search' %}">Search</a></li>
-                <li><a href="#">Profile</a></li>
-                {% if user.is_authenticated %}
-                    <li><a class="modal-trigger" href="{% url 'user.logout' %}">Logout</a></li>
-                {% else %}
-                    <li><a class="modal-trigger" rel="loginModal" href="#loginModal">Login</a></li>
-                    <li><a class="modal-trigger" rel="registerModal" href="#registerModal">Register</a></li>
-                {% endif %}
-            </ul>
+<div id="navbar">
+    <nav class="indigo">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="/" class="center brand-logo">Drinklet</a>
+                <a href="#" data-activates="mobile-list" class="button-collapse"><i class="material-icons">menu</i></a>
+                <ul class="left hide-on-med-and-down">
+                    <li><a href="{% url 'ingredients.search' %}">Search</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'user.profile' %}">Profile</a></li>
+                    {% endif %}
+                </ul>
+                <ul class="right hide-on-med-and-down">
+                    {% if user.is_authenticated %}
+                        <li><a class="modal-trigger" href="{% url 'user.logout' %}">Logout</a></li>
+                    {% else %}
+                        <li><a class="modal-trigger" rel="loginModal" href="#loginModal">Login</a></li>
+                        <li><a class="modal-trigger" rel="registerModal" href="#registerModal">Register</a></li>
+                    {% endif %}
+                </ul>
+                <ul class="side-nav" id="mobile-list">
+                    <li><a href="{% url 'ingredients.search' %}">Search</a></li>
+                    <li><a href="#">Profile</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a class="modal-trigger" href="{% url 'user.logout' %}">Logout</a></li>
+                    {% else %}
+                        <li><a class="modal-trigger" rel="loginModal" href="#loginModal">Login</a></li>
+                        <li><a class="modal-trigger" rel="registerModal" href="#registerModal">Register</a></li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
+    {% include 'fab.html' %}
+</div>
