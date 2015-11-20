@@ -7,3 +7,34 @@ body {
 	counter-increment: instructions;
 	content: ' #' counter(instructions);
 }
+
+/* Recipe Card */
+.recipe-card-comments {
+	margin-top: 20px;
+	margin-right: 40px;
+}
+
+.recipe-card-favorite {
+	margin-top: 20px;
+	margin-left: 40px;
+}
+
+.recipe-card-rating {
+	margin-top: 20px;
+}
+
+.card-image {
+	min-height: 250px;
+}
+
+.recipe-card-instructions ol {
+	padding-left: 20px;
+}
+
+.recipe-card-second-ingredients ul {
+	padding-left: 10px;
+}
+
+.recipe-card-make-drink {
+	margin-left: 20px;
+}
