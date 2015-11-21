@@ -2,6 +2,7 @@ from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.core.context_processors import csrf
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 
 from .models import Recipe
@@ -34,6 +35,53 @@ class SearchRecipes(View):
         for i in ingredient_ids:
             context['parameters'].append(Ingredient.objects.get(id=i))
         return render(request, 'recipes/index.html', context)
+
+class ListRecipes(View):
+    def get(self, request):
+        """
+        Lists all recipes
+        """
+        limit = request.GET.get('limit')
+        # If the limit was not set, default 10
+        if limit is None: 
+            limit = 10
+
+        order = request.GET.get('order')
+        # If the order was not set, default asc
+        if order is None: 
+            order = 'asc'
+
+        # Filter recipes by name in descending order
+        if order == 'desc': 
+            recipes = Recipe.objects.extra(
+                select={'lower_name': 'lower(name)'}
+            ).order_by('-lower_name')
+        # Filter recipes by name in ascending order
+        else: 
+            recipes = Recipe.objects.extra(
+                select={'lower_name': 'lower(name)'}
+            ).order_by('lower_name')
+
+        # Create new Paginator object for Recipe objects
+        paginator = Paginator(recipes,limit)
+            
+        page = request.GET.get('page')
+        # Grab the Recipe objects corresponding to passed in page
+        try:
+            results = paginator.page(page)
+        # Invalid page passed in, give page 1
+        except PageNotAnInteger:
+            results = paginator.page(1)
+        # Invalid page passed in, give page 1
+        except EmptyPage:
+            results = paginator.page(1)
+            
+        context = {
+            'limit': limit,
+            'order': order,
+            'results': results
+        }
+        return render(request, 'recipes/list.html', context)
 
 class CreateRecipe(View):
     def get(self, request):

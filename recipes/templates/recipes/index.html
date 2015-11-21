@@ -16,9 +16,11 @@
   <!-- Check if there were any matching recipes -->
   {% if results %}
     <!-- Add a row for each recipe -->
+    <div class="row">
     {% for recipe in results %}
       {% include 'recipes/recipeRow.html' %}
     {% endfor %}
+    </div>
   <!-- No results, inform the user -->
   {% else %}
     <p> There were no results matching your ingredients </p>
