@@ -1,21 +1,67 @@
-<div class="card grey lighten-5">
-  <div class="card-content">
-    <h4 class="activator grey-text text-darken-4">{{ recipe.name }}<i class="material-icons small right">comment</i></h4>
-    {% for recipeIngredient in recipe.recipeingredients_set.all %}
-      <div class="chip">
-          {{ recipeIngredient.ingredient.name }}
+<div class="col l6 m8 offset-m2 s12">
+  <div class="card">
+    <div class="card-image">
+      <div class="row">
+        <div class="recipe-card-favorite left">
+          <i class="material-icons left red-text">favorite</i>
+        </div>
+
+        <div class="recipe-card-rating left">
+          <i class="material-icons orange-text">star</i>
+          <i class="material-icons orange-text">star</i>
+          <i class="material-icons orange-text">star</i>
+          <i class="material-icons orange-text">star</i>
+          <i class="material-icons orange-text">star</i>
+        </div>
+
+        <div class="recipe-card-comments right">
+          <i class="material-icons left blue-text">comment</i>
+        </div>
       </div>
-    {% endfor %}
-    <p class="card-title grey-text text-darken-4">Instructions</p>
-    <hr>
-    <ol>
-    {% for instruction in recipe.instruction %}
-      <li class="black-text">{{ instruction }}</li>
-    {% endfor %}
-    </ol>
-  </div>
-  <div class="card-reveal">
-    <span class="card-title grey-text text-darken-4">Community Comments<i class="material-icons right">close</i></span>
-    <p> There are no comments </p>
+
+      <div class="row">
+        <div class="recipe-card-top-ingredients">
+        {% for recipeIngredient in recipe.recipeingredients_set.all %}
+          <div class="col s6 m6 l4 center">
+            <h5>{{ recipeIngredient.ingredient.name }}</h5>
+          </div>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="card-content white-text indigo activator">
+      <span class="card-title activator">
+        {{ recipe.name }}
+        <i class="material-icons right">more_vert</i>
+      </span>
+    </div>
+    <div class="card-reveal white-text blue">
+      <span class="card-title">
+        {{ recipe.name }}
+        <i class="material-icons right">close</i>
+      </span>
+      <div class="row">
+        <div class="col s12 m12 l6 recipe-card-second-ingredients">
+          <h5>Ingredients</h5>
+          <ul>
+          {% for recipeIngredient in recipe.recipeingredients_set.all %}
+          <li>{{ recipeIngredient.quantity }} {{ recipeIngredient.ingredient.uom }} {{ recipeIngredient.ingredient.name }}</li>
+          {% endfor %}
+          </ul>
+        </div>
+        <div class="col s12 m12 l6 recipe-card-instructions">
+          <h5>Instructions</h5>
+          <ol>
+          {% for instruction in recipe.instruction %}
+            <li>{{ instruction }}</li>
+          {% endfor %}
+          </ol>
+        </div>
+      </div>
+      <div class="row">
+        <a class="waves-effect waves-light btn blue darken-3 recipe-card-make-drink">Make Drink!</a>
+      </div>
+    </div>
+
   </div>
 </div>
