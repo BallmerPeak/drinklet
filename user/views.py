@@ -37,20 +37,41 @@ class Profile(View):
         if user.is_authenticated():
             profile = UserProfile.get_or_create_profile(user)
             ingredients = profile.ingredients.values()
-            names = {}
+            ingredientQuantity = []
             for e in ingredients:
-                names[e.get("name")] = e.get("id")
-            userIngredients = []
-            for ingredient in UserIngredients.objects.all().values():
-                userIngredients.append(ingredient)
-            quantities = {}
-            for key, value in names.items():
-                for item in userIngredients:
-                    if item.get("ingredient_id") == value:
-                        quantities[key] = item.get("quantity")
+                for ingredient in UserIngredients.objects.all().values():
+                    id = ingredient.get("ingredient_id")
+                    if id == e.get("id"):
+                        item = {"id": id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
+                        ingredientQuantity.append(item)
             context = {
                 'profile': profile,
-                'quantities': quantities
+                'userIngredients': ingredientQuantity
+            }
+            return render(request, 'user/profile.html', context)
+        return HttpResponseRedirect(reverse('ingredients.search'))
+
+    def post(self, request):
+        user = self.request.user
+        if user.is_authenticated():
+            profile = UserProfile.get_or_create_profile(user)
+
+            quantities = json.loads(request.POST["ingredient_objects"])
+            deleted = json.loads(request.POST["deleted_ingredients"])
+            for removedIngredient in deleted:
+                profile.delete_user_ingredient(removedIngredient.get("id"))
+
+            ingredients = profile.ingredients.values()
+            ingredientQuantity = []
+            for e in ingredients:
+                for ingredient in UserIngredients.objects.all().values():
+                    id = ingredient.get("ingredient_id")
+                    if id == e.get("id"):
+                        item = {"id": id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
+                        ingredientQuantity.append(item)
+            context = {
+                'profile': profile,
+                'userIngredients': ingredientQuantity
             }
             return render(request, 'user/profile.html', context)
         return HttpResponseRedirect(reverse('ingredients.search'))

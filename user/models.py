@@ -55,6 +55,11 @@ class UserProfile(models.Model):
 
         return self._create_dict(user_ingredients, 'ingredient_id', 'quantity')
 
+    def update_user_ingredient_quantity(self, ingredient_id, quantity):
+        #Call user ingredients to update the quantity of the ingredient with the given id
+        #with the given quantity
+        UserIngredients
+
     def create_recipe(self, recipe_info):
         recipe = Recipe._add_recipe(recipe_info['name'], recipe_info['instructions'], recipe_info['ingredients'])
         self.created_recipes.add(recipe)

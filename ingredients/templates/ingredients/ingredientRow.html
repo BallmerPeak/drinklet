@@ -1,18 +1,18 @@
 <!-- User Ingredients -->
 <div id="ingredient-inputs" class="col s10 m10 l6 offset-s1 offset-m1">
     <div id="ingredient-input-wrapper">
-        <div class="row ingredient-input">
+        <div class="row ingredient-input" data-id="{{ ingredient.id }}" data-name="{{ ingredient.name }}">
             <!-- Ingredient -->
             <div class="col s3">
-               {{ key }}
+               {{ ingredient.name }}
             </div>
             <!-- Quantity -->
             <div class="col s3">
-                <input type="text" value="{{ value }}"/>
+                <input type="text" value="{{ ingredient.quantity }}" name="{{ ingredient.name }}_quantity" id="{{ ingredient.id }}_quantity"/>
                 <label>Quantity</label>
             </div>
             <div>
-                <button class="waves-effect waves-light btn blue" name="deleteIngredient" >Delete</button>
+                <button type="button" class="waves-effect waves-light btn blue delete-button" name="deleteIngredient" >Delete</button>
             </div>
         </div>
     </div>

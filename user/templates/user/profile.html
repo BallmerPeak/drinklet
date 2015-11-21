@@ -4,6 +4,7 @@
 
 {% load staticfiles %}
 <link rel="stylesheet" href="{% static 'user/profile.css' %}">
+<script src="{% static 'user/profile.js' %}"></script>
 
 <div class="container">
   <h3 class="black-text">Profile</h3>
@@ -19,13 +20,13 @@
     </div>
   </div>
   <div>
-      <form action="{% url 'recipes.search' %}" method="POST">
+      <form name="pantry" id="pantry_form" action="{% url 'user.profile' %}" method="POST">
         {% csrf_token %}
         <h4>Pantry</h4>
-        <input type="hidden" id="ingredient_names" name="ingredient_names" value="[]"/>
-        <input type="hidden" id="ingredient_quantities"  name="ingredient_quantities" value="[]"/>
+        <input type="hidden" id="ingredient_objects" name="ingredient_objects" value="[]"/>
+        <input type="hidden" id="deleted_ingredients" name="deleted_ingredients" value="[]"/>
         <div id="inventoryButtons">
-          {% for key, value in quantities.items %}
+          {% for ingredient in userIngredients %}
             <!-- Add the Ingredient Row template -->
             {% include 'ingredients/ingredientRow.html' %}
           {% empty %}
