@@ -7,6 +7,10 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from user.models import UserProfile
+from user.models import UserIngredients
+from ingredients.models import Ingredient
+
+import json
 
 # Create your views here.
 
@@ -32,7 +36,23 @@ class Profile(View):
         user = self.request.user
         if user.is_authenticated():
             profile = UserProfile.get_or_create_profile(user)
-            return render(request, 'user/profile.html', {'profile': profile})
+            ingredients = profile.ingredients.values()
+            names = {}
+            for e in ingredients:
+                names[e.get("name")] = e.get("id")
+            userIngredients = []
+            for ingredient in UserIngredients.objects.all().values():
+                userIngredients.append(ingredient)
+            quantities = {}
+            for key, value in names.items():
+                for item in userIngredients:
+                    if item.get("ingredient_id") == value:
+                        quantities[key] = item.get("quantity")
+            context = {
+                'profile': profile,
+                'quantities': quantities
+            }
+            return render(request, 'user/profile.html', context)
         return HttpResponseRedirect(reverse('ingredients.search'))
 
 

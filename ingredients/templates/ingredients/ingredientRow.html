@@ -1,18 +1,19 @@
-<div class="row">
-  		<!-- Recipe Ingredients -->
-	  	<div id="ingredient-inputs" class="col s10 m10 l6 offset-s1 offset-m1">
-	  		<h4>Ingredients</h4>
-	  		<div id="ingredient-input-wrapper">
-			  	<div class="row ingredient-input">
-			  		<!-- Ingredient -->
-			  		<div class="col s8">
-
-			  		</div>
-			  		<!-- Quantity -->
-			  		<div class="col s3 input-field">
-			  			<input type="text"/>
-			  			<label>Quantity</label>
-			  		</div>
-			  	</div>
-			  </div>
-	  	</div>
+<!-- User Ingredients -->
+<div id="ingredient-inputs" class="col s10 m10 l6 offset-s1 offset-m1">
+    <div id="ingredient-input-wrapper">
+        <div class="row ingredient-input">
+            <!-- Ingredient -->
+            <div class="col s3">
+               {{ key }}
+            </div>
+            <!-- Quantity -->
+            <div class="col s3">
+                <input type="text" value="{{ value }}"/>
+                <label>Quantity</label>
+            </div>
+            <div>
+                <button class="waves-effect waves-light btn blue" name="deleteIngredient" >Delete</button>
+            </div>
+        </div>
+    </div>
+</div>

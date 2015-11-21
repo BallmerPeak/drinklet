@@ -18,6 +18,27 @@
       <span class="black-text">Email:</span> <span class="grey-text text-darken-1">{{ profile.user.email }}</span>
     </div>
   </div>
+  <div>
+      <form action="{% url 'recipes.search' %}" method="POST">
+        {% csrf_token %}
+        <h4>Pantry</h4>
+        <input type="hidden" id="ingredient_names" name="ingredient_names" value="[]"/>
+        <input type="hidden" id="ingredient_quantities"  name="ingredient_quantities" value="[]"/>
+        <div id="inventoryButtons">
+          {% for key, value in quantities.items %}
+            <!-- Add the Ingredient Row template -->
+            {% include 'ingredients/ingredientRow.html' %}
+          {% empty %}
+            <!-- User doesn't have any ingredients -->
+            You have no selected ingredients.
+          {% endfor %}
+          <button type="submit" name="submitIngredients" class="waves-effect waves-light btn blue">
+            Update Pantry
+            <i class="material-icons right">send</i>
+          </button>
+        </div>
+      </form>
+  </div>
   <div class="row">
     <div class="col s12">
       <ul class="tabs grey lighten-5 z-depth-1">
