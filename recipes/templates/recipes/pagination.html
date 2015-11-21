@@ -1,0 +1,70 @@
+<div class="row">
+  <div class="col s2 m1">
+    <ul class="pagination">
+      {% if results.has_previous %}
+        <!-- Previous Arrow Enabled -->
+        <a href="?page={{ results.previous_page_number }}&limit={{ limit }}&order={{ order }}">
+          <li class="grey lighten-5 z-depth-1 waves-effect"><i class="material-icons">chevron_left</i></li>
+        </a>
+      {% endif %}
+    </ul>
+  </div>
+  <div class="col s1 m2 offset-s1">
+    <ul class="pagination">
+      {% if results.number > 2 %}
+        <!-- First Number -->
+        <a href="?page=1&limit={{ limit }}&order={{ order }}">
+          <li class="grey lighten-5 z-depth-1 waves-effect col s12">1</li>
+        </a>
+      {% endif %}
+    </ul>
+  </div>
+  <div class="col s1 m2">
+    <ul class="pagination">
+      {% if results.has_previous %}
+        <!-- Previous Number -->
+        <a href="?page={{ results.previous_page_number }}&limit={{ limit }}&order={{ order }}">
+          <li class="grey lighten-5 z-depth-1 waves-effect col s12">{{ results.previous_page_number }}</li>
+        </a>
+      {% endif %}
+    </ul>
+  </div>
+  <div class="col s2">
+    <ul class="pagination">
+      <!-- Current Page Number -->
+      <a href="?page={{ results.number }}&limit={{ limit }}&order={{ order }}">
+        <li class="z-depth-1 active col s12">{{ results.number }}</li>
+      </a>
+    </ul>
+  </div>
+  <div class="col s1 m2">
+    <ul class="pagination">
+      {% if results.has_next %}
+        <!-- Next Number -->
+        <a href="?page={{ results.next_page_number }}&limit={{ limit }}&order={{ order }}">
+          <li class="grey lighten-5 z-depth-1 waves-effect col s12">{{ results.next_page_number }}</li>
+        </a>
+      {% endif %}
+    </ul>
+  </div>
+  <div class="col s1 m2">
+    <ul class="pagination">
+      {% if results.number < results.paginator.num_pages|add:"-1" %}
+        <!-- Last Number -->
+        <a href="?page={{ results.paginator.num_pages }}&limit={{ limit }}&order={{ order }}">
+          <li class="grey lighten-5 z-depth-1 waves-effect col s12">{{ results.paginator.num_pages }}</li>
+        </a>
+      {% endif %}
+    </ul>
+  </div>
+  <div class="col s2 m1 offset-s1">
+    <ul class="pagination">
+      {% if results.has_next %}
+        <!-- Next Arrow Enabled -->
+        <a href="?page={{ results.next_page_number }}&limit={{ limit }}&order={{ order }}">
+          <li class="grey lighten-5 z-depth-1 waves-effect"><i class="material-icons">chevron_right</i></li>
+        </a>
+      {% endif %}
+    </ul>
+  </div>
+</div>

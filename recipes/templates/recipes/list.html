@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+  <h3 class="black-text">Recipe Results</h3>
+  <hr>
+  <!-- Check if there were any matching recipes -->
+  {% if results %}
+    <!-- Check if there is a paginated list -->
+    {% if results.object_list %}
+      <div class="row">
+        <div class="col s12 m4">
+        {% if order == 'desc' %}
+          <a href="{% url 'recipes.list' %}?page={{ results.number }}&limit={{ limit }}&order=asc" class="col s12 waves-effect waves-light btn blue">
+            Order Name 
+            <i class="material-icons right">trending_down</i>
+          </a>
+        {% else %}
+          <a href="{% url 'recipes.list' %}?page={{ results.number }}&limit={{ limit }}&order=desc" class="col s12 waves-effect waves-light btn blue">
+            Order Name 
+            <i class="material-icons right">trending_up</i>
+          </a>
+        {% endif %}
+        </div>
+      </div>
+      <!-- Add the pagination at the top of the list -->
+      {% include 'recipes/pagination.html' %}
+
+      <!-- Add this page's objects -->
+      <div class="row">
+      {% for recipe in results.object_list %}
+        <!-- Add a row for each recipe -->
+        {% include 'recipes/recipeRow.html' %}
+      {% endfor %}
+      </div>
+
+      <!-- Add the pagination at the bottom of the list -->
+      {% include 'recipes/pagination.html' %}
+    {% endif %}
+         
+  <!-- No results, inform the user -->
+  {% else %}
+    <p> There are no recipes to display. </p>
+  {% endif %}
+</div>
+
+{% endblock %}

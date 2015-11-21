@@ -8,6 +8,17 @@ body {
 	content: ' #' counter(instructions);
 }
 
+/* Pagination Buttons */
+.pagination a li {
+	color: #444;
+}
+.pagination li.active {
+	background-color: #3f51b5;
+}
+.pagination a li.active {
+	color: #fff;
+}
+
 /* Recipe Card */
 .recipe-card-comments {
 	margin-top: 20px;
