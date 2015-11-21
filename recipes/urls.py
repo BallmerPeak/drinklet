@@ -1,8 +1,9 @@
 from django.conf.urls import include, url
-from .views import SearchRecipes, CreateRecipe, ListRecipes
+from .views import ListRecipes, CreateRecipe, SearchRecipesByName, SearchRecipesByIngredients
 
 urlpatterns = [
-	url(r'^$', SearchRecipes.as_view(), name='recipes.search'),
+	url(r'^$', ListRecipes.as_view(), name='recipes.list'),
 	url(r'^create/$', CreateRecipe.as_view(), name='recipes.create'),
-	url(r'^list/$', ListRecipes.as_view(), name='recipes.list')
+	url(r'^search/name/$', SearchRecipesByName.as_view(), name='recipes.name'),
+	url(r'^search/ingredients/$', SearchRecipesByIngredients.as_view(), name='recipes.ingredients'),
 ]

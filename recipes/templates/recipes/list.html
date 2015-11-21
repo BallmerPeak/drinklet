@@ -2,45 +2,98 @@
 
 {% block content %}
 
+{% load staticfiles %}
+<script src="{% static 'recipes/list.js' %}"></script>
+
 <div class="container">
   <h3 class="black-text">Recipe Results</h3>
   <hr>
-  <!-- Check if there were any matching recipes -->
-  {% if results %}
-    <!-- Check if there is a paginated list -->
-    {% if results.object_list %}
-      <div class="row">
-        <div class="col s12 m4">
-        {% if order == 'desc' %}
-          <a href="{% url 'recipes.list' %}?page={{ results.number }}&limit={{ limit }}&order=asc" class="col s12 waves-effect waves-light btn blue">
-            Order Name 
-            <i class="material-icons right">trending_down</i>
-          </a>
-        {% else %}
-          <a href="{% url 'recipes.list' %}?page={{ results.number }}&limit={{ limit }}&order=desc" class="col s12 waves-effect waves-light btn blue">
-            Order Name 
-            <i class="material-icons right">trending_up</i>
-          </a>
-        {% endif %}
+  <div class="row">
+    <form id="create-recipe-form" action="{% url 'recipes.name' %}" method="POST">
+      {% csrf_token %}
+      <input type="hidden" id="limit" name="limit" value="{{ limit }}"/>
+      <input type="hidden" id="order" name="order" value="{{ order }}"/>
+      {% if query %}
+        <!-- Display the user's searched query -->
+        <div class="col s10 m3 input-field">
+          <input id="query" name="query" type="text" value="{{ query }}" class="validate">
+          <label for="query">Name of Recipe</label>
         </div>
-      </div>
-      <!-- Add the pagination at the top of the list -->
-      {% include 'recipes/pagination.html' %}
 
-      <!-- Add this page's objects -->
-      <div class="row">
+        <!-- Clear button to go back to displaying all recipes -->
+        <div class="col s1">
+          <br>
+          <a href="{% url 'recipes.list' %}?page=1&limit=10&order=asc" class="btn-floating btn-small blue">
+            <i class="large material-icons">delete</i>
+          </a>
+        </div>
+      {% else %}
+        <!-- No query, display empty field -->
+        <div class="col s12 m4 input-field">
+          <input id="query" name="query" type="text" class="validate">
+          <label for="query">Name of Recipe</label>
+        </div>
+      {% endif %}
+      <div class="col s12 m4">
+        <br>
+        <button id="searchButton" class="col s12 btn waves-effect waves-light blue right" type="submit" name="action">
+          Search 
+          <i class="material-icons right">search</i>
+        </button>
+      </div>
+      {% if results and results.object_list %}
+        <!-- There are results that can be reordered -->
+        <div class="col s12 m4">
+          <br>
+          {% if query %}
+            <a id="orderNameButton" class="col s12 waves-effect waves-light btn blue">
+              Order Name
+              <i class="material-icons right">
+                {% if order == 'desc' %}
+                  trending_down
+                {% else %}
+                  trending_up
+                {% endif %}
+              </i>
+            </a>
+          {% else %}
+            {% if order == 'desc' %}
+              <!-- Currently ordered in descending order -->
+              <a href="{% url 'recipes.list' %}?page={{ results.number }}&limit={{ limit }}&order=asc" class="col s12 waves-effect waves-light btn blue">
+                Order Name 
+                <i class="material-icons right">trending_down</i>
+              </a>
+            {% else %}
+              <!-- Currently ordered in ascending order -->
+              <a href="{% url 'recipes.list' %}?page={{ results.number }}&limit={{ limit }}&order=desc" class="col s12 waves-effect waves-light btn blue">
+                Order Name 
+                <i class="material-icons right">trending_up</i>
+              </a>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endif %}
+    </form>
+  </div>
+
+  {% if results and results.object_list %} 
+    <!-- There are results to display -->
+
+    <!-- Add the pagination at the top of the list -->
+    {% include 'recipes/pagination.html' %}
+
+    <!-- Add this page's objects -->
+    <div class="row">
       {% for recipe in results.object_list %}
         <!-- Add a row for each recipe -->
         {% include 'recipes/recipeRow.html' %}
       {% endfor %}
-      </div>
+    </div>
 
-      <!-- Add the pagination at the bottom of the list -->
-      {% include 'recipes/pagination.html' %}
-    {% endif %}
-         
-  <!-- No results, inform the user -->
+    <!-- Add the pagination at the bottom of the list -->
+    {% include 'recipes/pagination.html' %}
   {% else %}
+    <!-- There are no results, inform the user -->
     <p> There are no recipes to display. </p>
   {% endif %}
 </div>

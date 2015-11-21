@@ -9,8 +9,64 @@ from .models import Recipe
 from .models import Ingredient
 from user.models import UserProfile
 
+def _filterRecipes(query, limit, order):
+    """
+    Build Paginator of results from filtering Recipes
+    """
+    # If the query is not set, default it to empty
+    if query is None:
+        query = ""
 
-class SearchRecipes(View):
+    # If the limit is not set, default it to 10
+    if limit is None:
+        limit = 10
+
+    # If the order is not set, default it to asc
+    if order is None:
+        order = 'asc'
+
+    # Filter recipes by query in descending order
+    if order == 'desc':
+        recipes = Recipe.objects.extra(
+                select={'lower_name': 'lower(name)'}
+            ).filter(name__iregex=r''+query).order_by('-lower_name')
+    # Filter recipes by query in ascending order
+    else:
+        recipes = Recipe.objects.extra(
+                select={'lower_name': 'lower(name)'}
+            ).filter(name__iregex=r''+query).order_by('lower_name')
+
+    # Return all of the values
+    return {
+        'query': query,
+        'limit': limit,
+        'order': order,
+        'paginator': Paginator(recipes,limit)
+    }
+
+
+class SearchRecipesByName(View):
+    def get(self, request):
+        return redirect('recipes.list')
+
+    def post(self, request):
+        """
+        Searches for recipes given a search query
+        """
+        filterRes = _filterRecipes(
+            request.POST.get('query'),
+            request.POST.get('limit'),
+            request.POST.get('order')
+        )
+        context = {
+            'limit': filterRes['limit'],
+            'order': filterRes['order'],
+            'query': filterRes['query'],
+            'results': filterRes['paginator'].page(1)
+        }
+        return render(request, 'recipes/list.html', context)
+
+class SearchRecipesByIngredients(View):
     def get(self, request):
         return redirect('ingredients.search')
 
@@ -41,30 +97,13 @@ class ListRecipes(View):
         """
         Lists all recipes
         """
-        limit = request.GET.get('limit')
-        # If the limit was not set, default 10
-        if limit is None: 
-            limit = 10
-
-        order = request.GET.get('order')
-        # If the order was not set, default asc
-        if order is None: 
-            order = 'asc'
-
-        # Filter recipes by name in descending order
-        if order == 'desc': 
-            recipes = Recipe.objects.extra(
-                select={'lower_name': 'lower(name)'}
-            ).order_by('-lower_name')
-        # Filter recipes by name in ascending order
-        else: 
-            recipes = Recipe.objects.extra(
-                select={'lower_name': 'lower(name)'}
-            ).order_by('lower_name')
-
         # Create new Paginator object for Recipe objects
-        paginator = Paginator(recipes,limit)
-            
+        filterRes = _filterRecipes(
+            "",
+            request.GET.get('limit'),
+            request.GET.get('order')
+        )
+        paginator = filterRes['paginator']    
         page = request.GET.get('page')
         # Grab the Recipe objects corresponding to passed in page
         try:
@@ -77,8 +116,9 @@ class ListRecipes(View):
             results = paginator.page(1)
             
         context = {
-            'limit': limit,
-            'order': order,
+            'limit': filterRes['limit'],
+            'order': filterRes['order'],
+            'query': "",
             'results': results
         }
         return render(request, 'recipes/list.html', context)

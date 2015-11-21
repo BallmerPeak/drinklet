@@ -14,7 +14,7 @@
   <p id="inventoryEmpty" class="grey-text text-darken-1">Selected ingredients from below will appear here.</p>
   <br>
   <!-- What gets displayed when there are selected ingredients -->
-  <form action="{% url 'recipes.search' %}" method="POST">
+  <form action="{% url 'recipes.ingredients' %}" method="POST">
     {% csrf_token %}
     <input type="hidden" id="ingredient_ids" name="ingredient_ids" value="[]"/>
     <div id="inventoryButtons">
