@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.core.context_processors import csrf
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponse
 import json
 
 from .models import Recipe
@@ -58,11 +59,19 @@ class SearchRecipesByName(View):
             request.POST.get('limit'),
             request.POST.get('order')
         )
+
+        favorites = None
+
+        if self.request.user.is_authenticated():
+            profile = UserProfile.get_or_create_profile(self.request.user)
+            favorites = profile.favorites.all()
+
         context = {
             'limit': filterRes['limit'],
             'order': filterRes['order'],
             'query': filterRes['query'],
-            'results': filterRes['paginator'].page(1)
+            'results': filterRes['paginator'].page(1),
+            'favorites': favorites
         }
         return render(request, 'recipes/list.html', context)
 
@@ -76,6 +85,7 @@ class SearchRecipesByIngredients(View):
         """
         print("InPOST")
         ingredient_ids = json.loads(request.POST['ingredient_ids'])
+        favorites = None
         if not self.request.user.is_anonymous():
             useringredients = list(UserProfile.get_or_create_profile(self.request.user).ingredients.values_list('id', flat=True))
             ingredientstoremove = list(set(useringredients) - set(ingredient_ids))
@@ -84,8 +94,14 @@ class SearchRecipesByIngredients(View):
                 self.request.user.userprofile.delete_user_ingredient(ingredient)
             if len(ingredientstoadd) > 0:
                 self.request.user.userprofile.add_user_ingredients(ingredientstoadd)
+
+        if self.request.user.is_authenticated():
+            profile = UserProfile.get_or_create_profile(self.request.user)
+            favorites = profile.favorites.all()
+
         context = {
             'results': Recipe.get_recipes_by_ingredients(ingredient_ids),
+            'favorites': favorites,
             'parameters': []
         }
         for i in ingredient_ids:
@@ -116,11 +132,17 @@ class ListRecipes(View):
         except EmptyPage:
             results = paginator.page(1)
             
+        favorites = None
+        if self.request.user.is_authenticated():
+            profile = UserProfile.get_or_create_profile(self.request.user)
+            favorites = profile.favorites.all()
+
         context = {
             'limit': filterRes['limit'],
             'order': filterRes['order'],
             'query': "",
-            'results': results
+            'results': results,
+            'favorites': favorites
         }
         return render(request, 'recipes/list.html', context)
 
@@ -164,3 +186,25 @@ class CreateRecipe(View):
         }
 
         return render(request, 'recipes/create.html', context)
+
+class FavoriteRecipe(View):
+    def post(self, request):
+        """
+        Favorites or Unfavorites a recipe
+        """
+        if request.is_ajax():
+            recipe_id = request.POST.get('recipe_id')
+            is_favorite = request.POST.get('is_favorite')
+
+            favorite = False
+            if is_favorite:
+                favorite = True
+
+            profile = UserProfile.get_or_create_profile(self.request.user)
+            profile.set_favorites(recipe_id=recipe_id, is_favorite=favorite)
+
+            json_response = {'favorite': favorite }
+
+            return HttpResponse(json.dumps(json_response), content_type='application/json')
+
+        return redirect('recipes.list')   
