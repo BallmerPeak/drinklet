@@ -250,16 +250,30 @@ class RateRecipe(View):
 
 def MakeDrink(request):
     user = request.user
+    quantityUpdates = []
     if user.is_authenticated():
         profile = UserProfile.get_or_create_profile(user)
         for maderecipe in Recipe.objects.all():
             if maderecipe.id == int(request.POST.get("recipe")):
-                myrecipe = {"recipe_id": maderecipe.id, "ingredients": maderecipe.ingredients.values()}
+                myrecipe = {"recipe_id": maderecipe.id}
+                user_ingredient_ids = []
+                for item in UserIngredients.objects.all().values():
+                    user_ingredient_ids.append(item.get("ingredient_id"))
+                recipe_ingredient_ids = []
+                for item in RecipeIngredients.objects.all().values():
+                    if item.get("recipe_id") == myrecipe.get("recipe_id"):
+                        recipe_ingredient_ids.append(item.get("ingredient_id"))
+                if not set(recipe_ingredient_ids).issubset(set(user_ingredient_ids)):
+                    return HttpResponse("error")
                 for ingredient in RecipeIngredients.objects.all().values():
                     if ingredient.get("recipe_id") == myrecipe.get("recipe_id"):
                         for useringredient in UserIngredients.objects.all().values():
                             if (ingredient.get("ingredient_id") == useringredient.get("ingredient_id")) and (useringredient.get("user_id") == profile.user_id):
                                 newQuantity = useringredient.get("quantity") - ingredient.get("quantity")
                                 if newQuantity < 0:
-                                    newQuantity = 0
-    return HttpResponse("success")
+                                    return HttpResponse("error")
+                                update = {"ingredient_id": ingredient.get("ingredient_id"), "quantity": newQuantity}
+                                quantityUpdates.append(update)
+        for submission in quantityUpdates:
+            profile.update_user_ingredient_quantity(submission.get("ingredient_id"), submission.get("quantity"))
+        return HttpResponse("success")

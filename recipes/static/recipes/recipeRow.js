@@ -20,9 +20,9 @@ $(document).ready(function() {
                     'recipe': recipeid
                 }
             }).success(function(data){
-                //window.alert(data);
+                window.alert(data);
             }).fail(function(jqXHR, textStatus){
-                //window.alert(textStatus);
+                window.alert(textStatus);
             });
         }
 

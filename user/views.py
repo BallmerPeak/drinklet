@@ -77,6 +77,9 @@ class Profile(View):
             for removedIngredient in deleted:
                 profile.delete_user_ingredient(removedIngredient.get("id"))
 
+            for submission in quantities:
+                profile.update_user_ingredient_quantity(submission.get("id"), submission.get("quantity"))
+
             ingredients = profile.ingredients.values()
             ingredientQuantity = []
             for e in ingredients:
