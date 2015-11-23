@@ -1,196 +1,193 @@
 ## Run `python manage.py runscript seed_recipes`
 
 from django.db import IntegrityError
-
 from recipes.models import Recipe, RecipeIngredients
 from ingredients.models import Ingredient
+from user.models import UserProfile
 
 all_ingredients = Ingredient.objects.all()
 
+
 def get_ingredient(_name):
-	ingredient_object = list(all_ingredients.filter(name=_name)[:1])
-	if ingredient_object:
-		return ingredient_object[0]
-	return None
+    ingredient_object = list(all_ingredients.filter(name=_name)[:1])
+    if ingredient_object:
+        return ingredient_object[0]
+    return None
+
 
 recipe_array = [
-	## Gin & Tonic
-	{
-		"name":"gin & tonic",
-		"ingredients": {
-			"gin":"1.25",
-			"tonic":"3",
-			"lime":"1"
-		},
-		"instructions": [
-			"Fill a highball glass with ice.",
-			"Place a lime wheel on top of the ice.",
-			"Pour Gin over the ice and add tonic water."
-		]
-	},
+    ## Gin & Tonic
+    (
+        "gin & tonic",
+        [
+            "Fill a highball glass with ice.",
+            "Place a lime wheel on top of the ice.",
+            "Pour Gin over the ice and add tonic water."
+        ],
+        {
+            1: "1.25",
+            11: "3",
+            17: "1"
+        }
+    ),
 
-	## Margarita
-	{
-		"name": "margarita",
-		"ingredients": {
-			"tequila":"1",
-			"orange liqueur":"0.5",
-			"lime juice":"2",
-			"lime":"1",
-			"salt":"1"
-		},
-		"instructions": [
-			"Rub rim of a chilled rocks glass with lime.",
-			"Dip glass into salt to coat.",
-			"Fill shaker with ice.",
-			"Add orange liqueur, tequila, and lime juice.",
-			"Shake well.",
-			"Strain drink into the rocks glass filled with ice.",
-			"Garnish with lime wedge."
-		]
-	},
+    ## Margarita
+    (
+        "margarita",
+		[
+            "Rub rim of a chilled rocks glass with lime.",
+            "Dip glass into salt to coat.",
+            "Fill shaker with ice.",
+            "Add orange liqueur, tequila, and lime juice.",
+            "Shake well.",
+            "Strain drink into the rocks glass filled with ice.",
+            "Garnish with lime wedge."
+        ],
+        {
+            2: "1",
+            3: "0.5",
+            13: "2",
+            17: "1",
+            21: "1"
+        }
+    ),
 
-	## Mojito
-	{
-		"name": "mojito",
-		"ingredients": {
-			"white rum":"1.5",
-			"mint":"6",
-			"lime juice":"0.5",
-			"simple syrup":"0.5",
-			"club soda":"1",
-			"lime":"1"
-		},
-		"instructions": [
-			"Place mint leaves in the bottom of the glass, add white rum, lime juice, and simple syrup.",
-			"Muddle all ingredients.",
-			"Add ice and top with club soda.",
-			"Garnish with a lime wedge."
-		]
-	},
+    ## Mojito
+    (
+        "mojito",
+		[
+            "Place mint leaves in the bottom of the glass, add white rum, lime juice, and simple syrup.",
+            "Muddle all ingredients.",
+            "Add ice and top with club soda.",
+            "Garnish with a lime wedge."
+        ],
+        {
+            4: "1.5",
+            18: "6",
+            13: "0.5",
+            19: "0.5",
+            12: "1",
+            17: "1"
+        }
 
-	## White Russian
-	{
-		"name": "white russian",
-		"ingredients": {
-			"coffee liqueur":"0.66",
-			"vodka":"1.66",
-			"fresh cream":"1"
-		},
-		"instructions": [
-			"Pour coffee liqueur and vodka into an Old Fashioned glass filled with ice.",
-			"Float fresh cream on top and stir slowly."
-		]
-	},
+    ),
 
-	## Mud Slide
-	{
-		"name": "mud slide",
-		"ingredients": {
-			"coffee liqueur":"1",
-			"vodka":"1",
-			"cream liqueur":"1",
-			"fresh cream":"1"
-		},
-		"instructions": [
-			"Add all the ingredients to a blender and blend until smooth.",
-			"Pour the Mudslide into a Martini or Hurricane glass.",
-			"If desired, drizzle with chocolate syrup."
-		]
-	},
+    ## White Russian
+    (
+        "white russian",
+		[
+            "Pour coffee liqueur and vodka into an Old Fashioned glass filled with ice.",
+            "Float fresh cream on top and stir slowly."
+        ],
+        {
+            5: "0.66",
+            6: "1.66",
+            22: "1"
+        }
 
-	## Bahama Mama
-	{
-		"name": "bahama mama",
-		"ingredients": {
-			"rum":"0.5",
-			"coconut rum":"0.5",
-			"grenadine syrup":"0.5",
-			"orange juice":"1",
-			"pineapple juice":"1"
-		},
-		"instructions": [
-			"Combine regular rum, rum with coconut flavoring, grenadine, orange juice, pineapple juice and crushed ice in an electric blender.",
-			"Blend until the drink's consistency is slushy."
-		]
-	},
+    ),
 
-	## Cosmopolitan
-	{
-		"name": "Cosmopolitan",
-		"ingredients": {
-			"lime juice":"0.5",
-			"cranberry juice":"1", 
-			"orange liqueur":"0.5",
-			"vodka":"1.5"
-		},
-		"instructions": [
-			"Add all ingredients into cocktail shaker filled with ice.",
-			"Shake well and double strain into large cocktail glass.",
-			"Garnish with lime wheel."
-		]
-	},
+    ## Mud Slide
+    (
+        "mud slide",
+		[
+            "Add all the ingredients to a blender and blend until smooth.",
+            "Pour the Mudslide into a Martini or Hurricane glass.",
+            "If desired, drizzle with chocolate syrup."
+        ],
+        {
+            5: "1",
+            6: "1",
+            7: "1",
+            22: "1"
+        }
 
-	## Screwdriver
-	{
-		"name": "screwdriver",
-		"ingredients": {
-			"vodka":"1.75",
-			"orange juice":"3.5"
-		},
-		"instructions": [
-			"Mix in a highball glass with ice.",
-			"Garnish and serve."
-		]
-	},
+    ),
 
-	# Martini
-	{
-		"name": "Martini",
-		"ingredients": {
-			"dry vermouth":"0.5",
-			"gin":"3"
-		},
-		"instructions": [
-			"Pour all ingredients into mixing glass with ice cubes.",
-			"Stir well.",
-			"Strain in chilled martini cocktail glass.",
-			"Squeeze oil from lemon peel onto the drink or garnish with olive."
-		]
-	},
+    ## Bahama Mama
+    (
+        "bahama mama",
+		[
+            "Combine regular rum, rum with coconut flavoring, grenadine, orange juice, pineapple juice and crushed ice in an electric blender.",
+            "Blend until the drink's consistency is slushy."
+        ],
+        {
+            8: "0.5",
+            9: "0.5",
+            20: "0.5",
+            14: "1",
+            15: "1"
+        }
 
-	# Daiquiri
-	{
-		"name": "daiquiri",
-		"ingredients": {
-			"white rum":"1.5",
-			"simple syrup":"0.5",
-			"lime juice":"1"
-		},
-		"instructions": [
-			"Pour all ingredients into shaker with ice cubes.",
-			"Shake well.",
-			"Strain in chilled cocktail glass."
-		]
-	}
+    ),
+
+    ## Cosmopolitan
+    (
+        "Cosmopolitan",
+		[
+            "Add all ingredients into cocktail shaker filled with ice.",
+            "Shake well and double strain into large cocktail glass.",
+            "Garnish with lime wheel."
+        ],
+        {
+            13: "0.5",
+            16: "1",
+            3: "0.5",
+            6: "1.5"
+        }
+
+    ),
+
+    ## Screwdriver
+    (
+        "screwdriver",
+		[
+            "Mix in a highball glass with ice.",
+            "Garnish and serve."
+        ],
+        {
+            6: "1.75",
+            14: "3.5"
+        }
+
+    ),
+
+    # Martini
+    (
+        "Martini",
+		[
+            "Pour all ingredients into mixing glass with ice cubes.",
+            "Stir well.",
+            "Strain in chilled martini cocktail glass.",
+            "Squeeze oil from lemon peel onto the drink or garnish with olive."
+        ],
+        {
+            10: "0.5",
+            1: "3"
+        },
+
+    ),
+
+    # Daiquiri
+    (
+        "daiquiri",
+		[
+            "Pour all ingredients into shaker with ice cubes.",
+            "Shake well.",
+            "Strain in chilled cocktail glass."
+        ],
+        {
+            4: "1.5",
+            19: "0.5",
+            13: "1"
+        }
+
+    )
 ]
 
+profile = UserProfile.objects.get(pk=1)
 for recipe in recipe_array:
-	r = Recipe(name=recipe.get("name"), instructions_blob=('~~~'.join(recipe.get("instructions"))))
-	try:
-		r.save()
-	except IntegrityError as e:
-		print(recipe.get("name") + " is already in the database.")
-		continue
+    profile.create_recipe(*recipe)
 
-	for _ingredient, _quantity in recipe.get("ingredients").items():
-		i = RecipeIngredients(recipe=r, ingredient=get_ingredient(_ingredient), quantity=_quantity)
-		try:
-			i.save()
-		except IntegrityError as e:
-			print(_ingredient + " is already connected to a " + recipe.get("name") + " recipe.")
-			continue
 
 print("** Recipes Seeded **")
-
-
