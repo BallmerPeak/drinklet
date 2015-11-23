@@ -4,6 +4,7 @@ from django.views.generic import View
 from django.core.context_processors import csrf
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
+from django.http import HttpResponse
 
 from .models import Recipe
 from .models import Ingredient
@@ -163,3 +164,12 @@ class CreateRecipe(View):
         }
 
         return render(request, 'recipes/create.html', context)
+
+def MakeDrink(request):
+    user = request.user
+    if user.is_authenticated():
+        profile = UserProfile.get_or_create_profile(user)
+        for maderecipe in Recipe.objects.all():
+            if maderecipe.id == int(request.POST.get("recipe")):
+                blah = "blah"
+    return HttpResponse("fart")
