@@ -85,6 +85,7 @@ def _filterRecipes(ingredients, query, limit, order, page):
         'results': results
     }
 
+
 class SearchRecipes(View):
     def get(self, request):
         """
