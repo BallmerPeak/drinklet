@@ -32,7 +32,7 @@ var user = function () {
     var login, jqxhr;
 
     login = function (username, password) {
-        jqxhr = $.post('user/login',
+        jqxhr = $.post('/user/login',
             {
                 'username': username,
                 'password': password

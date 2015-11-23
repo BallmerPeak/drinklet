@@ -199,83 +199,83 @@ class UserProfileTestCase(TestCase):
         oj_id = Ingredient.objects.get(name='Orange Juice').id
         gin_id = Ingredient.objects.get(name='Gin').id
 
-        screwdriver_recipe = {
-            'name': 'Screwdriver',
-            'instructions': [
+        screwdriver_recipe = (
+            'Screwdriver',
+            [
                 'Fill glass with ice',
                 'Add 2 parts Orange Juice',
                 'Add 1 part Vodka',
                 'Shake well'
             ],
-            'ingredients': {
+            {
                 vodka_id: 1,
                 oj_id: 2
             }
-        }
+        )
 
-        gin_vodka_recipe = {
-            'name': 'Gin and Vodka',
-            'instructions': [
+        gin_vodka_recipe = (
+            'Gin and Vodka',
+            [
                 'Add 1 part Gin',
                 'Add 1 part Vodka',
                 'Enjoy!'
             ],
-            'ingredients': {
+            {
                 vodka_id: 1,
                 gin_id: 1
             }
-        }
+        )
 
-        fake_screwdriver_recipe = {
-            'name': 'Screwdriver',
-            'instructions': [
+        fake_screwdriver_recipe = (
+            'Screwdriver',
+            [
                 'This is fake',
                 'Really fake'
             ],
-            'ingredients': {
+            {
                 vodka_id: 1,
                 gin_id: 1
             }
-        }
+        )
 
         # Test creating 1 recipe
         def create_one_recipe():
-            recipes1 = self.profile.create_recipe(screwdriver_recipe)
-            self.assertListEqual(list(recipes1), list(self.profile.created_recipes.all()))
-            self.assertEqual(1, len(recipes1))
-            self.assertEqual(screwdriver_recipe['name'], recipes1[0].name)
-            self.assertEqual('~~~'.join(screwdriver_recipe['instructions']), recipes1[0].instructions_blob)
-            self.assertEqual(screwdriver_recipe['ingredients'][vodka_id],
-                             recipes1[0].recipeingredients_set.get(recipe=recipes1[0],
-                                                                   ingredient=vodka_id).quantity)
-            self.assertEqual(screwdriver_recipe['ingredients'][oj_id],
-                             recipes1[0].recipeingredients_set.get(recipe=recipes1[0],
-                                                                   ingredient=oj_id).quantity)
-            return recipes1
+            recipe1 = self.profile.create_recipe(*screwdriver_recipe)
+            self.assertEqual(recipe1, self.profile.created_recipes.get(id=recipe1.id))
+            self.assertEqual(1, self.profile.created_recipes.count())
+            self.assertEqual(screwdriver_recipe[0], recipe1.name)
+            self.assertEqual('~~~'.join(screwdriver_recipe[1]), recipe1.instructions_blob)
+            self.assertEqual(screwdriver_recipe[2][vodka_id],
+                             recipe1.recipeingredients_set.get(recipe=recipe1,
+                                                               ingredient=vodka_id).quantity)
+            self.assertEqual(screwdriver_recipe[2][oj_id],
+                             recipe1.recipeingredients_set.get(recipe=recipe1,
+                                                               ingredient=oj_id).quantity)
+            return recipe1
 
         # Test Create 2nd recipe
         def create_second_recipe():
-            recipes2 = self.profile.create_recipe(gin_vodka_recipe)
-            self.assertListEqual(list(recipes2), list(self.profile.created_recipes.all()))
-            self.assertEqual(2, len(recipes2))
-            gin_vodka_obj = recipes2.get(name='Gin and Vodka')
-            self.assertEqual(gin_vodka_recipe['name'], gin_vodka_obj.name)
-            self.assertEqual('~~~'.join(gin_vodka_recipe['instructions']), gin_vodka_obj.instructions_blob)
-            self.assertEqual(gin_vodka_recipe['ingredients'][vodka_id],
+            recipe2 = self.profile.create_recipe(*gin_vodka_recipe)
+            self.assertEqual(recipe2, self.profile.created_recipes.get(id=recipe2.id))
+            self.assertEqual(2, self.profile.created_recipes.count())
+            gin_vodka_obj = self.profile.created_recipes.get(name='Gin and Vodka')
+            self.assertEqual(gin_vodka_recipe[0], gin_vodka_obj.name)
+            self.assertEqual('~~~'.join(gin_vodka_recipe[1]), gin_vodka_obj.instructions_blob)
+            self.assertEqual(gin_vodka_recipe[2][vodka_id],
                              gin_vodka_obj.recipeingredients_set.get(recipe=gin_vodka_obj,
                                                                      ingredient=vodka_id).quantity)
-            self.assertEqual(gin_vodka_recipe['ingredients'][gin_id],
+            self.assertEqual(gin_vodka_recipe[2][gin_id],
                              gin_vodka_obj.recipeingredients_set.get(recipe=gin_vodka_obj,
                                                                      ingredient=gin_id).quantity)
 
         # Test create duplicately named recipe
-        def create_duplicately_named_recipe(recipes1):
+        def create_duplicately_named_recipe(recipe1):
             with self.assertRaises(IntegrityError):
                 with transaction.atomic():
-                    self.profile.create_recipe(fake_screwdriver_recipe)
+                    self.profile.create_recipe(*fake_screwdriver_recipe)
 
             self.assertEqual(2, self.profile.created_recipes.count())
-            self.assertEqual(recipes1[0], self.profile.created_recipes.get(name='Screwdriver'))
+            self.assertEqual(recipe1, self.profile.created_recipes.get(name='Screwdriver'))
 
         recipes = create_one_recipe()
         create_second_recipe()
@@ -286,22 +286,21 @@ class UserProfileTestCase(TestCase):
         vodka_id = Ingredient.objects.get(name='Vodka').id
         oj_id = Ingredient.objects.get(name='Orange Juice').id
 
-        screwdriver_recipe = {
-            'name': 'Screwdriver',
-            'instructions': [
+        screwdriver_recipe = (
+            'Screwdriver',
+            [
                 'Fill glass with ice',
                 'Add 2 parts Orange Juice',
                 'Add 1 part Vodka',
                 'Shake well'
             ],
-            'ingredients': {
+            {
                 vodka_id: 1,
                 oj_id: 2
             }
-        }
+        )
 
-        recipes = self.profile.create_recipe(screwdriver_recipe)
-        screwdriver = recipes.get(name='Screwdriver')
+        screwdriver = self.profile.create_recipe(*screwdriver_recipe)
 
         profile = self.profile.delete_recipe(screwdriver.id)
 

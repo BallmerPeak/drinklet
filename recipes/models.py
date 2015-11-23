@@ -28,12 +28,12 @@ class Recipe(models.Model):
         return found_recipes
 
     @classmethod
-    def _add_recipe(cls, name, instructions, ingredients_info):
+    def _add_recipe(cls, name, instructions, ingredients):
         blob_instructions = '~~~'.join(instructions)
         recipe = cls(name=name,
                      instructions_blob=blob_instructions)
         recipe.save()
-        RecipeIngredients._add_ingredients(recipe, ingredients_info)
+        RecipeIngredients._add_ingredients(recipe, ingredients)
         return recipe
 
     def _delete_recipe(self):
@@ -54,7 +54,7 @@ class RecipeIngredients(models.Model):
     def _add_ingredients(cls, recipe, ingredients):
         recipe_ingredients = []
 
-        for ingredient_id, quantity in ingredients.items():
+        for ingredient_id, quantity in ingredients:
             recipe_ingredients.append(cls(recipe=recipe,
                                           ingredient_id=ingredient_id,
                                           quantity=quantity))

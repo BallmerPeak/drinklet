@@ -20,3 +20,20 @@ class Ingredient(models.Model):
             ret_dict[category] = ingredients.filter(category=category)
 
         return ret_dict
+
+    @classmethod
+    def _get_ingredient_objs(cls, ingredients):
+
+        ingredient_objs = [
+            Ingredient(name=name, category=category, uom=uom)
+            for name, category, _, uom in ingredients
+        ]
+        Ingredient.objects.bulk_create(ingredient_objs)
+
+        return [
+            (Ingredient.objects.get(name=name).id, quantity)
+            for name, _, quantity, _ in ingredients
+        ]
+
+
+

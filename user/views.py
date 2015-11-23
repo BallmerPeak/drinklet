@@ -44,9 +44,11 @@ class Profile(View):
                     if id == e.get("id"):
                         item = {"id": id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
                         ingredientQuantity.append(item)
+            favorites = profile.favorites.all()
             context = {
                 'profile': profile,
-                'userIngredients': ingredientQuantity
+                'userIngredients': ingredientQuantity,
+                'favorites': favorites
             }
             return render(request, 'user/profile.html', context)
         return HttpResponseRedirect(reverse('ingredients.search'))
@@ -69,9 +71,11 @@ class Profile(View):
                     if id == e.get("id"):
                         item = {"id": id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
                         ingredientQuantity.append(item)
+            favorites = profile.favorites.all()
             context = {
                 'profile': profile,
-                'userIngredients': ingredientQuantity
+                'userIngredients': ingredientQuantity,
+                'favorites': favorites
             }
             return render(request, 'user/profile.html', context)
         return HttpResponseRedirect(reverse('ingredients.search'))

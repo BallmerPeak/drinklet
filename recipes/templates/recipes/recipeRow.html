@@ -2,9 +2,17 @@
   <div class="card">
     <div class="card-image">
       <div class="row">
+        {% if user and user.is_authenticated %}
         <div class="recipe-card-favorite left">
-          <i class="material-icons left red-text">favorite</i>
+          <i data-recipeid="{{ recipe.id }}" class="material-icons left red-text">
+          {% if recipe in favorites %}
+          favorite
+          {% else %}
+          favorite_border
+          {% endif %}
+          </i>
         </div>
+        {% endif %}
 
         <div class="recipe-card-rating left">
           <i class="material-icons orange-text">star</i>

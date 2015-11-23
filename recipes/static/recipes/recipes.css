@@ -23,15 +23,13 @@ body {
 .recipe-card-comments {
 	margin-top: 20px;
 	margin-right: 40px;
+	cursor: pointer;
 }
 
-.recipe-card-favorite {
+.recipe-card-favorite, .recipe-card-rating {
 	margin-top: 20px;
 	margin-left: 40px;
-}
-
-.recipe-card-rating {
-	margin-top: 20px;
+	cursor: pointer;
 }
 
 .card-image {
