@@ -16,7 +16,7 @@ def _filterRecipes(ingredients, query, limit, order, page):
     """
     # Make sure the list contains ids as integers
     try:
-        ingredients = map(int,ingredients)
+        ingredients = list(map(int,ingredients))
     # Invalid list element (probably empty and cant cast int)
     except ValueError:
         ingredients = []
