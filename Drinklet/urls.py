@@ -19,5 +19,6 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^', include('recipes.urls')),
     url(r'^user/', include('user.urls')),
+    url(r'^ingredients/', include('ingredients.urls')),
     url(r'^admin/', include(admin.site.urls)),
 ]

@@ -46,23 +46,17 @@ def _filterRecipes(ingredients, query, limit, order, page):
     # Filter recipes by query in descending order
     if order == 'desc':
         if len(ingredients):
-            recipes = Recipe.objects.extra(
-                    select={'lower_name': 'lower(name)'}
-                ).filter(ingredients__id__in=ingredients, name__iregex=r''+query).distinct().order_by('-lower_name')
+            recipes = sorted(Recipe.get_recipes_by_ingredients(ingredients),key=lambda r:r.name)
         else:
-            recipes = Recipe.objects.extra(
-                    select={'lower_name': 'lower(name)'}
-                ).filter(name__iregex=r''+query).order_by('-lower_name')
+            recipes = Recipe.objects.all().order_by('name')
+        recipes = [recipe for recipe in reversed(recipes) if query in recipe.name]
     # Filter recipes by query in ascending order
     else:
         if len(ingredients):
-            recipes = Recipe.objects.extra(
-                    select={'lower_name': 'lower(name)'}
-                ).filter(ingredients__id__in=ingredients, name__iregex=r''+query).distinct().order_by('lower_name')
+            recipes = sorted(Recipe.get_recipes_by_ingredients(ingredients),key=lambda r:r.name)
         else:
-            recipes = Recipe.objects.extra(
-                    select={'lower_name': 'lower(name)'}
-                ).filter(name__iregex=r''+query).order_by('lower_name')
+            recipes = Recipe.objects.all().order_by('name')
+        recipes = [recipe for recipe in recipes if query in recipe.name]
 
     paginator = Paginator(recipes,limit)
 
