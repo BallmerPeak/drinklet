@@ -207,4 +207,20 @@ class FavoriteRecipe(View):
 
             return HttpResponse(json.dumps(json_response), content_type='application/json')
 
-        return redirect('recipes.list')   
+        return redirect('recipes.list')
+
+def MakeDrink(request):
+    user = request.user
+    if user.is_authenticated():
+        profile = UserProfile.get_or_create_profile(user)
+        for maderecipe in Recipe.objects.all():
+            if maderecipe.id == int(request.POST.get("recipe")):
+                myrecipe = {"recipe_id": maderecipe.id, "ingredients": maderecipe.ingredients.values()}
+                for ingredient in RecipeIngredients.objects.all().values():
+                    if ingredient.get("recipe_id") == myrecipe.get("recipe_id"):
+                        for useringredient in UserIngredients.objects.all().values():
+                            if (ingredient.get("ingredient_id") == useringredient.get("ingredient_id")) and (useringredient.get("user_id") == profile.user_id):
+                                newQuantity = useringredient.get("quantity") - ingredient.get("quantity")
+                                if newQuantity < 0:
+                                    newQuantity = 0
+    return HttpResponse("success")

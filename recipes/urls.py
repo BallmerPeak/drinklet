@@ -1,5 +1,5 @@
 from django.conf.urls import include, url
-from .views import ListRecipes, CreateRecipe, SearchRecipesByName, SearchRecipesByIngredients, FavoriteRecipe
+from .views import ListRecipes, CreateRecipe, SearchRecipesByName, SearchRecipesByIngredients, FavoriteRecipe, MakeDrink
 
 urlpatterns = [
 	url(r'^$', ListRecipes.as_view(), name='recipes.list'),
@@ -7,4 +7,5 @@ urlpatterns = [
 	url(r'^search/name/$', SearchRecipesByName.as_view(), name='recipes.name'),
 	url(r'^search/ingredients/$', SearchRecipesByIngredients.as_view(), name='recipes.ingredients'),
 	url(r'^favorite/$', FavoriteRecipe.as_view(), name='recipes.favorite'),
+	url(r'^makedrink', MakeDrink, name='recipes.makedrink'),
 ]
