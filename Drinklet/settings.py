@@ -86,7 +86,7 @@ DATABASES = {
     }
 }
 
-LOGIN_URL = 'ingredients.search'
+LOGIN_URL = 'recipes.search'
 
 
 # Internationalization
