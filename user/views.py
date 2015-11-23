@@ -26,9 +26,9 @@ class Register(View):
             User.objects.create_user(username, email, password)
             user = authenticate(username=username, password=password)
             login(request,user)
-            return HttpResponseRedirect(reverse('ingredients.search'))
+            return HttpResponseRedirect(reverse('recipes.search'))
         else:
-            return render(request, 'ingredients/index.html', {'form': form})
+            return render(request, 'recipes/list.html', {'form': form})
 
 
 class Profile(View):
@@ -51,7 +51,7 @@ class Profile(View):
                 'favorites': favorites
             }
             return render(request, 'user/profile.html', context)
-        return HttpResponseRedirect(reverse('ingredients.search'))
+        return HttpResponseRedirect(reverse('recipes.search'))
 
     def post(self, request):
         user = self.request.user
@@ -78,7 +78,7 @@ class Profile(View):
                 'favorites': favorites
             }
             return render(request, 'user/profile.html', context)
-        return HttpResponseRedirect(reverse('ingredients.search'))
+        return HttpResponseRedirect(reverse('recipes.search'))
 
 
 class Login(View):
@@ -103,6 +103,6 @@ class Login(View):
 def logout_view(request):
     logout(request)
 
-    return HttpResponseRedirect(reverse('ingredients.search'))
+    return HttpResponseRedirect(reverse('recipes.search'))
 
 

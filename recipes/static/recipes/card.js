@@ -34,7 +34,7 @@ $(document).ready(function() {
 			// if it's currently unfavorited and becoming favorited
 			if($(this).html().trim() == 'favorite'){
 				$(this).html('favorite_border');							
-				$.post('/recipes/favorite/', {
+				$.post('/favorite/', {
 					recipe_id: $(this).data('recipeid'),
 					is_favorite: false
 				});
@@ -42,7 +42,7 @@ $(document).ready(function() {
 			// if it's currently favorited and becoming unfavorited
 			} else {
 				$(this).html('favorite');
-				$.post('/recipes/favorite/', {
+				$.post('/favorite/', {
 					recipe_id: $(this).data('recipeid'),
 					is_favorite: true
 				});
@@ -92,7 +92,7 @@ $(document).ready(function() {
 				$(element).children().each(function(index, celement) {
 					$(celement).click(function() {
 
-						$.post('/recipes/rate/', {
+						$.post('/rate/', {
 							recipe_id: recipeId,
 							rating: (index+1)
 						});

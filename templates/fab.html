@@ -4,8 +4,8 @@
 	</a>
 	<ul>
 		{% if user.is_authenticated %}
-			<li><a href="{% url 'recipes.create' %}" class="btn-floating blue tooltipped" data-position="left" data-delay="50" data-tooltip="Recipe">R</a></li>
+			<li><a href="{% url 'recipes.create' %}" class="btn-floating blue tooltipped" data-position="left" data-delay="50" data-tooltip="Create Recipe">R</a></li>
 		{% endif %}
-		<li><a href="{% url 'ingredients.search' %}" class="btn-floating blue tooltipped" data-position="left" data-delay="50" data-tooltip="Ingredients">I</a></li>
+		<li><a href="{% url 'recipes.search' %}" class="btn-floating blue tooltipped" data-position="left" data-delay="50" data-tooltip="Search Recipes">S</a></li>
 	</ul>
 </div>
