@@ -189,7 +189,7 @@ class FavoriteRecipe(View):
             is_favorite = request.POST.get('is_favorite')
 
             favorite = False
-            if is_favorite:
+            if is_favorite == 'true':
                 favorite = True
 
             profile = UserProfile.get_or_create_profile(self.request.user)
@@ -200,3 +200,21 @@ class FavoriteRecipe(View):
             return HttpResponse(json.dumps(json_response), content_type='application/json')
 
         return redirect('recipes.search')   
+
+class RateRecipe(View):
+    def post(self, request):
+        """
+        Rate a recipe
+        """
+        if request.is_ajax() and self.request.user.is_authenticated():
+            recipe_id = int(request.POST.get('recipe_id'))
+            rating = int(request.POST.get('rating'))
+
+            profile = UserProfile.get_or_create_profile(self.request.user)
+            profile.set_rating(recipe_id=recipe_id, rating=rating)
+
+            json_response = {'user-rating': rating }
+
+            return HttpResponse(json.dumps(json_response), content_type='application/json')
+
+        return redirect('recipes.search')

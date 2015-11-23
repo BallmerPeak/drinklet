@@ -14,12 +14,8 @@
         </div>
         {% endif %}
 
-        <div class="recipe-card-rating left">
-          <i class="material-icons orange-text">star</i>
-          <i class="material-icons orange-text">star</i>
-          <i class="material-icons orange-text">star</i>
-          <i class="material-icons orange-text">star</i>
-          <i class="material-icons orange-text">star</i>
+        <div class="recipe-card-rating left" data-recipeid="{{ recipe.id }}" data-rating-sum="{{ recipe.ratings_sum }}" data-num-ratings="{{ recipe.num_ratings }}">
+
         </div>
 
         <div class="recipe-card-comments right">

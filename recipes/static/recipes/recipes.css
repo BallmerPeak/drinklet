@@ -47,3 +47,7 @@ body {
 .recipe-card-make-drink {
 	margin-left: 20px;
 }
+
+.recipe-card-rating>i:hover {
+	color: black !important;
+}
