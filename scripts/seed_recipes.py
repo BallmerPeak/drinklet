@@ -16,20 +16,20 @@ def get_ingredient(_name):
 
 
 recipe_array = [
-    ## Gin & Tonic
-    (
-        "gin & tonic",
-        [
-            "Fill a highball glass with ice.",
-            "Place a lime wheel on top of the ice.",
-            "Pour Gin over the ice and add tonic water."
-        ],
-        {
-            1: "1.25",
-            11: "3",
-            17: "1"
-        }
-    ),
+    # ## Gin & Tonic
+    # (
+    #     "gin & tonic",
+    #     [
+    #         "Fill a highball glass with ice.",
+    #         "Place a lime wheel on top of the ice.",
+    #         "Pour Gin over the ice and add tonic water."
+    #     ],
+    #     {
+    #         1: "1.25",
+    #         11: "3",
+    #         17: "1"
+    #     }
+    # ),
 
     ## Margarita
     (
