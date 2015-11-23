@@ -15,14 +15,18 @@ $(document).ready(function() {
         function submitRecipe(recipeid) {
             $.ajax({
                 type: "POST",
-                url: "makedrink",
+                url: "/makedrink",
                 data: {
                     'recipe': recipeid
                 }
             }).success(function(data){
-                window.alert(data);
+                var path = window.location.pathname;
+                if (path === '/user/profile'){
+                    window.location.reload();
+                }
+                console.log(data);
             }).fail(function(jqXHR, textStatus){
-                window.alert(textStatus);
+                console.log(textStatus);
             });
         }
 
