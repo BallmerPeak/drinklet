@@ -38,7 +38,7 @@ def _filterRecipes(ingredients, query, limit, order, page):
 
     # If the limit is not set, default it to 10
     if limit is None:
-        limit = 10
+        limit = 6
 
     # If the order is not set, default it to asc
     if order is None:
