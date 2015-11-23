@@ -7,8 +7,10 @@ from django.http import HttpResponse
 import json
 
 from .models import Recipe
+from .models import RecipeIngredients
 from .models import Ingredient
 from user.models import UserProfile
+from user.models import UserIngredients
 
 def _filterRecipes(ingredients, query, limit, order, page):
     """
