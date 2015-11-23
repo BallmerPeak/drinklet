@@ -16,6 +16,29 @@ class Recipe(models.Model):
     def get_instructions(self):
         return self.instructions_blob.split('~~~')
 
+    def edit_recipe(self, recipe_name, instructions, ingredients):
+        new_ingredients = []
+        recipe_ingredients = []
+
+        self.name = recipe_name
+        self.instructions_blob = '~~~'.join(instructions)
+
+        for key, info in ingredients.items():
+            if isinstance(key, str):
+                category, quantity, uom = info
+                new_ingredients.append((key, category, quantity, uom))
+            else:
+                recipe_ingredients.append((key, info))
+
+        recipe_ingredients += Ingredient._create_ingredient_objs(new_ingredients)
+        self.ingredients.clear()
+
+        RecipeIngredients._add_ingredients(self, recipe_ingredients)
+        self.save()
+        self.refresh_from_db()
+
+        return self
+
     @classmethod
     def get_recipes_by_ingredients(cls, ingredient_ids):
         found_recipes = []

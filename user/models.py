@@ -59,7 +59,7 @@ class UserProfile(models.Model):
     def update_user_ingredient_quantity(self, ingredient_id, quantity):
         # Call user ingredients to update the quantity of the ingredient with the given id
         # with the given quantity
-        pass
+        return UserIngredients._update_quantity(self, ingredient_id, quantity)
 
     def create_recipe(self, recipe_name, instructions, ingredients):
         new_ingredients = []
@@ -72,7 +72,7 @@ class UserProfile(models.Model):
             else:
                 recipe_ingredients.append((key, info))
 
-        recipe_ingredients + Ingredient._create_ingredient_objs(new_ingredients)
+        recipe_ingredients += Ingredient._create_ingredient_objs(new_ingredients)
 
         recipe = Recipe._add_recipe(recipe_name, instructions, recipe_ingredients)
         self.created_recipes.add(recipe)
@@ -135,6 +135,14 @@ class UserIngredients(models.Model):
         return "User:{user} -> Ingredient:{ingredient} -> Quantity:{quantity}".format(user=self.user,
                                                                                       ingredient=self.ingredient,
                                                                                       quantity=self.quantity)
+
+    @classmethod
+    def _update_quantity(cls, user, ingredient_id, qty):
+        user_ingredient = UserIngredients.objects.get(user=user, ingredient=ingredient_id)
+        user_ingredient.quantity = qty
+        user_ingredient.save()
+
+        return user_ingredient
 
     @classmethod
     def _add_user_ingredients(cls, user, ingredient_ids):
