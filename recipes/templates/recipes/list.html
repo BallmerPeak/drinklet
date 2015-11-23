@@ -7,13 +7,15 @@
 <script src="{% static 'recipes/card.js' %}"></script>
 
 <div class="container">
-  <h3 class="black-text">Recipe Results</h3>
-  <hr>
   <div class="row">
-    <form id="create-recipe-form" action="{% url 'recipes.name' %}" method="POST">
+    <form id="create-recipe-form" action="{% url 'recipes.search' %}" method="POST">
       {% csrf_token %}
+      <input id="thisPage" type="hidden" value="{{ results.number }}"/>
+      <input id="numPages" type="hidden" value="{{ results.paginator.num_pages }}"/>
+      <input type="hidden" id="page" name="page" value="{{ results.number }}"/>
       <input type="hidden" id="limit" name="limit" value="{{ limit }}"/>
       <input type="hidden" id="order" name="order" value="{{ order }}"/>
+        <input type="hidden" id="ingredients" name="ingredients" value="{{ ingredients }}" />
       {% if query %}
         <!-- Display the user's searched query -->
         <div class="col s10 m3 input-field">
@@ -24,7 +26,7 @@
         <!-- Clear button to go back to displaying all recipes -->
         <div class="col s1">
           <br>
-          <a href="{% url 'recipes.list' %}?page=1&limit=10&order=asc" class="btn-floating btn-small blue">
+          <a id="clearName" class="btn-floating btn-small blue">
             <i class="large material-icons">delete</i>
           </a>
         </div>
@@ -35,6 +37,41 @@
           <label for="query">Name of Recipe</label>
         </div>
       {% endif %}
+      {% if ingredients %}
+        <div class="col s10 m3">
+      {% else %}
+        <div class="col s12 m4">
+      {% endif %}
+        <br>
+        <select id="ingredientList" data-placeholder="Select Ingredients" class="z-depth-2 browser-default chosen-select" multiple tabindex="6">
+          <option value=""></option>
+          {% if categories %}
+            <!-- Ingredients exist, list them -->
+            {% for key, value in categories.items %}
+              {% if value %}
+                <!-- Make an optgroup for each category -->
+                <optgroup label="{{ key.capitalize }}">
+                  <!-- Make an option for each ingredient -->
+                  {% for ingredient in value %}
+                    <option value="{{ingredient.id}}">{{ ingredient.name.capitalize }}</option>
+                  {% endfor %}
+                </optgroup>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <!-- No ingredients exist -->
+            <option disabled>No ingredients available</option>
+          {% endif %}
+        </select>
+      </div>
+      {% if ingredients %}
+        <div class="col s1">
+          <br>
+          <a id="clearIngredients" class="btn-floating btn-small blue">
+            <i class="large material-icons">delete</i>
+          </a>
+        </div>
+      {% endif %}
       <div class="col s12 m4">
         <br>
         <button id="searchButton" class="col s12 btn waves-effect waves-light blue right" type="submit" name="action">
@@ -42,47 +79,27 @@
           <i class="material-icons right">search</i>
         </button>
       </div>
-      {% if results and results.object_list %}
-        <!-- There are results that can be reordered -->
-        <div class="col s12 m4">
-          <br>
-          {% if query %}
-            <a id="orderNameButton" class="col s12 waves-effect waves-light btn blue">
-              Order Name
-              <i class="material-icons right">
-                {% if order == 'desc' %}
-                  trending_down
-                {% else %}
-                  trending_up
-                {% endif %}
-              </i>
-            </a>
-          {% else %}
-            {% if order == 'desc' %}
-              <!-- Currently ordered in descending order -->
-              <a href="{% url 'recipes.list' %}?page={{ results.number }}&limit={{ limit }}&order=asc" class="col s12 waves-effect waves-light btn blue">
-                Order Name 
-                <i class="material-icons right">trending_down</i>
-              </a>
-            {% else %}
-              <!-- Currently ordered in ascending order -->
-              <a href="{% url 'recipes.list' %}?page={{ results.number }}&limit={{ limit }}&order=desc" class="col s12 waves-effect waves-light btn blue">
-                Order Name 
-                <i class="material-icons right">trending_up</i>
-              </a>
-            {% endif %}
-          {% endif %}
-        </div>
-      {% endif %}
     </form>
   </div>
 
   {% if results and results.object_list %} 
-    <!-- There are results to display -->
-
-    <!-- Add the pagination at the top of the list -->
+    <!-- Add the pagination at the bottom of the list -->
     {% include 'recipes/pagination.html' %}
-
+    <!-- There are results that can be reordered -->
+    <div class="row">
+      <div class="col s12 m4">
+        <a id="orderNameButton" class="col s12 waves-effect waves-light btn blue">
+          Order Name
+          <i class="material-icons right">
+            {% if order == 'desc' %}
+              trending_down
+            {% else %}
+              trending_up
+            {% endif %}
+          </i>
+        </a>
+      </div>
+    </div>
     <!-- Add this page's objects -->
     <div class="row">
       {% for recipe in results.object_list %}
