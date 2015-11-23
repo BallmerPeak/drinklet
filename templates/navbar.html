@@ -1,12 +1,16 @@
+{% load staticfiles %}
+
 <div id="navbar">
     <nav class="indigo">
         <div class="container">
             <div class="nav-wrapper">
-                <a href="/" class="center brand-logo">Drinklet</a>
+                <a href="{% url 'recipes.search' %}" class="center brand-logo">
+                    <img id="titleText" class="hide-on-small-only" src="{% static 'Drinklet/title-white.png' %}" />
+                    <img id="titleLogo" class="hide-on-med-and-up" src="{% static 'Drinklet/logo-white.png' %}" />
+                </a>
                 <a href="#" data-activates="mobile-list" class="button-collapse"><i class="material-icons">menu</i></a>
                 <ul class="left hide-on-med-and-down">
-                    <li><a href="{% url 'ingredients.search' %}">Search</a></li>
-                    <li><a href="{% url 'recipes.list' %}?page=1&limit=10&order=asc">Recipes</a></li>
+                    <li><a href="{% url 'recipes.search' %}">Search</a></li>
                     {% if user.is_authenticated %}
                         <li><a href="{% url 'user.profile' %}">Profile</a></li>
                     {% endif %}
@@ -20,8 +24,7 @@
                     {% endif %}
                 </ul>
                 <ul class="side-nav" id="mobile-list">
-                    <li><a href="{% url 'ingredients.search' %}">Search</a></li>
-                    <li><a href="{% url 'recipes.list' %}?page=1&limit=10&order=asc">Recipes</a></li>
+                    <li><a href="{% url 'recipes.search' %}">Search</a></li>
                     <li><a href="{% url 'user.profile' %}">Profile</a></li>
                     {% if user.is_authenticated %}
                         <li><a class="modal-trigger" href="{% url 'user.logout' %}">Logout</a></li>

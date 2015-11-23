@@ -6,3 +6,41 @@ nav li>div {
 	bottom: 24px;
 	right: 45px;
 }
+
+#titleText {
+	height: 64px;
+}
+#titleLogo {
+	margin-top: 10%;
+	height: 46px;
+}
+
+/* Chosen.io Search Box */
+.chosen-container-multi .chosen-choices li.search-field input[type=text] {
+	height: 32px;
+}
+.chosen-container-multi .chosen-choices {
+	border: none;
+	box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+	background-color: #fafafa;
+	background-image: none;
+	transition: all .3s;
+}
+.chosen-container-active .chosen-choices, 
+.chosen-container .chosen-drop {
+	border: none;
+	box-shadow: 0 8px 17px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+.chosen-container-multi .chosen-choices li.search-choice {
+	padding: 0;
+	border: none;
+	background: transparent;
+	background-image: none;
+	box-shadow: none;
+}
+.chosen-container-multi .chosen-choices li.search-choice .chip {
+	padding-right: 30px;
+}
+.chosen-container-multi .chosen-choices .search-choice .search-choice-close {
+	margin: 5px;
+}

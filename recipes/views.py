@@ -7,15 +7,20 @@ from django.http import HttpResponse
 import json
 
 from .models import Recipe
-from .models import RecipeIngredients
 from .models import Ingredient
 from user.models import UserProfile
-from user.models import UserIngredients
 
-def _filterRecipes(query, limit, order):
+def _filterRecipes(ingredients, query, limit, order, page):
     """
     Build Paginator of results from filtering Recipes
     """
+    # Make sure the list contains ids as integers
+    try:
+        ingredients = list(map(int,ingredients))
+    # Invalid list element (probably empty and cant cast int)
+    except ValueError:
+        ingredients = []
+
     # If the query is not set, default it to empty
     if query is None:
         query = ""
@@ -28,111 +33,65 @@ def _filterRecipes(query, limit, order):
     if order is None:
         order = 'asc'
 
+    # If the page is not set, default it to 1
+    if page is None:
+        page = 1
+
     # Filter recipes by query in descending order
     if order == 'desc':
-        recipes = Recipe.objects.extra(
-                select={'lower_name': 'lower(name)'}
-            ).filter(name__iregex=r''+query).order_by('-lower_name')
+        if len(ingredients):
+            recipes = Recipe.objects.extra(
+                    select={'lower_name': 'lower(name)'}
+                ).filter(ingredients__id__in=ingredients, name__iregex=r''+query).distinct().order_by('-lower_name')
+        else:
+            recipes = Recipe.objects.extra(
+                    select={'lower_name': 'lower(name)'}
+                ).filter(name__iregex=r''+query).order_by('-lower_name')
     # Filter recipes by query in ascending order
     else:
-        recipes = Recipe.objects.extra(
-                select={'lower_name': 'lower(name)'}
-            ).filter(name__iregex=r''+query).order_by('lower_name')
+        if len(ingredients):
+            recipes = Recipe.objects.extra(
+                    select={'lower_name': 'lower(name)'}
+                ).filter(ingredients__id__in=ingredients, name__iregex=r''+query).distinct().order_by('lower_name')
+        else:
+            recipes = Recipe.objects.extra(
+                    select={'lower_name': 'lower(name)'}
+                ).filter(name__iregex=r''+query).order_by('lower_name')
+
+    paginator = Paginator(recipes,limit)
+
+    # Grab the Recipe objects corresponding to passed in page
+    try:
+        results = paginator.page(page)
+    # Invalid page passed in, give page 1
+    except PageNotAnInteger:
+        results = paginator.page(1)
+    # Invalid page passed in, give page 1
+    except EmptyPage:
+        results = paginator.page(1)
 
     # Return all of the values
     return {
         'query': query,
         'limit': limit,
         'order': order,
-        'paginator': Paginator(recipes,limit)
+        'ingredients': ingredients,
+        'results': results
     }
 
-
-class SearchRecipesByName(View):
-    def get(self, request):
-        return redirect('recipes.list')
-
-    def post(self, request):
-        """
-        Searches for recipes given a search query
-        """
-        filterRes = _filterRecipes(
-            request.POST.get('query'),
-            request.POST.get('limit'),
-            request.POST.get('order')
-        )
-
-        favorites = None
-
-        if self.request.user.is_authenticated():
-            profile = UserProfile.get_or_create_profile(self.request.user)
-            favorites = profile.favorites.all()
-
-        context = {
-            'limit': filterRes['limit'],
-            'order': filterRes['order'],
-            'query': filterRes['query'],
-            'results': filterRes['paginator'].page(1),
-            'favorites': favorites
-        }
-        return render(request, 'recipes/list.html', context)
-
-class SearchRecipesByIngredients(View):
-    def get(self, request):
-        return redirect('ingredients.search')
-
-    def post(self, request):
-        """
-        Searches for recipes given a list of ingredients
-        """
-        print("InPOST")
-        ingredient_ids = json.loads(request.POST['ingredient_ids'])
-        favorites = None
-        if not self.request.user.is_anonymous():
-            useringredients = list(UserProfile.get_or_create_profile(self.request.user).ingredients.values_list('id', flat=True))
-            ingredientstoremove = list(set(useringredients) - set(ingredient_ids))
-            ingredientstoadd = list(set(ingredient_ids) - set(useringredients))
-            for ingredient in ingredientstoremove:
-                self.request.user.userprofile.delete_user_ingredient(ingredient)
-            if len(ingredientstoadd) > 0:
-                self.request.user.userprofile.add_user_ingredients(ingredientstoadd)
-
-        if self.request.user.is_authenticated():
-            profile = UserProfile.get_or_create_profile(self.request.user)
-            favorites = profile.favorites.all()
-
-        context = {
-            'results': Recipe.get_recipes_by_ingredients(ingredient_ids),
-            'favorites': favorites,
-            'parameters': []
-        }
-        for i in ingredient_ids:
-            context['parameters'].append(Ingredient.objects.get(id=i))
-        return render(request, 'recipes/index.html', context)
-    
-
-class ListRecipes(View):
+class SearchRecipes(View):
     def get(self, request):
         """
         Lists all recipes
         """
         # Create new Paginator object for Recipe objects
         filterRes = _filterRecipes(
+            [],
             "",
             request.GET.get('limit'),
-            request.GET.get('order')
+            request.GET.get('order'),
+            request.GET.get('page')
         )
-        paginator = filterRes['paginator']    
-        page = request.GET.get('page')
-        # Grab the Recipe objects corresponding to passed in page
-        try:
-            results = paginator.page(page)
-        # Invalid page passed in, give page 1
-        except PageNotAnInteger:
-            results = paginator.page(1)
-        # Invalid page passed in, give page 1
-        except EmptyPage:
-            results = paginator.page(1)
             
         favorites = None
         if self.request.user.is_authenticated():
@@ -140,10 +99,41 @@ class ListRecipes(View):
             favorites = profile.favorites.all()
 
         context = {
+            'query': "",
             'limit': filterRes['limit'],
             'order': filterRes['order'],
-            'query': "",
-            'results': results,
+            'ingredients': [],
+            'categories': Ingredient.get_all_ingredients(),
+            'results': filterRes['results'],
+            'favorites': favorites
+        }
+        return render(request, 'recipes/list.html', context)
+
+    def post(self, request):
+        """
+        Searches for recipes given a search query
+        """
+        filterRes = _filterRecipes(
+            request.POST.get('ingredients').split(','),
+            request.POST.get('query'),
+            request.POST.get('limit'),
+            request.POST.get('order'),
+            request.POST.get('page')
+        )
+
+        favorites = None
+
+        if self.request.user.is_authenticated():
+            profile = UserProfile.get_or_create_profile(self.request.user)
+            favorites = profile.favorites.all()
+
+        context = {
+            'query': filterRes['query'],
+            'limit': filterRes['limit'],
+            'order': filterRes['order'],
+            'ingredients': filterRes['ingredients'],
+            'categories': Ingredient.get_all_ingredients(),
+            'results': filterRes['results'],
             'favorites': favorites
         }
         return render(request, 'recipes/list.html', context)
@@ -199,7 +189,7 @@ class FavoriteRecipe(View):
             is_favorite = request.POST.get('is_favorite')
 
             favorite = False
-            if is_favorite:
+            if is_favorite == 'true':
                 favorite = True
 
             profile = UserProfile.get_or_create_profile(self.request.user)
@@ -209,20 +199,22 @@ class FavoriteRecipe(View):
 
             return HttpResponse(json.dumps(json_response), content_type='application/json')
 
-        return redirect('recipes.list')
+        return redirect('recipes.search')   
 
-def MakeDrink(request):
-    user = request.user
-    if user.is_authenticated():
-        profile = UserProfile.get_or_create_profile(user)
-        for maderecipe in Recipe.objects.all():
-            if maderecipe.id == int(request.POST.get("recipe")):
-                myrecipe = {"recipe_id": maderecipe.id, "ingredients": maderecipe.ingredients.values()}
-                for ingredient in RecipeIngredients.objects.all().values():
-                    if ingredient.get("recipe_id") == myrecipe.get("recipe_id"):
-                        for useringredient in UserIngredients.objects.all().values():
-                            if (ingredient.get("ingredient_id") == useringredient.get("ingredient_id")) and (useringredient.get("user_id") == profile.user_id):
-                                newQuantity = useringredient.get("quantity") - ingredient.get("quantity")
-                                if newQuantity < 0:
-                                    newQuantity = 0
-    return HttpResponse("success")
+class RateRecipe(View):
+    def post(self, request):
+        """
+        Rate a recipe
+        """
+        if request.is_ajax() and self.request.user.is_authenticated():
+            recipe_id = int(request.POST.get('recipe_id'))
+            rating = int(request.POST.get('rating'))
+
+            profile = UserProfile.get_or_create_profile(self.request.user)
+            profile.set_rating(recipe_id=recipe_id, rating=rating)
+
+            json_response = {'user-rating': rating }
+
+            return HttpResponse(json.dumps(json_response), content_type='application/json')
+
+        return redirect('recipes.search')
