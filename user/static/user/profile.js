@@ -50,7 +50,6 @@ $(document).ready(function() {
                         $("#ingredientListContainer").toggleClass("s12 s10");
                         $("#ingredientListContainer").toggleClass("m4 m3");
                         $("#ingredientListContainer").after(clearButton);
-                        // $("#ingredientListContainer").after("<div id='clearIngredientsContainer' class='col s1'><br><a id='clearIngredients' class='btn-floating btn-small blue'><i class='large material-icons'>delete</i></a></div>");
                     } 
                 }
 
