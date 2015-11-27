@@ -12,6 +12,13 @@
         <h3 class="black-text">Profile</h3>
         <hr>
 
+         {% if messages %}
+            {% for message in messages %}
+            <h6 class="green-text">{{message}}</h6>
+            {%endfor%}
+            <hr>
+        {% endif %}
+
         <!-- Display User's Account Details -->
         <h5 class="activator grey-text text-darken-4">Account Details</h5>
         <div class="card grey lighten-5">

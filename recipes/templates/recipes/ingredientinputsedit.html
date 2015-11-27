@@ -1,0 +1,33 @@
+<div class="row ingredient-input">
+    <!-- Category -->
+    <div class="input-field col s3">
+        <select class="browser-default" id="{{ category.field}}" name="{{ category.field}}" required title="categories">
+            <option value="" disabled hidden selected>Category..</option>
+            {% for cat, _ in ingredient_choices.items %}
+                <option {% if category.value == cat %}selected {% endif %}value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <!-- Ingredient -->
+    <div class="input-field col s3">
+        <label class="{% if ingredient.value %}active{% endif %}"for="{{ ingredient.field }}">Ingredient</label>
+        <input class="ingredients" {% if not category.value %}disabled{% endif %} id="{{ ingredient.field }}"
+               type="text" list="" name="{{ ingredient.field}}" value="{{ ingredient.value }}" >
+    </div>
+    <!-- Quantity -->
+    <div class="col s2 input-field">
+        <label class="{% if qty.value %}active{% endif %}" for="{{ qty.field }}">Qty</label>
+        <input id="{{ qty.field }}" type="number" name="{{ qty.field}}" value="{{ qty.value }}" min="0.01"
+               step="0.01" max="99.99"required/>
+    </div>
+    <!-- UOM -->
+    <div class="col s2 input-field">
+        <label class="{% if uom.value %}active{% endif %}" for="{{ uom.field }}">Units</label>
+        <input class="units" id="{{ uom.field }}" type="text" name="{{ uom.field}}" value="{{ uom.value }}"
+                {% if not uom.value %}disabled{% endif %}/>
+    </div>
+    <div class="col s1 input-field">
+        <a class="ingredient-remove btn-floating btn waves-effect waves-light blue left">
+            <i class="material-icons">remove</i></a>
+    </div>
+</div>

@@ -9,6 +9,7 @@ from django.utils.http import urlencode
 import json
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 
 
 from .forms.recipes.create_forms import CreateRecipeForm
@@ -284,69 +285,131 @@ def MakeDrink(request):
         return HttpResponse("success")
 
 
-class deleteRecipe(View):
-    def post(self,request):
-        user = request.user
-        result = 0
-        if user.is_authenticated:
-            recipe = request['recipe_name']
-            profile = UserProfile.get_or_create_profile(user)
-            try:
-                recipe_id = profile.created_recipes.get(name = recipe).id
-            except ObjectDoesNotExist:
-                render(request,"",{'result':result,'msg':'This recipe does not exist'})
+def deleteRecipe(request):
 
-            result = 1
-            profile.delete_recipe(recipe_id)
+    user = request.user
 
-        render(request,"",{'result':result ,'msg':'Successfully deleted'})
+    if user.is_authenticated():
+        recipe = request.GET['recipe_name']
+        profile = UserProfile.get_or_create_profile(user)
+        try:
+            recipe_id = profile.created_recipes.get(name = recipe).id
+        except ObjectDoesNotExist:
+            render(request,"user/profile",{'error_message':'This recipe does not exist'})
+            return redirect('user.profile')
+
+
+        profile.delete_recipe(recipe_id)
+
+
+    return HttpResponse('success')
 
 class editRecipe(View):
     def get (self ,request):
         user  = request.user
-        result = 0
-        if user.is_authenticated:
-            recipe_name = request['recipe_name']
+
+
+        if request.user.is_authenticated():
+            recipe_name = request.GET.get('recipe_name')
+
             profile = UserProfile.get_or_create_profile(user)
             try:
                 recipe = profile.created_recipes.get(name = recipe_name)
                 recipe_id = recipe.id
             except ObjectDoesNotExist:
-                render(request,"",{'result':result,'msg':'The recipe with name %s does not exist'%recipe_name})
+                context =  {'error_message':'The recipe with name %s does not exist'%recipe_name}
+                return render(request,'recipes/edit.html',context)
 
             result = 1
             f = RecipeForm(instance = recipe)
+
+            def getfields_name(form):
+                i = 0
+                k = -1
+                ingredient_fields = []
+                instructions = []
+                for key in form.data.keys():
+                    if not key.startswith('in'):
+                        continue;
+                    if key.startswith('instr'):
+                        instructions.append(
+                            {'field':'instructions_blob_%i'%i,
+                            'value': form.data['instructions_blob_%i'%i]}
+                        )
+                        i+=1
+                    elif key.startswith('ingr'):
+                        k+=1
+
+                        ingredient_fields.append(
+                            (
+                                {'field':'category%s'%k, 'value': form.data['category%s'%k] },
+                                {'field':'ingredient%s'%k , 'value':form.data['ingredient%s'%k] },
+                                {'field':'quantity%s'%k,  'value':form.data['quantity%s'%k]},
+                                {'field':'uom%s'%k ,       'value': form.data['uom%s'%k]}
+                            )
+                        )
+
+                return (ingredient_fields,instructions)
+            fields_name = getfields_name(f)
+
             context = {
                 'recipeform' : f,
+                'ingredients_fields':fields_name[0]  ,        #names of ingredient fields
+                'instructions': fields_name[1],
+                'ingredient_choices':Ingredient.get_all_ingredients(),
+                'uom_lookup':Ingredient.get_uom_lookup(),
                 'exist':result
             }
+            return render(request, "recipes/edit.html",context)
+        return redirect(reverse('recipes.search'))
 
-        return render(request, reverse('recipe.edit'), context)
 
     def post(self,request):
         user = request.user
         result = 0
-        if user.is_authenticated:
-            recipe_name = request['recipe_name']
+        if user.is_authenticated():
+            recipe_name = request.POST.get('recipe_name')
+            data = request.POST.copy()
+            data.pop('recipe_name')
+            data.update({'name':recipe_name})
             profile = UserProfile.get_or_create_profile(user)
 
-            extraStep = [value for  key,value in request.items() if key.startswith('xstep')]
-            extraIQ = [value for  key,value in request.items() if key.startswith('xiq')]
-
+            context = {}
+            f = 0
             try:
+
                 recipe = profile.created_recipes.get(name = recipe_name)
+                instr_threshold = len(recipe.get_instructions())
+                ingr_threshold = recipe.ingredients.count()
+                extraStep,extraIQ = self.getExtra(instr_threshold,ingr_threshold,data)
                 recipe_id = recipe.id
+                f  = RecipeForm(data = data, instance = recipe, extraStep= extraStep,extraIQ=extraIQ)
+                if f.is_valid():
+                    f.save()
+                    result = 1
+                    messages.add_message(request, messages.INFO, '%s has been successfully edited'%recipe_name)
+
+                    return redirect('user.profile')
             except ObjectDoesNotExist:
-                render(request,"",{'result':result,'msg':'The recipe with name %s does not exist'%recipe_name})
 
-            f  = RecipeForm(data = request, instance = recipe, extraStep= extraStep,extraIQ=extraIQ)
-            if f.is_valid():
-                f.save()
-                result = 1
-            context = {
-                'recipeform' : f,
-                'success':result
-            }
+                return render(request,"recipes/edit.html",{'result':result,'error_message':'The recipe with name %s does not exist'%recipe_name})
 
-        return render(request, reverse('recipe.edit'), context)
+        context ={'recipeform':f}
+        context.update({'error_message': 'Try again, please' })
 
+        return render(request,"recipes/edit.html",context)
+
+    def getExtra(self,instr_threshold,ingr_threshold,data):
+        extraIQ,extraStep = [],[]
+        for i in range(instr_threshold,instr_threshold+15):
+            try:
+                extraStep = [data['instructions_blob_%s'%i]]
+            except KeyError:
+                break
+        for i in range(ingr_threshold,ingr_threshold+15):
+            try:
+                extraIQ = [(data['ingredient%s'%i],data['quantity%s'%i],data['uom%s'%i],data['category%s'%i])]
+            except KeyError:
+                break
+
+        return extraStep,extraIQ

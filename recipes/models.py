@@ -21,7 +21,7 @@ class Recipe(models.Model):
         recipe_ingredients = []
 
         self.name = recipe_name
-        self.instructions_blob = '~~~'.join(instructions)
+        self.instructions_blob = instructions
 
         for key, info in ingredients.items():
             if isinstance(key, str):
