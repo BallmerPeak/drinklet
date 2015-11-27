@@ -29,68 +29,15 @@
             </div>
         </div>
         <div class="row">
-            <form id="add-ingredients-form" action="{% url 'ingredients.add' %}" method="POST">
-                {% csrf_token %}
-                <input type="hidden" id="ingredients" name="ingredients" value="{{ ingredients }}" />
-                <div id="ingredientListContainer" class="col s12 m4">
-                    <br>
-                    <select id="ingredientList" data-placeholder="Select Ingredients" class="z-depth-2 browser-default chosen-select" multiple tabindex="6">
-                        <option value=""></option>
-                        {% if categories %}
-                            <!-- Ingredients exist, list them -->
-                            {% for key, value in categories.items %}
-                                {% if value %}
-                                    <!-- Make an optgroup for each category -->
-                                    <optgroup label="{{ key.capitalize }}">
-                                        <!-- Make an option for each ingredient -->
-                                        {% for ingredient in value %}
-                                            <option value="{{ ingredient.id }}">{{ ingredient.name.capitalize }}</option>
-                                        {% endfor %}
-                                    </optgroup>
-                                {% endif %}
-                            {% endfor %}
-                        {% else %}
-                            <!-- No ingredients exist -->
-                            <option disabled>No ingredients available</option>
-                        {% endif %}
-                    </select>
-                </div>
-                <div class="col s12 m4">
-                    <br>
-                    <button id="addIngredientsButton" class="col s12 btn waves-effect waves-light blue right" type="submit" name="action">
-                        Add Ingredients
-                        <i class="material-icons right">add</i>
-                    </button>
-                </div>
-            </form>
-        </div>
-        <div>
-            <form name="pantry" id="pantry_form" action="{% url 'user.profile' %}" method="POST">
-                {% csrf_token %}
-                <h4>Pantry</h4>
-                <input type="hidden" id="ingredient_objects" name="ingredient_objects" value="[]"/>
-                <input type="hidden" id="deleted_ingredients" name="deleted_ingredients" value="[]"/>
-                <div id="inventoryButtons">
-                    {% for ingredient in userIngredients %}
-                        <!-- Add the Ingredient Row template -->
-                        {% include 'ingredients/ingredientRow.html' %}
-                    {% empty %}
-                        <!-- User doesn't have any ingredients -->
-                        You have no selected ingredients.
-                    {% endfor %}
-                    <button type="submit" name="submitIngredients" class="waves-effect waves-light btn blue">
-                        Update Pantry
-                        <i class="material-icons right">send</i>
-                    </button>
-                </div>
-            </form>
-        </div>
-        <div class="row">
             <div class="col s12">
                 <ul class="tabs grey lighten-5 z-depth-1">
-                    <li class="tab col s3"><a class="active black-text" href="#favoriteRecipes">Favorites</a></li>
+                    <li class="tab col s3"><a class="active black-text" href="#pantryIngredients">Pantry</a></li>
+                    <li class="tab col s3"><a class="black-text" href="#favoriteRecipes">Favorites</a></li>
                     <li class="tab col s3"><a class="black-text" href="#createdRecipes">Created</a></li>
                 </ul>
+            </div>
+            <div id="pantryIngredients" class="col s12">
+                {% include 'ingredients/pantry.html' %}
             </div>
             <div id="favoriteRecipes" class="col s12">
                 <!-- Display a list of User's Favorited Recipes -->
