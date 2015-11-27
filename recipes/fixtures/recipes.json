@@ -1,0 +1,633 @@
+[
+{
+    "model": "ingredients.ingredient",
+    "pk": 48,
+    "fields": {
+        "name": "gin",
+        "uom": "oz",
+        "category": "alcohol"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 49,
+    "fields": {
+        "name": "tequila",
+        "uom": "oz",
+        "category": "alcohol"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 50,
+    "fields": {
+        "name": "orange liqueur",
+        "uom": "oz",
+        "category": "alcohol"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 51,
+    "fields": {
+        "name": "white rum",
+        "uom": "oz",
+        "category": "alcohol"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 52,
+    "fields": {
+        "name": "coffee liqueur",
+        "uom": "oz",
+        "category": "alcohol"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 53,
+    "fields": {
+        "name": "vodka",
+        "uom": "oz",
+        "category": "alcohol"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 54,
+    "fields": {
+        "name": "cream liqueur",
+        "uom": "oz",
+        "category": "alcohol"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 55,
+    "fields": {
+        "name": "rum",
+        "uom": "oz",
+        "category": "alcohol"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 56,
+    "fields": {
+        "name": "coconut rum",
+        "uom": "oz",
+        "category": "alcohol"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 57,
+    "fields": {
+        "name": "dry vermouth",
+        "uom": "oz",
+        "category": "alcohol"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 58,
+    "fields": {
+        "name": "tonic",
+        "uom": "oz",
+        "category": "soft drink"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 59,
+    "fields": {
+        "name": "club soda",
+        "uom": "oz",
+        "category": "soft drink"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 60,
+    "fields": {
+        "name": "lime juice",
+        "uom": "oz",
+        "category": "juice"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 61,
+    "fields": {
+        "name": "orange juice",
+        "uom": "oz",
+        "category": "juice"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 62,
+    "fields": {
+        "name": "pineapple juice",
+        "uom": "oz",
+        "category": "juice"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 63,
+    "fields": {
+        "name": "cranberry juice",
+        "uom": "oz",
+        "category": "juice"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 64,
+    "fields": {
+        "name": "lime",
+        "uom": "wedge(s)",
+        "category": "produce"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 65,
+    "fields": {
+        "name": "mint",
+        "uom": "leaves",
+        "category": "produce"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 66,
+    "fields": {
+        "name": "simple syrup",
+        "uom": "oz",
+        "category": "syrup"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 67,
+    "fields": {
+        "name": "grenadine syrup",
+        "uom": "oz",
+        "category": "syrup"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 68,
+    "fields": {
+        "name": "salt",
+        "uom": "pinch(es)",
+        "category": "misc"
+    }
+},
+{
+    "model": "ingredients.ingredient",
+    "pk": 69,
+    "fields": {
+        "name": "fresh cream",
+        "uom": "oz",
+        "category": "misc"
+    }
+},
+{
+    "model": "recipes.recipe",
+    "pk": 21,
+    "fields": {
+        "name": "gin & tonic",
+        "instructions_blob": "Fill a highball glass with ice.~~~Place a lime wheel on top of the ice.~~~Pour Gin over the ice and add tonic water.",
+        "ratings_sum": 0,
+        "num_ratings": 0
+    }
+},
+{
+    "model": "recipes.recipe",
+    "pk": 22,
+    "fields": {
+        "name": "margarita",
+        "instructions_blob": "Rub rim of a chilled rocks glass with lime.~~~Dip glass into salt to coat.~~~Fill shaker with ice.~~~Add orange liqueur, tequila, and lime juice.~~~Shake well.~~~Strain drink into the rocks glass filled with ice.~~~Garnish with lime wedge.",
+        "ratings_sum": 0,
+        "num_ratings": 0
+    }
+},
+{
+    "model": "recipes.recipe",
+    "pk": 23,
+    "fields": {
+        "name": "mojito",
+        "instructions_blob": "Place mint leaves in the bottom of the glass, add white rum, lime juice, and simple syrup.~~~Muddle all ingredients.~~~Add ice and top with club soda.~~~Garnish with a lime wedge.",
+        "ratings_sum": 0,
+        "num_ratings": 0
+    }
+},
+{
+    "model": "recipes.recipe",
+    "pk": 24,
+    "fields": {
+        "name": "white russian",
+        "instructions_blob": "Pour coffee liqueur and vodka into an Old Fashioned glass filled with ice.~~~Float fresh cream on top and stir slowly.",
+        "ratings_sum": 0,
+        "num_ratings": 0
+    }
+},
+{
+    "model": "recipes.recipe",
+    "pk": 25,
+    "fields": {
+        "name": "mud slide",
+        "instructions_blob": "Add all the ingredients to a blender and blend until smooth.~~~Pour the Mudslide into a Martini or Hurricane glass.~~~If desired, drizzle with chocolate syrup.",
+        "ratings_sum": 0,
+        "num_ratings": 0
+    }
+},
+{
+    "model": "recipes.recipe",
+    "pk": 26,
+    "fields": {
+        "name": "bahama mama",
+        "instructions_blob": "Combine regular rum, rum with coconut flavoring, grenadine, orange juice, pineapple juice and crushed ice in an electric blender.~~~Blend until the drink's consistency is slushy.",
+        "ratings_sum": 0,
+        "num_ratings": 0
+    }
+},
+{
+    "model": "recipes.recipe",
+    "pk": 27,
+    "fields": {
+        "name": "Cosmopolitan",
+        "instructions_blob": "Add all ingredients into cocktail shaker filled with ice.~~~Shake well and double strain into large cocktail glass.~~~Garnish with lime wheel.",
+        "ratings_sum": 0,
+        "num_ratings": 0
+    }
+},
+{
+    "model": "recipes.recipe",
+    "pk": 28,
+    "fields": {
+        "name": "screwdriver",
+        "instructions_blob": "Mix in a highball glass with ice.~~~Garnish and serve.",
+        "ratings_sum": 0,
+        "num_ratings": 0
+    }
+},
+{
+    "model": "recipes.recipe",
+    "pk": 29,
+    "fields": {
+        "name": "Martini",
+        "instructions_blob": "Pour all ingredients into mixing glass with ice cubes.~~~Stir well.~~~Strain in chilled martini cocktail glass.~~~Squeeze oil from lemon peel onto the drink or garnish with olive.",
+        "ratings_sum": 0,
+        "num_ratings": 0
+    }
+},
+{
+    "model": "recipes.recipe",
+    "pk": 30,
+    "fields": {
+        "name": "daiquiri",
+        "instructions_blob": "Pour all ingredients into shaker with ice cubes.~~~Shake well.~~~Strain in chilled cocktail glass.",
+        "ratings_sum": 0,
+        "num_ratings": 0
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 115,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 64,
+        "recipe": 21
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 116,
+    "fields": {
+        "quantity": "3.00",
+        "ingredient": 58,
+        "recipe": 21
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 117,
+    "fields": {
+        "quantity": "1.25",
+        "ingredient": 48,
+        "recipe": 21
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 118,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 64,
+        "recipe": 22
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 119,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 68,
+        "recipe": 22
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 120,
+    "fields": {
+        "quantity": "2.00",
+        "ingredient": 60,
+        "recipe": 22
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 121,
+    "fields": {
+        "quantity": "0.50",
+        "ingredient": 50,
+        "recipe": 22
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 122,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 49,
+        "recipe": 22
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 123,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 64,
+        "recipe": 23
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 124,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 59,
+        "recipe": 23
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 125,
+    "fields": {
+        "quantity": "0.50",
+        "ingredient": 66,
+        "recipe": 23
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 126,
+    "fields": {
+        "quantity": "0.50",
+        "ingredient": 60,
+        "recipe": 23
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 127,
+    "fields": {
+        "quantity": "1.50",
+        "ingredient": 51,
+        "recipe": 23
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 128,
+    "fields": {
+        "quantity": "6.00",
+        "ingredient": 65,
+        "recipe": 23
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 129,
+    "fields": {
+        "quantity": "0.66",
+        "ingredient": 52,
+        "recipe": 24
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 130,
+    "fields": {
+        "quantity": "1.66",
+        "ingredient": 53,
+        "recipe": 24
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 131,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 69,
+        "recipe": 24
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 132,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 52,
+        "recipe": 25
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 133,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 53,
+        "recipe": 25
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 134,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 54,
+        "recipe": 25
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 135,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 69,
+        "recipe": 25
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 136,
+    "fields": {
+        "quantity": "0.50",
+        "ingredient": 67,
+        "recipe": 26
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 137,
+    "fields": {
+        "quantity": "0.50",
+        "ingredient": 55,
+        "recipe": 26
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 138,
+    "fields": {
+        "quantity": "0.50",
+        "ingredient": 56,
+        "recipe": 26
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 139,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 61,
+        "recipe": 26
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 140,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 62,
+        "recipe": 26
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 141,
+    "fields": {
+        "quantity": "1.50",
+        "ingredient": 53,
+        "recipe": 27
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 142,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 63,
+        "recipe": 27
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 143,
+    "fields": {
+        "quantity": "0.50",
+        "ingredient": 50,
+        "recipe": 27
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 144,
+    "fields": {
+        "quantity": "0.50",
+        "ingredient": 60,
+        "recipe": 27
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 145,
+    "fields": {
+        "quantity": "1.75",
+        "ingredient": 53,
+        "recipe": 28
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 146,
+    "fields": {
+        "quantity": "3.50",
+        "ingredient": 61,
+        "recipe": 28
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 147,
+    "fields": {
+        "quantity": "3.00",
+        "ingredient": 48,
+        "recipe": 29
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 148,
+    "fields": {
+        "quantity": "0.50",
+        "ingredient": 57,
+        "recipe": 29
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 149,
+    "fields": {
+        "quantity": "1.50",
+        "ingredient": 51,
+        "recipe": 30
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 150,
+    "fields": {
+        "quantity": "0.50",
+        "ingredient": 66,
+        "recipe": 30
+    }
+},
+{
+    "model": "recipes.recipeingredients",
+    "pk": 151,
+    "fields": {
+        "quantity": "1.00",
+        "ingredient": 60,
+        "recipe": 30
+    }
+}
+]
