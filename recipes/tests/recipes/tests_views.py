@@ -44,10 +44,6 @@ class RecipeEditTest(TransactionTestCase):
 
         cls.GETresponse = cls.c.get('/edit/',{'recipe_name':'mojito'})
 
-
-
-
-
     def test_GET(self):
         data = self.GETresponse.context
         form = data['recipeform']

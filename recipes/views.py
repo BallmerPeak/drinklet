@@ -21,10 +21,12 @@ from user.models import UserIngredients
 from .forms.recipes.forms import RecipeForm
 
 
-def _filterRecipes(ingredients, query, limit, order, page):
+def _filterRecipes(ingredients, query, limit, order, page, user=None):
     """
     Build Paginator of results from filtering Recipes
     """
+    # Get Recipe calling object
+    call_object = Recipe if user is None else user
     # Make sure the list contains ids as integers
     try:
         ingredients = list(map(int, ingredients))
@@ -51,16 +53,16 @@ def _filterRecipes(ingredients, query, limit, order, page):
     # Filter recipes by query in descending order
     if order == 'desc':
         if len(ingredients):
-            recipes = sorted(Recipe.get_recipes_by_ingredients(ingredients),key=lambda r:r.name)
+            recipes = sorted(call_object.get_recipes_by_ingredients(ingredients), key=lambda r: r.name)
         else:
-            recipes = Recipe.objects.all().order_by('name')
+            recipes = call_object.get_all_recipes().order_by('name')
         recipes = [recipe for recipe in reversed(recipes) if query in recipe.name]
     # Filter recipes by query in ascending order
     else:
         if len(ingredients):
-            recipes = sorted(Recipe.get_recipes_by_ingredients(ingredients),key=lambda r:r.name)
+            recipes = sorted(call_object.get_recipes_by_ingredients(ingredients), key=lambda r: r.name)
         else:
-            recipes = Recipe.objects.all().order_by('name')
+            recipes = call_object.get_all_recipes().order_by('name')
         recipes = [recipe for recipe in recipes if query in recipe.name]
 
     paginator = Paginator(recipes,limit)
@@ -91,18 +93,22 @@ class SearchRecipes(View):
         Lists all recipes
         """
         # Create new Paginator object for Recipe objects
+        profile = None
+        if request.user.is_authenticated:
+            profile = UserProfile.get_or_create_profile(request.user)
+
         filterRes = _filterRecipes(
             [],
             "",
             request.GET.get('limit'),
             request.GET.get('order'),
-            request.GET.get('page')
+            request.GET.get('page'),
+            profile,
         )
             
         favorites = None
-        if self.request.user.is_authenticated():
-            profile = UserProfile.get_or_create_profile(self.request.user)
-            favorites = profile.favorites.all()
+        if profile:
+            favorites = profile.get_favorites()
 
         context = {
             'query': "",
@@ -259,7 +265,7 @@ def MakeDrink(request):
     quantityUpdates = []
     if user.is_authenticated():
         profile = UserProfile.get_or_create_profile(user)
-        for maderecipe in Recipe.objects.all():
+        for maderecipe in profile.get_all_recipes():
             if maderecipe.id == int(request.POST.get("recipe")):
                 myrecipe = {"recipe_id": maderecipe.id}
                 user_ingredient_ids = []

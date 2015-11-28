@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
-from recipes.models import Recipe
+
+from recipes.models import Recipe, RecipeIngredients
 from ingredients.models import Ingredient
 from django.core.validators import MaxValueValidator
 
@@ -35,7 +36,14 @@ class UserProfile(models.Model):
         return self.get_favorites()
 
     def get_favorites(self):
-        return self.favorites.all()
+        user_ingredients = self.useringredients_set.select_related('ingredient')
+
+        return Recipe._add_user_stats_to_collection(self.favorites, user_ingredients)
+
+    def get_created_recipes(self):
+        user_ingredients = self.useringredients_set.select_related('ingredient')
+
+        return Recipe._add_user_stats_to_collection(self.created_recipes, user_ingredients)
 
     def set_rating(self, recipe_id, rating):
 
@@ -86,6 +94,14 @@ class UserProfile(models.Model):
         self.refresh_from_db()
 
         return self
+
+    def get_all_recipes(self):
+        user_ingredients = self.useringredients_set.select_related('ingredient')
+        return Recipe._get_recipes_with_user_stats(user_ingredients)
+
+    def get_recipes_by_ingredients(self, ingredient_ids):
+        user_ingredients = self.useringredients_set.select_related('ingredient')
+        return Recipe.get_recipes_by_ingredients(ingredient_ids, user_ingredients)
 
     @staticmethod
     def _create_dict(obj_list, rel_key, rel_value):

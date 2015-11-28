@@ -103,8 +103,8 @@ $(document).ready(function() {
             $instructionInput = $('.instruction-input');
             $ingredientAdd = $('#ingredient-add');
             $instructionAdd = $('#instruction-add');
-            numIngredientInputs = 5;
-            numInstructionInputs = 7;
+            numIngredientInputs = $ingredientInput.length;
+            numInstructionInputs = $instructionInput.length;
             maxIngredients = 10;
             maxInstructions = 15;
 

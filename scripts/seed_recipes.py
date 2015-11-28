@@ -1,35 +1,25 @@
 ## Run `python manage.py runscript seed_recipes`
-
+from django.contrib.auth.models import User
 from django.db import IntegrityError
 from recipes.models import Recipe, RecipeIngredients
 from ingredients.models import Ingredient
 from user.models import UserProfile
 
-all_ingredients = Ingredient.objects.all()
-
-
-def get_ingredient(_name):
-    ingredient_object = list(all_ingredients.filter(name=_name)[:1])
-    if ingredient_object:
-        return ingredient_object[0]
-    return None
-
-
 recipe_array = [
-    # ## Gin & Tonic
-    # (
-    #     "gin & tonic",
-    #     [
-    #         "Fill a highball glass with ice.",
-    #         "Place a lime wheel on top of the ice.",
-    #         "Pour Gin over the ice and add tonic water."
-    #     ],
-    #     {
-    #         1: "1.25",
-    #         11: "3",
-    #         17: "1"
-    #     }
-    # ),
+    ## Gin & Tonic
+    (
+        "gin & tonic",
+        [
+            "Fill a highball glass with ice.",
+            "Place a lime wheel on top of the ice.",
+            "Pour Gin over the ice and add tonic water."
+        ],
+        {
+            1: "1.25",
+            11: "3",
+            17: "1"
+        }
+    ),
 
     ## Margarita
     (
@@ -186,6 +176,7 @@ recipe_array = [
 ]
 
 profile = UserProfile.objects.get(pk=1)
+
 for recipe in recipe_array:
     profile.create_recipe(*recipe)
 
