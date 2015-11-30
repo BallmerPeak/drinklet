@@ -5,10 +5,12 @@ from ingredients.models import Ingredient
 
 
 class Recipe(models.Model):
+    # from user.models import UserProfile
     name = models.CharField(max_length=30, unique=True)
     ratings_sum = models.PositiveIntegerField(default=0)
     num_ratings = models.PositiveIntegerField(default=0)
     instructions_blob = models.CharField(max_length=1000)
+    author = models.ForeignKey('user.UserProfile', related_name='created_recipes')
     ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredients', related_name='recipe_ingredients')
 
     def __str__(self):
@@ -57,23 +59,28 @@ class Recipe(models.Model):
 
         return self
 
-    def add_user_stats(self, user_ingredients):
+    def _add_user_stats(self, user_ingredients):
         from recipes.helper_objects import RecipeInfo
         recipe_info = RecipeInfo(self, user_ingredients)
         self.num_can_make = recipe_info.num_can_make
         self.missing_ingredients = recipe_info.missing_ingredients
 
     @classmethod
-    def get_recipes_by_ingredients(cls, ingredient_ids, user_ingredients=None):
+    def get_recipes_by_ingredients(cls, ingredient_ids, user_ingredients=None, user_recipes=None):
         found_recipes = []
         ingredients = frozenset(ingredient_ids)
-        recipes = cls.objects.filter(ingredients__id__in=ingredients).distinct().prefetch_related('ingredients')
+        call_object = user_recipes if user_recipes else cls.objects
+        recipes = call_object.select_related(
+            'author', 'author__user'
+        ).filter(
+            ingredients__id__in=ingredients
+        ).distinct().prefetch_related('ingredients')
 
         for recipe in recipes:
             recipe_ingredients = [x.id for x in list(recipe.ingredients.all())]
             if ingredients.issuperset(recipe_ingredients):
                 if user_ingredients:
-                    recipe.add_user_stats(user_ingredients)
+                    recipe._add_user_stats(user_ingredients)
                 found_recipes.append(recipe)
 
         return found_recipes
@@ -84,15 +91,11 @@ class Recipe(models.Model):
         return cls.objects.prefetch_related(models.Prefetch('recipeingredients_set', queryset=queryset))
 
     @classmethod
-    def _get_recipes_with_user_stats(cls, user_ingredients):
-
-        return cls._add_user_stats_to_collection(Recipe.objects.all(), user_ingredients)
-
-    @classmethod
-    def _add_recipe(cls, name, instructions, ingredients):
+    def _add_recipe(cls, name, instructions, ingredients, author):
         blob_instructions = '~~~'.join(instructions)
         recipe = cls(name=name.lower(),
-                     instructions_blob=blob_instructions)
+                     instructions_blob=blob_instructions,
+                     author=author)
         recipe.save()
         RecipeIngredients._add_ingredients(recipe, ingredients)
         return recipe
@@ -103,12 +106,17 @@ class Recipe(models.Model):
     @classmethod
     def _add_user_stats_to_collection(cls, recipes, user_ingredients):
         queryset = RecipeIngredients.objects.select_related('ingredient')
-        recipes = recipes.prefetch_related(models.Prefetch('recipeingredients_set', queryset=queryset))
+        recipes = recipes.prefetch_related(models.Prefetch(
+            'recipeingredients_set', queryset=queryset)).select_related('author', 'author__user')
 
         for recipe in recipes:
-            recipe.add_user_stats(user_ingredients)
+            recipe._add_user_stats(user_ingredients)
 
         return recipes
+
+    # @classmethod
+    # def _get_recipe(cls, get_filter_dict):
+    #     return Recipe.objects.select_related('author', 'author__user').get(**get_filter_dict)
 
 
 class RecipeIngredients(models.Model):

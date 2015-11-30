@@ -38,83 +38,83 @@ class Register(View):
 
 class Profile(View):
     def get(self, request):
-        user = self.request.user
-        if user.is_authenticated():
-            profile = UserProfile.get_or_create_profile(user)
-            ingredients = profile.ingredients.values()
-            ingredientQuantity = []
-            for e in ingredients:
-                for ingredient in UserIngredients.objects.all().values():
-                    id = ingredient.get("ingredient_id")
-                    if id == e.get("id"):
-                        item = {"id": id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
-                        ingredientQuantity.append(item)
-            favorites = profile.favorites.all()
+        profile = UserProfile.get_or_create_profile(request.user)
+        messages = []
+        recipe_edit_success_message = request.GET.get('success_message', '')
+        if recipe_edit_success_message:
+            messages.append(recipe_edit_success_message)
+        ingredients = profile.ingredients.values()
+        ingredientQuantity = []
+        for e in ingredients:
+            for ingredient in UserIngredients.objects.all().values():
+                id = ingredient.get("ingredient_id")
+                if id == e.get("id"):
+                    item = {"id": id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
+                    ingredientQuantity.append(item)
+        favorites = profile.get_favorites()
 
-            # Get list of ids corresponding to user's ingredients
-            user_ingredient_ids = profile.ingredients.values_list('id', flat=True)
-            
-            # Get a category bucketed list of ingredients that the user does not have
-            categories = {}
-            for category, category_ingredients in Ingredient.get_all_ingredients().items():
-                categories[category] = []
-                for ingredient in  category_ingredients:
-                    if(not ingredient.id in user_ingredient_ids):
-                        categories[category].append(ingredient)
-            
-            context = {
-                'profile': profile,
-                'categories': categories,
-                'userIngredients': ingredientQuantity,
-                'ingredients': user_ingredient_ids,
-                'favorites': favorites
-            }
-            return render(request, 'user/profile.html', context)
-        return HttpResponseRedirect(reverse('recipes.search'))
+        # Get list of ids corresponding to user's ingredients
+        user_ingredient_ids = profile.ingredients.values_list('id', flat=True)
+
+        # Get a category bucketed list of ingredients that the user does not have
+        categories = {}
+        for category, category_ingredients in Ingredient.get_all_ingredients().items():
+            categories[category] = []
+            for ingredient in  category_ingredients:
+                if(not ingredient.id in user_ingredient_ids):
+                    categories[category].append(ingredient)
+
+        context = {
+            'profile': profile,
+            'categories': categories,
+            'userIngredients': ingredientQuantity,
+            'ingredients': user_ingredient_ids,
+            'favorites': favorites,
+            'messages': messages
+        }
+        return render(request, 'user/profile.html', context)
 
     def post(self, request):
-        user = self.request.user
-        if user.is_authenticated():
-            profile = UserProfile.get_or_create_profile(user)
+        profile = UserProfile.get_or_create_profile(request.user)
 
-            quantities = json.loads(request.POST["ingredient_objects"])
-            deleted = json.loads(request.POST["deleted_ingredients"])
-            for removedIngredient in deleted:
-                profile.delete_user_ingredient(removedIngredient.get("id"))
+        quantities = json.loads(request.POST["ingredient_objects"])
+        deleted = json.loads(request.POST["deleted_ingredients"])
+        for removedIngredient in deleted:
+            profile.delete_user_ingredient(removedIngredient.get("id"))
 
-            for submission in quantities:
-                profile.update_user_ingredient_quantity(submission.get("id"), submission.get("quantity"))
+        for submission in quantities:
+            profile.update_user_ingredient_quantity(submission.get("id"), submission.get("quantity"))
 
-            ingredients = profile.ingredients.values()
-            ingredientQuantity = []
-            for e in ingredients:
-                for ingredient in UserIngredients.objects.all().values():
-                    id = ingredient.get("ingredient_id")
-                    if id == e.get("id"):
-                        item = {"id": id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
-                        ingredientQuantity.append(item)
-            favorites = profile.favorites.all()
+        ingredients = profile.ingredients.values()
+        ingredientQuantity = []
+        for e in ingredients:
+            for ingredient in UserIngredients.objects.all().values():
+                id = ingredient.get("ingredient_id")
+                if id == e.get("id"):
+                    item = {"id": id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
+                    ingredientQuantity.append(item)
+        favorites = profile.get_favorites()
 
-            # Get list of ids corresponding to user's ingredients
-            user_ingredient_ids = profile.ingredients.values_list('id', flat=True)
+        # Get list of ids corresponding to user's ingredients
+        user_ingredient_ids = profile.ingredients.values_list('id', flat=True)
 
-            # Get a category bucketed list of ingredients that the user does not have
-            categories = {}
-            for category, category_ingredients in Ingredient.get_all_ingredients().items():
-                categories[category] = []
-                for ingredient in  category_ingredients:
-                    if(not ingredient.id in user_ingredient_ids):
-                        categories[category].append(ingredient)
+        # Get a category bucketed list of ingredients that the user does not have
+        categories = {}
+        for category, category_ingredients in Ingredient.get_all_ingredients().items():
+            categories[category] = []
+            for ingredient in  category_ingredients:
+                if(not ingredient.id in user_ingredient_ids):
+                    categories[category].append(ingredient)
 
-            context = {
-                'profile': profile,
-                'categories': categories,
-                'userIngredients': ingredientQuantity,
-                'ingredients': list(profile.ingredients.values_list('id', flat=True)),
-                'favorites': favorites
-            }
-            return render(request, 'user/profile.html', context)
-        return HttpResponseRedirect(reverse('recipes.search'))
+        context = {
+            'profile': profile,
+            'categories': categories,
+            'userIngredients': ingredientQuantity,
+            'ingredients': list(profile.ingredients.values_list('id', flat=True)),
+            'favorites': favorites
+        }
+        return render(request, 'user/profile.html', context)
+
 
 
 class Login(View):

@@ -15,7 +15,7 @@ QTY_INDEX = len(QTY_NAME)
 UOM_INDEX = len(UOM_NAME)
 
 
-class CreateRecipeForm(forms.Form):
+class RecipeForm(forms.Form):
     recipe_name = forms.CharField(max_length=30)
     ingredient = forms.CharField(max_length=30)
     ingredient_qty = forms.DecimalField(decimal_places=2)
@@ -25,7 +25,7 @@ class CreateRecipeForm(forms.Form):
     inst_index = 1
 
     def __init__(self, *args, **kwargs):
-        super(CreateRecipeForm, self).__init__(*args, **kwargs)
+        super(RecipeForm, self).__init__(*args, **kwargs)
         self.ingredient_choices = Ingredient.get_all_ingredients()
         self.categories = forms.ChoiceField(choices=self._get_category_choices())
 
@@ -72,7 +72,7 @@ class CreateRecipeForm(forms.Form):
                 self.fields[key] = forms.CharField(max_length=10)
 
     def clean(self):
-        cleaned_data = super(CreateRecipeForm, self).clean()
+        cleaned_data = super(RecipeForm, self).clean()
 
         for name, value in self.data.items():
             if name.startswith(INGREDIENT_NAME):
@@ -147,68 +147,70 @@ class CreateRecipeForm(forms.Form):
             'field_name': 'instruction',
             'instruction': self.data.get('instruction', '')
         }]
-
+        added_instructions = []
         for name, value in self._get_data_generator(INSTRUCTION_NAME):
-            instructions.append({
+            added_instructions.append({
                 'field_name': name,
                 'instruction': value
             })
-
-        return instructions
+        added_instructions.sort(key=lambda instruction: int(instruction['field_name'][INSTRUCTION_ID_INDEX:]))
+        return instructions + added_instructions
 
     def get_qty_fields(self):
-        qty = [{
+        qtys = [{
             'field_name': 'ingredient_qty',
             'qty': self.data.get('ingredient_qty', '')
         }]
-
+        added_qty = []
         for name, value in self._get_data_generator(QTY_NAME):
-            qty.append({
+            added_qty.append({
                 'field_name': name,
                 'qty': value
             })
-        return qty
+        added_qty.sort(key=lambda qty: int(qty['field_name'][QTY_INDEX:]))
+        return qtys + added_qty
 
     def get_ingredient_fields(self):
         ingredients = [{
             'field_name': 'ingredient',
             'ingredient': self.data.get('ingredient', '')
         }]
-
+        added_ingredients = []
         for name, value in self._get_data_generator(INGREDIENT_NAME):
-            ingredients.append({
+            added_ingredients.append({
                 'field_name': name,
                 'ingredient': value
             })
-
-        return ingredients
+        added_ingredients.sort(key=lambda ingredient: int(ingredient['field_name'][INGREDIENT_ID_INDEX:]))
+        return ingredients + added_ingredients
 
     def get_category_fields(self):
         categories = [{
             'field_name': 'categories',
             'category': self.data.get('categories', '')
         }]
-
+        added_categories = []
         for name, value in self._get_data_generator(CATEGORY_NAME):
-            categories.append({
+            added_categories.append({
                 'field_name': name,
                 'category': value
             })
-        return categories
+        added_categories.sort(key=lambda category: int(category['field_name'][CATEGORY_INDEX:]))
+        return categories + added_categories
 
     def get_uom_fields(self):
-        uom = [{
+        uoms = [{
             'field_name': 'uom',
             'uom': self.data.get('uom', '')
         }]
-
+        added_uom = []
         for name, value in self._get_data_generator(UOM_NAME):
-            uom.append({
+            added_uom.append({
                 'field_name': name,
-                'category': value
+                'uom': value
             })
-
-        return uom
+        added_uom.sort(key=lambda uom: int(uom['field_name'][UOM_INDEX:]))
+        return uoms + added_uom
 
     # ########### Cleaned Data accessor methods ###########################
     # #####################################################################

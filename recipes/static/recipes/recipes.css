@@ -26,6 +26,11 @@ body {
 	cursor: pointer;
 }
 
+.recipe-card-edit {
+	margin-top: 20px;
+	cursor: pointer;
+}
+
 .recipe-card-favorite, .recipe-card-rating {
 	margin-top: 20px;
 	margin-left: 40px;

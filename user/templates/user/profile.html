@@ -41,7 +41,7 @@
             </div>
             <div id="favoriteRecipes" class="col s12">
                 <!-- Display a list of User's Favorited Recipes -->
-                {% for recipe in profile.favorites.all %}
+                {% for recipe in profile.get_favorite %}
                     <!-- Add the Recipe Row template -->
                     {% include 'recipes/recipeRow.html' %}
                 {% empty %}
@@ -51,7 +51,7 @@
             </div>
             <div id="createdRecipes" class="col s12">
                 <!-- Display a list of User's Created Recipes  -->
-                {% for recipe in profile.created_recipes.all %}
+                {% for recipe in profile.get_created_recipes %}
                     <!-- Add the Recipe Row template -->
                     {% include 'recipes/recipeRow.html' %}
                 {% empty %}

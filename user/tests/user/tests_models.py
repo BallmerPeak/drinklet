@@ -26,10 +26,11 @@ class UserProfileTestCase(TestCase):
         self.oj = Ingredient.objects.get(name='orange juice')
         self.pineapple = Ingredient.objects.get(name='pineapple juice')
 
-        def create_drink(name, ratings_sum, num_ratings):
+        def create_drink(name, ratings_sum, num_ratings, author):
             recipe = Recipe.objects.create(name=name,
                                            ratings_sum=ratings_sum,
-                                           num_ratings=num_ratings)
+                                           num_ratings=num_ratings,
+                                           author=author)
             setattr(self, name.replace(" ", "_"), recipe)
 
         def add_ingredients_to_drink(recipe, ingredients):
@@ -47,8 +48,8 @@ class UserProfileTestCase(TestCase):
                 UserIngredients(user=self.profile, ingredient=self.vodka, quantity=10.0),
                 UserIngredients(user=self.profile, ingredient=self.pineapple, quantity=2.0)])
 
-        create_drink('screwdriver', 120, 40)
-        create_drink('gin and vodka', 10, 40)
+        create_drink('screwdriver', 120, 40, self.profile)
+        create_drink('gin and vodka', 10, 40, self.profile)
 
         add_ingredients_to_drink(self.screwdriver, [(self.vodka, 1),
                                                     (self.oj, 2)])

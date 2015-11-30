@@ -7,7 +7,7 @@
     <script src="{% static 'recipes/create.js' %}"></script>
 
     <div class="container">
-        <h3 class="black-text">Create a Recipe</h3>
+        <h3 class="black-text">{{ page_title }}</h3>
         <hr>
 
         {% if error_message %}
@@ -21,8 +21,10 @@
         {% endif %}
 
 
-        <form id="create-recipe-form" action="{% url 'recipes.create' %}" method="POST">
+        <form id="recipe-form" action="{% if recipe_id %}{% url 'recipes.edit' recipe_id %}
+        {% else %}{% url 'recipes.create' %}{% endif %}" method="POST">
             {% csrf_token %}
+            <input id="next" type="hidden" value="{{ next }}"/>
             <input id="uom-lookup" type="hidden" value="{{ uom_lookup }}"/>
             <input id="ingr-index" type="hidden" value="{{ form.ingr_index }}"/>
             <input id="inst-index" type="hidden" value="{{ form.inst_index }}"/>
@@ -67,14 +69,14 @@
                     <h4>Instructions</h4>
                     <div id="instruction-input-wrapper">
                         {% for instruction in instructions %}
-                        <div class="row input-field instruction-input">
-                            <label class="{% if instruction.instruction %}active {% endif %}" for="{{ instruction.field_name }}">
-                                <span>Step</span></label>
-                            <input class="col s11" id="{{ instruction.field_name }}" type="text"
-                                   name="{{ instruction.field_name }}" value="{{ instruction.instruction }}" required>
-                             <a class="instruction-remove disabled btn-floating btn waves-effect waves-light blue right">
-                                 <i class="material-icons">remove</i></a>
-                        </div>
+                            <div class="row input-field instruction-input">
+                                <label class="{% if instruction.instruction %}active {% endif %}" for="{{ instruction.field_name }}">
+                                    <span>Step</span></label>
+                                <input class="col s11" id="{{ instruction.field_name }}" type="text"
+                                       name="{{ instruction.field_name }}" value="{{ instruction.instruction }}" required>
+                                <a class="instruction-remove disabled btn-floating btn waves-effect waves-light blue right">
+                                    <i class="material-icons">remove</i></a>
+                            </div>
                         {% endfor %}
                     </div>
                     <div class="row">
@@ -85,7 +87,7 @@
 
             <!-- Submit Button -->
             <hr>
-            <button class="btn waves-effect waves-light blue right" type="submit" name="action">Create</button>
+            <button class="btn waves-effect waves-light blue right" type="submit" name="action">{{ button_type }}</button>
         </form>
     </div>
 {% endblock %}

@@ -21,6 +21,11 @@
         <div class="recipe-card-comments right">
           <i class="material-icons left blue-text">comment</i>
         </div>
+        {% if recipe.is_author %}
+        <div class="recipe-card-edit right">
+            <a href="{% url 'recipes.edit' recipe.id %}"><i class="material-icons left blue-text">edit</i></a>
+        </div>
+        {% endif %}
       </div>
 
       <div class="row">

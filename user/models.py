@@ -1,5 +1,7 @@
+from bulk_update.helper import bulk_update
 from django.db import models
 from django.conf import settings
+from django.db.models import ExpressionWrapper, Value, BooleanField, Case, When
 
 from recipes.models import Recipe, RecipeIngredients
 from ingredients.models import Ingredient
@@ -14,7 +16,6 @@ class UserProfile(models.Model):
     favorites = models.ManyToManyField(Recipe, related_name='user_favorites')
     recipe_ratings = models.ManyToManyField(Recipe, through='UserRecipeRating', related_name='user_ratings')
     ingredients = models.ManyToManyField(Ingredient, through='UserIngredients', related_name='user_ingredients')
-    created_recipes = models.ManyToManyField(Recipe, related_name='user_created_recipes')
     user_recipe_comments = models.ManyToManyField(Recipe, through='RecipeComment', related_name='recipe_comments')
 
     def __str__(self):
@@ -22,7 +23,7 @@ class UserProfile(models.Model):
 
     @classmethod
     def get_or_create_profile(cls, user):
-        profile, _ = cls.objects.get_or_create(user=user)
+        profile, _ = cls.objects.select_related('user').get_or_create(user=user)
         return profile
 
     def set_favorites(self, recipe_id, is_favorite=None):
@@ -37,13 +38,22 @@ class UserProfile(models.Model):
 
     def get_favorites(self):
         user_ingredients = self.useringredients_set.select_related('ingredient')
+        recipes = self.favorites.annotate(
+            is_author=Case(
+                When(author=self, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )
+        )
 
-        return Recipe._add_user_stats_to_collection(self.favorites, user_ingredients)
+        return Recipe._add_user_stats_to_collection(recipes, user_ingredients)
 
     def get_created_recipes(self):
         user_ingredients = self.useringredients_set.select_related('ingredient')
+        created_recipes = self.created_recipes.annotate(
+            is_author=ExpressionWrapper(Value(True), output_field=BooleanField()))
 
-        return Recipe._add_user_stats_to_collection(self.created_recipes, user_ingredients)
+        return Recipe._add_user_stats_to_collection(created_recipes, user_ingredients)
 
     def set_rating(self, recipe_id, rating):
 
@@ -69,6 +79,10 @@ class UserProfile(models.Model):
         # with the given quantity
         return UserIngredients._update_quantity(self, ingredient_id, quantity)
 
+    @staticmethod
+    def bulk_update_user_ingredient_quantity(user_ingredients):
+        bulk_update(user_ingredients, update_fields=['quantity'])
+
     def create_recipe(self, recipe_name, instructions, ingredients):
         new_ingredients = []
         recipe_ingredients = []
@@ -82,8 +96,7 @@ class UserProfile(models.Model):
 
         recipe_ingredients += Ingredient._create_ingredient_objs(new_ingredients)
 
-        recipe = Recipe._add_recipe(recipe_name, instructions, recipe_ingredients)
-        self.created_recipes.add(recipe)
+        recipe = Recipe._add_recipe(recipe_name, instructions, recipe_ingredients, self)
 
         return recipe
 
@@ -97,11 +110,32 @@ class UserProfile(models.Model):
 
     def get_all_recipes(self):
         user_ingredients = self.useringredients_set.select_related('ingredient')
-        return Recipe._get_recipes_with_user_stats(user_ingredients)
+        recipes = Recipe.objects.annotate(
+            is_author=Case(
+                When(author=self, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )
+        )
+        return Recipe._add_user_stats_to_collection(recipes, user_ingredients)
 
     def get_recipes_by_ingredients(self, ingredient_ids):
         user_ingredients = self.useringredients_set.select_related('ingredient')
-        return Recipe.get_recipes_by_ingredients(ingredient_ids, user_ingredients)
+        recipes = Recipe.objects.annotate(
+            is_author=Case(
+                When(author=self, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )
+        )
+        return Recipe.get_recipes_by_ingredients(ingredient_ids, user_ingredients, recipes)
+
+    # def get_recipe(self, get_filter_dict):
+    #     user_ingredients = self.useringredients_set.select_related('ingredient')
+    #     recipe = Recipe._get_recipe(get_filter_dict)
+    #     recipe._add_user_stats(user_ingredients)
+    #
+    #     return recipe
 
     @staticmethod
     def _create_dict(obj_list, rel_key, rel_value):

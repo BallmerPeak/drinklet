@@ -11,15 +11,14 @@ from django.core.exceptions import ObjectDoesNotExist
 
 class RecipeEditTest(TransactionTestCase):
 
-    fixtures = ["recipes/fixtures/recipes.json"]
+    fixtures = ["recipes.json"]
 
-    @classmethod
-    def setUp(cls):
-        cls.c = Client()
-        user = UserProfile.get_or_create_profile(User.objects.create_user(username = 'testcase',password = 'test',email = 'test@gmail.com'))
-        cls.c.login(username = 'testcase', password= 'test')
-        recipe = Recipe.objects.get(name = 'mojito')
-        cls.dic_rec = {
+    def setUp(self):
+        self.c = Client()
+        user = UserProfile.objects.get(pk=1)
+        self.c.login(username ='testcase', password='test')
+        self.recipe = Recipe.objects.get(name='mojito')
+        self.dic_rec = {
                         "recipe_name": "mojito",                   ## Mojito
 
                             "ingredient0":"white rum","quantity0":"1.5","category0":"alcohol","uom0":"oz",
@@ -36,17 +35,16 @@ class RecipeEditTest(TransactionTestCase):
                             "instructions_blob_3":"Garnish with a lime wedge."
 
                     }
-        cls.ingr = Ingredient.objects.all()
-        cls.initial_ing_ct = 6        ## how many ingrendients initially
+        self.ingr = Ingredient.objects.all()
+        self.initial_ing_ct = 6        ## how many ingrendients initially
 
+        # user.created_recipes.add(recipe)
 
-        user.created_recipes.add(recipe)
-
-        cls.GETresponse = cls.c.get('/edit/',{'recipe_name':'mojito'})
+        self.GETresponse = self.c.get('/edit/{}'.format(self.recipe.id))
 
     def test_GET(self):
         data = self.GETresponse.context
-        form = data['recipeform']
+        form = data['form']
         name_of_rec = form.data['name']
         self.assertEqual(name_of_rec,'mojito')
 
@@ -67,7 +65,7 @@ class RecipeEditTest(TransactionTestCase):
 
     def test_ingredients_edits(self):
         data = self.GETresponse.context
-        form = data['recipeform']
+        form = data['form']
         name_of_rec = form.data['name']
         self.assertEqual(name_of_rec,'mojito')
 
@@ -110,7 +108,7 @@ class RecipeEditTest(TransactionTestCase):
 
         def test_instructions_edit(self):
             data = self.GETresponse.context                         #Initialization get the form
-            form = data['recipeform']
+            form = data['form']
             name_of_rec = form.data['name']
             self.assertEqual(name_of_rec,'mojito')                  #Verify we got the right one
 
@@ -126,7 +124,7 @@ class RecipeEditTest(TransactionTestCase):
 
         def extra_ingredients(self):
             data = self.GETresponse.context                         #Initialization get the form
-            form = data['recipeform']
+            form = data['form']
             name_of_rec = form.data['name']
             self.assertEqual(name_of_rec,'mojito')                  #Verify we got the right one
 
@@ -149,7 +147,7 @@ class RecipeEditTest(TransactionTestCase):
 
         def extra_instructions(self):
             data = self.GETresponse.context                         #Initialization get the form
-            form = data['recipeform']
+            form = data['form']
             name_of_rec = form.data['name']
             self.assertEqual(name_of_rec,'mojito')                  #Verify we got the right one
 
