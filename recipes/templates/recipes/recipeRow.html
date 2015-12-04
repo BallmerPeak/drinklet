@@ -2,7 +2,7 @@
   <div class="card">
     <div class="card-image">
       <div class="row">
-        {% if user and user.is_authenticated %}
+        {% if user and user.is_authenticated and not recipe.is_author %}
         <div class="recipe-card-favorite left">
           <i data-recipeid="{{ recipe.id }}" class="material-icons left red-text">
           {% if recipe in favorites %}
