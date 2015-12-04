@@ -178,7 +178,9 @@ recipe_array = [
 profile = UserProfile.objects.get(pk=1)
 
 for recipe in recipe_array:
-    profile.create_recipe(*recipe)
-
+    try:
+        profile.create_recipe(*recipe)
+    except IntegrityError as e:
+        print(recipe[0] + " is already in the database.")
 
 print("** Recipes Seeded **")
