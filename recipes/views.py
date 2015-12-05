@@ -105,8 +105,10 @@ class SearchRecipes(View):
         )
             
         favorites = None
+        user_recipes = None
         if profile:
             favorites = profile.get_favorites()
+            user_recipes = profile.get_all_recipes()
 
         context = {
             'query': "",
@@ -115,7 +117,8 @@ class SearchRecipes(View):
             'ingredients': [],
             'categories': Ingredient.get_all_ingredients(),
             'results': filter_res['results'],
-            'favorites': favorites
+            'favorites': favorites,
+            'user_recipe_list': user_recipes
         }
         return render(request, 'recipes/list.html', context)
 

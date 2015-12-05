@@ -68,6 +68,15 @@
         </div>
       </div>
       <div class="row">
+      {% if user_recipe_list %}
+          {% for user_recipe in user_recipe_list %}
+              {% if user_recipe.id == recipe.id %}
+                  You can make {{ user_recipe.num_can_make }}
+              {% endif %}
+          {% endfor %}
+      {% endif %}
+      </div>
+      <div class="row">
         <a class="waves-effect waves-light btn blue darken-3 recipe-card-make-drink" name="make_drink_button" data-id="{{ recipe.id }}">Make Drink!</a>
       </div>
     </div>
