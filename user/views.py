@@ -28,12 +28,11 @@ class Register(View):
             User.objects.create_user(username, email, password)
             user = authenticate(username=username, password=password)
             UserProfile.get_or_create_profile(user)
-            login(request,user)
+            login(request, user)
 
-            return render(request,'navbar.html')
+            return render(request, 'navbar.html')
         else:
-            return HttpResponse(render(request, 'user/register.html', {'form': form}),status = 401)
-
+            return HttpResponse(render(request, 'user/register.html', {'form': form}), status=401)
 
 
 class Profile(View):
@@ -90,9 +89,9 @@ class Profile(View):
         ingredient_quantity = []
         for e in ingredients:
             for ingredient in UserIngredients.objects.all().values():
-                id = ingredient.get("ingredient_id")
-                if id == e.get("id"):
-                    item = {"id": id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
+                ingredient_id = ingredient.get("ingredient_id")
+                if ingredient_id == e.get("id"):
+                    item = {"id": ingredient_id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
                     ingredient_quantity.append(item)
         favorites = profile.get_favorites()
 
@@ -103,8 +102,8 @@ class Profile(View):
         categories = {}
         for category, category_ingredients in Ingredient.get_all_ingredients().items():
             categories[category] = []
-            for ingredient in  category_ingredients:
-                if(not ingredient.id in user_ingredient_ids):
+            for ingredient in category_ingredients:
+                if ingredient.id not in user_ingredient_ids:
                     categories[category].append(ingredient)
 
         context = {
@@ -116,7 +115,6 @@ class Profile(View):
             'favorites': favorites
         }
         return render(request, 'user/profile.html', context)
-
 
 
 class Login(View):

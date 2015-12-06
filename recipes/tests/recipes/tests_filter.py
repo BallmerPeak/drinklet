@@ -128,7 +128,11 @@ class RecipeFilterTest(TransactionTestCase):
         response = self.c.post(reverse('recipes.search'),{
             'search_ingredients': '%d,%d' % (self.gin_id, self.white_rum_id)
         })
-        context = list(response.context[-1])[1]
+        try:
+            context = list(response.context[-1])[1]
+        except KeyError:
+            context = response.context.dicts[-1]
+
         self.assertEqual(context['search_ingredients'], [self.gin_id, self.white_rum_id])
         self.assertEqual(len(context['results'].object_list), 0)
 
@@ -145,7 +149,11 @@ class RecipeFilterTest(TransactionTestCase):
         response = self.c.post(reverse('recipes.search'),{
             'query': 'abc'
         })
-        context = list(response.context[-1])[1]
+        try:
+            context = list(response.context[-1])[1]
+        except KeyError:
+            context = response.context.dicts[-1]
+
         self.assertEqual(context['query'], 'abc')
         self.assertEqual(len(context['results'].object_list), 0)
 

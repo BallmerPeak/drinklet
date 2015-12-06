@@ -2,136 +2,88 @@
 
 {% block content %}
 
-{% load staticfiles %}
-<script src="{% static 'recipes/list.js' %}"></script>
-<script src="{% static 'recipes/card.js' %}"></script>
-<script src="{% static 'recipes/recipeRow.js' %}"></script>
+    {% load staticfiles %}
+    <script src="{% static 'recipes/list.js' %}"></script>
+    <script src="{% static 'recipes/card.js' %}"></script>
+    <script src="{% static 'recipes/recipeRow.js' %}"></script>
 
-<div class="container">
-  <div class="row">
-    <form id="create-recipe-form" action="{% url 'recipes.search' %}" method="POST">
-      {% csrf_token %}
-      <input id="thisPage" type="hidden" value="{{ results.number }}"/>
-      <input id="numPages" type="hidden" value="{{ results.paginator.num_pages }}"/>
-      <input type="hidden" id="page" name="page" value="{{ results.number }}"/>
-      <input type="hidden" id="limit" name="limit" value="{{ limit }}"/>
-      <input type="hidden" id="order_by" name="order_by" value="{{ order_by }}"/>
-      <input type="hidden" id="order" name="order" value="{{ order }}"/>
-      <input type="hidden" id="search_ingredients" name="search_ingredients" value="{{ search_ingredients }}" />
-      {% if query %}
-        <!-- Display the user's searched query -->
-        <div class="col s10 m3 input-field">
-          <input id="query" name="query" type="text" value="{{ query }}" class="validate">
-          <label for="query">Name of Recipe</label>
-        </div>
+    <div class="container">
+        <div class="row">
+            <form id="create-recipe-form" action="{% url 'recipes.search' %}" method="POST">
+                {% csrf_token %}
+                <input id="thisPage" type="hidden" value="{{ results.number }}"/>
+                <input id="numPages" type="hidden" value="{{ results.paginator.num_pages }}"/>
+                <input type="hidden" id="page" name="page" value="{{ results.number }}"/>
+                <input type="hidden" id="limit" name="limit" value="{{ limit }}"/>
+                <input type="hidden" id="order" name="order" value="{{ order }}"/>
+                <input type="hidden" id="order_by" name="order_by" value="{{ order_by }}"/>
+                <input type="hidden" id="search_ingredients" name="search_ingredients" value="{{ search_ingredients }}" />
+                {% if query %}
+                    <!-- Display the user's searched query -->
+                    <div class="col s10 m3 input-field">
+                        <input id="query" name="query" type="text" value="{{ query }}" class="validate">
+                        <label for="query">Name of Recipe</label>
+                    </div>
 
-        <!-- Clear button to go back to displaying all recipes -->
-        <div class="col s1">
-          <br>
-          <a id="clearName" class="btn-floating btn-small blue">
-            <i class="large material-icons">delete</i>
-          </a>
+                    <!-- Clear button to go back to displaying all recipes -->
+                    <div class="col s1">
+                        <br>
+                        <a id="clearName" class="btn-floating btn-small blue">
+                            <i class="large material-icons">delete</i>
+                        </a>
+                    </div>
+                {% else %}
+                    <!-- No query, display empty field -->
+                    <div class="col s12 m4 input-field">
+                        <input id="query" name="query" type="text" class="validate">
+                        <label for="query">Name of Recipe</label>
+                    </div>
+                {% endif %}
+                {% if search_ingredients %}
+                    <div class="col s10 m3">
+                {% else %}
+                    <div class="col s12 m4">
+                {% endif %}
+                <br>
+                <select id="ingredientList" data-placeholder="Select Ingredients" class="z-depth-2 browser-default chosen-select" multiple tabindex="6">
+                    <option value=""></option>
+                    {% if categories %}
+                        <!-- Ingredients exist, list them -->
+                        {% for key, value in categories.items %}
+                            {% if value %}
+                                <!-- Make an optgroup for each category -->
+                                <optgroup label="{{ key.capitalize }}">
+                                    <!-- Make an option for each ingredient -->
+                                    {% for ingredient in value %}
+                                        <option value="{{ingredient.id}}">{{ ingredient.name.capitalize }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <!-- No ingredients exist -->
+                        <option disabled>No ingredients available</option>
+                    {% endif %}
+                </select>
+                </div>
+                {% if search_ingredients %}
+                    <div class="col s1">
+                        <br>
+                        <a id="clearIngredients" class="btn-floating btn-small blue">
+                            <i class="large material-icons">delete</i>
+                        </a>
+                    </div>
+                {% endif %}
+                <div class="col s12 m4">
+                    <br>
+                    <button id="searchButton" class="col s12 btn waves-effect waves-light blue right" type="submit" name="action">
+                        Search
+                        <i class="material-icons right">search</i>
+                    </button>
+                </div>
+            </form>
         </div>
-      {% else %}
-        <!-- No query, display empty field -->
-        <div class="col s12 m4 input-field">
-          <input id="query" name="query" type="text" class="validate">
-          <label for="query">Name of Recipe</label>
-        </div>
-      {% endif %}
-      {% if search_ingredients %}
-        <div class="col s10 m3">
-      {% else %}
-        <div class="col s12 m4">
-      {% endif %}
-        <br>
-        <select id="ingredientList" data-placeholder="Select Ingredients" class="z-depth-2 browser-default chosen-select" multiple tabindex="6">
-          <option value=""></option>
-          {% if categories %}
-            <!-- Ingredients exist, list them -->
-            {% for key, value in categories.items %}
-              {% if value %}
-                <!-- Make an optgroup for each category -->
-                <optgroup label="{{ key.capitalize }}">
-                  <!-- Make an option for each ingredient -->
-                  {% for ingredient in value %}
-                    <option value="{{ingredient.id}}">{{ ingredient.name.capitalize }}</option>
-                  {% endfor %}
-                </optgroup>
-              {% endif %}
-            {% endfor %}
-          {% else %}
-            <!-- No ingredients exist -->
-            <option disabled>No ingredients available</option>
-          {% endif %}
-        </select>
-      </div>
-      {% if search_ingredients %}
-        <div class="col s1">
-          <br>
-          <a id="clearIngredients" class="btn-floating btn-small blue">
-            <i class="large material-icons">delete</i>
-          </a>
-        </div>
-      {% endif %}
-      <div class="col s12 m4">
-        <br>
-        <button id="searchButton" class="col s12 btn waves-effect waves-light blue right" type="submit" name="action">
-          Search 
-          <i class="material-icons right">search</i>
-        </button>
-      </div>
-    </form>
-  </div>
-
-  {% if results and results.object_list %} 
-    <!-- Add the pagination at the bottom of the list -->
-    {% include 'recipes/pagination.html' %}
-    <!-- There are results that can be reordered -->
-    <div class="row">
-      <div class="col s12 m4">
-        <a id="orderNameButton" class="col s12 waves-effect waves-light btn blue">
-          Order Name
-          {% if order_by == 'name' %}
-            <i class="material-icons right">
-              {% if order == 'desc' %}
-                trending_down
-              {% else %}
-                trending_up
-              {% endif %}
-            </i>
-          {% endif %}
-        </a>
-      </div>
-      <div class="col s12 m4">
-        <a id="orderRatingButton" class="col s12 waves-effect waves-light btn blue">
-          Order Rating
-          {% if order_by == 'ratings' %}
-          <i class="material-icons right">
-            {% if order == 'desc' %}
-              trending_down
-            {% else %}
-              trending_up
-            {% endif %}
-          </i>
-          {% endif %}
-        </a>
-      </div>
+        {% include 'recipes/recipelist.html' %}
     </div>
-    <!-- Add this page's objects -->
-    <div class="row">
-      {% for recipe in results.object_list %}
-        <!-- Add a row for each recipe -->
-        {% include 'recipes/recipeRow.html' %}
-      {% endfor %}
-    </div>
-
-    <!-- Add the pagination at the bottom of the list -->
-    {% include 'recipes/pagination.html' %}
-  {% else %}
-    <!-- There are no results, inform the user -->
-    <p> There are no recipes to display. </p>
-  {% endif %}
-</div>
 
 {% endblock %}

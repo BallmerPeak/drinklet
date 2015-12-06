@@ -9,5 +9,5 @@ urlpatterns = [
     url(r'^rate/$', RateRecipe.as_view(), name='recipes.rate'),
     url(r'^makedrink', make_drink, name='recipes.makedrink'),
     url(r'^edit/(?P<recipe_id>[0-9]+)/$', login_required(EditRecipe.as_view()), name='recipes.edit'),
-    url(r'^delete/$', delete_recipe, name='recipes.delete'),
+    url(r'^delete/(?P<recipe_id>[0-9]+)/$', delete_recipe, name='recipes.delete'),
 ]
