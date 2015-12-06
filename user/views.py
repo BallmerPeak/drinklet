@@ -44,13 +44,13 @@ class Profile(View):
         if recipe_edit_success_message:
             messages.append(recipe_edit_success_message)
         ingredients = profile.ingredients.values()
-        ingredientQuantity = []
+        ingredient_quantity = []
         for e in ingredients:
             for ingredient in UserIngredients.objects.all().values():
                 id = ingredient.get("ingredient_id")
                 if id == e.get("id"):
                     item = {"id": id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
-                    ingredientQuantity.append(item)
+                    ingredient_quantity.append(item)
         favorites = profile.get_favorites()
 
         # Get list of ids corresponding to user's ingredients
@@ -67,8 +67,9 @@ class Profile(View):
         context = {
             'profile': profile,
             'categories': categories,
-            'userIngredients': ingredientQuantity,
-            'ingredients': user_ingredient_ids,
+            'user_ingredients': ingredient_quantity,
+            'search_ingredients': ','.join([str(ingredient) for ingredient in user_ingredient_ids]),
+            'add_ingredients': user_ingredient_ids,
             'favorites': favorites,
             'messages': messages
         }
@@ -86,13 +87,13 @@ class Profile(View):
             profile.update_user_ingredient_quantity(submission.get("id"), submission.get("quantity"))
 
         ingredients = profile.ingredients.values()
-        ingredientQuantity = []
+        ingredient_quantity = []
         for e in ingredients:
             for ingredient in UserIngredients.objects.all().values():
                 id = ingredient.get("ingredient_id")
                 if id == e.get("id"):
                     item = {"id": id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
-                    ingredientQuantity.append(item)
+                    ingredient_quantity.append(item)
         favorites = profile.get_favorites()
 
         # Get list of ids corresponding to user's ingredients
@@ -109,8 +110,9 @@ class Profile(View):
         context = {
             'profile': profile,
             'categories': categories,
-            'userIngredients': ingredientQuantity,
-            'ingredients': list(profile.ingredients.values_list('id', flat=True)),
+            'user_ingredients': ingredient_quantity,
+            'search_ingredients': ','.join([str(ingredient) for ingredient in user_ingredient_ids]),
+            'add_ingredients': list(profile.ingredients.values_list('id', flat=True)),
             'favorites': favorites
         }
         return render(request, 'user/profile.html', context)

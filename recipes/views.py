@@ -94,7 +94,7 @@ def _filter_recipes(ingredients, query, limit, order_by, order, page, user=None)
         'limit': limit,
         'order_by': order_by,
         'order': order,
-        'ingredients': ingredients,
+        'search_ingredients': ingredients,
         'results': results
     }
 
@@ -131,7 +131,7 @@ class SearchRecipes(View):
             'limit': filter_res['limit'],
             'order_by': filter_res['order_by'],
             'order': filter_res['order'],
-            'ingredients': [],
+            'search_ingredients': [],
             'categories': Ingredient.get_all_ingredients(),
             'results': filter_res['results'],
             'favorites': favorites,
@@ -145,7 +145,7 @@ class SearchRecipes(View):
         :param request:
         """
         filter_res = _filter_recipes(
-            request.POST.get('ingredients'),
+            request.POST.get('search_ingredients'),
             request.POST.get('query'),
             request.POST.get('limit'),
             request.POST.get('order_by'),
@@ -164,7 +164,7 @@ class SearchRecipes(View):
             'limit': filter_res['limit'],
             'order_by': filter_res['order_by'],
             'order': filter_res['order'],
-            'ingredients': filter_res['ingredients'],
+            'search_ingredients': filter_res['search_ingredients'],
             'categories': Ingredient.get_all_ingredients(),
             'results': filter_res['results'],
             'favorites': favorites

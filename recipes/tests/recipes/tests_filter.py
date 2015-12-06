@@ -92,7 +92,7 @@ class RecipeFilterTest(TransactionTestCase):
         response = self.c.get(reverse('recipes.search'))
         context = list(response.context[-1])[1]
         self.assertEqual(context['query'], self.query)
-        self.assertEqual(context['ingredients'], self.ingredients)
+        self.assertEqual(context['search_ingredients'], self.ingredients)
         self.assertEqual(context['limit'], self.limit)
         self.assertEqual(context['order'], self.order)
         self.assertEqual(context['order_by'], self.order_by)
@@ -102,7 +102,7 @@ class RecipeFilterTest(TransactionTestCase):
         response = self.c.post(reverse('recipes.search'))
         context = list(response.context[-1])[1]
         self.assertEqual(context['query'], self.query)
-        self.assertEqual(context['ingredients'], self.ingredients)
+        self.assertEqual(context['search_ingredients'], self.ingredients)
         self.assertEqual(context['limit'], self.limit)
         self.assertEqual(context['order'], self.order)
         self.assertEqual(context['order_by'], self.order_by)
@@ -110,26 +110,26 @@ class RecipeFilterTest(TransactionTestCase):
 
     def test_ingredients_is_bad_str(self):
         response = self.c.post(reverse('recipes.search'),{
-            'ingredients': 'bad string'
+            'search_ingredients': 'bad string'
         })
         context = list(response.context[-1])[1]
-        self.assertEqual(context['ingredients'], self.ingredients)
+        self.assertEqual(context['search_ingredients'], self.ingredients)
         self.assertEqual(len(context['results'].object_list), 3)
 
     def test_ingredients_is_matching(self):
         response = self.c.post(reverse('recipes.search'),{
-            'ingredients': '%d,%d,%d' % (self.pineapple_juice_id, self.white_rum_id, self.coconut_cream_id)
+            'search_ingredients': '%d,%d,%d' % (self.pineapple_juice_id, self.white_rum_id, self.coconut_cream_id)
         })
         context = list(response.context[-1])[1]
-        self.assertEqual(context['ingredients'], [self.pineapple_juice_id, self.white_rum_id, self.coconut_cream_id])
+        self.assertEqual(context['search_ingredients'], [self.pineapple_juice_id, self.white_rum_id, self.coconut_cream_id])
         self.assertEqual(len(context['results'].object_list), 1)
 
     def test_ingredients_is_not_matching(self):
         response = self.c.post(reverse('recipes.search'),{
-            'ingredients': '%d,%d' % (self.gin_id, self.white_rum_id)
+            'search_ingredients': '%d,%d' % (self.gin_id, self.white_rum_id)
         })
         context = list(response.context[-1])[1]
-        self.assertEqual(context['ingredients'], [self.gin_id, self.white_rum_id])
+        self.assertEqual(context['search_ingredients'], [self.gin_id, self.white_rum_id])
         self.assertEqual(len(context['results'].object_list), 0)
 
     def test_query_is_matching(self):

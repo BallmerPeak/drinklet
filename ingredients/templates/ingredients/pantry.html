@@ -1,7 +1,7 @@
 <div class="row">
     <form id="add-ingredients-form" action="{% url 'ingredients.add' %}" method="POST">
         {% csrf_token %}
-        <input type="hidden" id="ingredients" name="ingredients" value="{{ ingredients }}" />
+        <input type="hidden" id="add_ingredients" name="add_ingredients" value="{{ add_ingredients }}" />
         <div id="ingredientListContainer" class="col s12 m4">
             <br>
             <select id="ingredientList" data-placeholder="Select Ingredients" class="z-depth-2 browser-default chosen-select" multiple tabindex="6">
@@ -35,23 +35,33 @@
     </form>
 </div>
 <br>
-<form name="pantry" id="pantry_form" action="{% url 'user.profile' %}" method="POST">
-    {% csrf_token %}
-    <input type="hidden" id="ingredient_objects" name="ingredient_objects" value="[]"/>
-    <input type="hidden" id="deleted_ingredients" name="deleted_ingredients" value="[]"/>
-    {% if userIngredients %}
-        <div class="row">
-            {% for ingredient in userIngredients %}
-                <!-- Add the Ingredient Row template -->
-                {% include 'ingredients/ingredientRow.html' %}
-            {% endfor %}
-        </div>
-    {% else %}
-        <!-- User doesn't have any ingredients -->
-        <p>You have no selected ingredients.</p>
-    {% endif %}
-    <button type="submit" name="submitIngredients" class="waves-effect waves-light btn blue">
-        Update Pantry
-        <i class="material-icons right">send</i>
-    </button>
-</form>
+{% if user_ingredients %}
+    <div class="row">
+        {% for ingredient in user_ingredients %}
+            <!-- Add the Ingredient Row template -->
+            {% include 'ingredients/ingredientRow.html' %}
+        {% endfor %}
+    </div>
+{% else %}
+    <!-- User doesn't have any ingredients -->
+    <p>You have no selected ingredients.</p>
+{% endif %}
+<div class="row">
+    <form class="col s12 m4" id="pantry_form" action="{% url 'user.profile' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" id="ingredient_objects" name="ingredient_objects" value="[]"/>
+        <input type="hidden" id="deleted_ingredients" name="deleted_ingredients" value="[]"/>
+        <button type="submit" name="submitIngredients" class="col s12 waves-effect waves-light btn blue">
+            Update Pantry
+            <i class="material-icons right">send</i>
+        </button>
+    </form>
+    <form id="search-recipes-form" class="col s12 m4" action="{% url 'recipes.search' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" id="search_ingredients" name="search_ingredients" value="{{ search_ingredients }}"/>
+        <button id="searchButton" class="col s12  btn waves-effect waves-light blue" type="submit" name="action">
+          Search 
+          <i class="material-icons right">search</i>
+        </button>
+    </form>
+</div>

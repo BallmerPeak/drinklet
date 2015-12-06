@@ -61,7 +61,7 @@ $(document).ready(function() {
          * Handle setting the value of a hidden field to list of ingredient ids
          */
         function getSelectedIngredients() {
-            $("#ingredients").val($("#ingredientList").val());
+            $("#add_ingredients").val($("#ingredientList").val());
         }
 
         /**

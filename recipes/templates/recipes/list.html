@@ -17,7 +17,7 @@
       <input type="hidden" id="limit" name="limit" value="{{ limit }}"/>
       <input type="hidden" id="order_by" name="order_by" value="{{ order_by }}"/>
       <input type="hidden" id="order" name="order" value="{{ order }}"/>
-      <input type="hidden" id="ingredients" name="ingredients" value="{{ ingredients }}" />
+      <input type="hidden" id="search_ingredients" name="search_ingredients" value="{{ search_ingredients }}" />
       {% if query %}
         <!-- Display the user's searched query -->
         <div class="col s10 m3 input-field">
@@ -39,7 +39,7 @@
           <label for="query">Name of Recipe</label>
         </div>
       {% endif %}
-      {% if ingredients %}
+      {% if search_ingredients %}
         <div class="col s10 m3">
       {% else %}
         <div class="col s12 m4">
@@ -66,7 +66,7 @@
           {% endif %}
         </select>
       </div>
-      {% if ingredients %}
+      {% if search_ingredients %}
         <div class="col s1">
           <br>
           <a id="clearIngredients" class="btn-floating btn-small blue">

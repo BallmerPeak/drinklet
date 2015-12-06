@@ -24,7 +24,7 @@ $(document).ready(function() {
 				}
 			}
 			// Update the ingredients list to contain the last searched values
-			$("#ingredientList").val(JSON.parse($("#ingredients").val()));
+			$("#ingredientList").val(JSON.parse($("#search_ingredients").val()));
 			$("#ingredientList").trigger("chosen:updated");
 		}
 
@@ -33,7 +33,7 @@ $(document).ready(function() {
 		 * Handle setting the value of a hidden field to list of ingredient ids
 		 */
 		function getSelectedIngredients() {
-			$("#ingredients").val($("#ingredientList").val());
+			$("#search_ingredients").val($("#ingredientList").val());
 		}
 
 		/**

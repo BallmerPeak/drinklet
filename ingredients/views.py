@@ -18,7 +18,7 @@ class AddIngredients(View):
         """
         # Make sure user is authenticated
         if not self.request.user.is_anonymous():
-            ingredient_ids = request.POST.get('ingredients').split(',')
+            ingredient_ids = request.POST.get('add_ingredients').split(',')
             # Make sure the list contains ids as integers
             try:
                 ingredient_ids = list(map(int,ingredient_ids))
