@@ -15,7 +15,7 @@
       <input id="numPages" type="hidden" value="{{ results.paginator.num_pages }}"/>
       <input type="hidden" id="page" name="page" value="{{ results.number }}"/>
       <input type="hidden" id="limit" name="limit" value="{{ limit }}"/>
-      <input type="hidden" id="orderBy" name="orderBy" value="{{ orderBy }}"/>
+      <input type="hidden" id="order_by" name="order_by" value="{{ order_by }}"/>
       <input type="hidden" id="order" name="order" value="{{ order }}"/>
       <input type="hidden" id="ingredients" name="ingredients" value="{{ ingredients }}" />
       {% if query %}
@@ -92,7 +92,7 @@
       <div class="col s12 m4">
         <a id="orderNameButton" class="col s12 waves-effect waves-light btn blue">
           Order Name
-          {% if orderBy == 'name' %}
+          {% if order_by == 'name' %}
             <i class="material-icons right">
               {% if order == 'desc' %}
                 trending_down
@@ -106,7 +106,7 @@
       <div class="col s12 m4">
         <a id="orderRatingButton" class="col s12 waves-effect waves-light btn blue">
           Order Rating
-          {% if orderBy == 'ratings' %}
+          {% if order_by == 'ratings' %}
           <i class="material-icons right">
             {% if order == 'desc' %}
               trending_down

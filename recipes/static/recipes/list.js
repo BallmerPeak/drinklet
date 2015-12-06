@@ -96,19 +96,19 @@ $(document).ready(function() {
 
 		/**
 		 * @event #orderNameButton.click
-		 * Set orderBy to "name", toggle the order, and rerun the search
+		 * Set order_by to "name", toggle the order, and rerun the search
 		 */
 		$("#orderNameButton").click(function() {
-			$("#orderBy").val("name");
+			$("#order_by").val("name");
 			toggleOrder();
 		});
 
 		/**
 		 * @event #orderRatingButton.click
-		 * Set orderBy to "ratings", toggle the order, and rerun the search
+		 * Set order_by to "ratings", toggle the order, and rerun the search
 		 */
 		$("#orderRatingButton").click(function() {
-			$("#orderBy").val("ratings");
+			$("#order_by").val("ratings");
 			toggleOrder();
 		});
 

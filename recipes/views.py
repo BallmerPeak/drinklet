@@ -18,7 +18,7 @@ from .models import Recipe, Ingredient
 from user.models import UserProfile
 
 
-def _filter_recipes(ingredients, query, limit, orderBy, order, page, user=None):
+def _filter_recipes(ingredients, query, limit, order_by, order, page, user=None):
     """
     Build Paginator of results from filtering Recipes
     """
@@ -43,9 +43,9 @@ def _filter_recipes(ingredients, query, limit, orderBy, order, page, user=None):
     if limit is None:
         limit = 6
 
-    # If the orderBy is not set, default it to name
-    if orderBy is None:
-        orderBy = 'name'
+    # If the order_by is not set, default it to name
+    if order_by is None:
+        order_by = 'name'
 
     # If the order is not set, default it to asc
     if order is None:
@@ -63,10 +63,10 @@ def _filter_recipes(ingredients, query, limit, orderBy, order, page, user=None):
         recipes = call_object.get_all_recipes()
 
     # Sort results by name
-    if orderBy == 'name':
+    if order_by == 'name':
         recipes = sorted(recipes, key=lambda r: r.name)
     # Sort results by ratings
-    elif orderBy == 'ratings':
+    elif order_by == 'ratings':
         recipes = sorted(recipes, key=lambda r: r.ratings_sum / float(r.num_ratings) if r.num_ratings > 0 else r.num_ratings)
 
     # Order results in descending order
@@ -92,7 +92,7 @@ def _filter_recipes(ingredients, query, limit, orderBy, order, page, user=None):
     return {
         'query': query,
         'limit': limit,
-        'orderBy': orderBy,
+        'order_by': order_by,
         'order': order,
         'ingredients': ingredients,
         'results': results
@@ -114,7 +114,7 @@ class SearchRecipes(View):
             [],
             "",
             request.GET.get('limit'),
-            request.GET.get('orderBy'),
+            request.GET.get('order_by'),
             request.GET.get('order'),
             request.GET.get('page'),
             profile,
@@ -129,7 +129,7 @@ class SearchRecipes(View):
         context = {
             'query': "",
             'limit': filter_res['limit'],
-            'orderBy': filter_res['orderBy'],
+            'order_by': filter_res['order_by'],
             'order': filter_res['order'],
             'ingredients': [],
             'categories': Ingredient.get_all_ingredients(),
@@ -145,10 +145,10 @@ class SearchRecipes(View):
         :param request:
         """
         filter_res = _filter_recipes(
-            request.POST.get('ingredients').split(','),
+            request.POST.get('ingredients'),
             request.POST.get('query'),
             request.POST.get('limit'),
-            request.POST.get('orderBy'),
+            request.POST.get('order_by'),
             request.POST.get('order'),
             request.POST.get('page')
         )
@@ -162,7 +162,7 @@ class SearchRecipes(View):
         context = {
             'query': filter_res['query'],
             'limit': filter_res['limit'],
-            'orderBy': filter_res['orderBy'],
+            'order_by': filter_res['order_by'],
             'order': filter_res['order'],
             'ingredients': filter_res['ingredients'],
             'categories': Ingredient.get_all_ingredients(),
