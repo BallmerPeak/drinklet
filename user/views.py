@@ -127,12 +127,18 @@ class Login(View):
         self.form = AuthenticationForm(None, request.POST)
         if self.form.is_valid():
             login(request, self.form.get_user())
-            return render(request, 'navbar.html')
+            redirect = {
+                'redirect': reverse('user.profile')
+            }
+            return HttpResponse(json.dumps(redirect))
 
         context = {
-            'form': self.form,
-            'username': self.form.cleaned_data.get('username')
+            'form': self.form
         }
+        username = self.form.cleaned_data.get('username', None)
+        if username:
+            context['username'] = username
+
         return HttpResponse(render(request, 'user/login.html', context), status=401)
 
 
