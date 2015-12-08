@@ -63,6 +63,7 @@ class Profile(View):
             for ingredient in  category_ingredients:
                 if(not ingredient.id in user_ingredient_ids):
                     categories[category].append(ingredient)
+        user_recipes = profile.get_all_recipes()
 
         context = {
             'profile': profile,
@@ -71,12 +72,16 @@ class Profile(View):
             'search_ingredients': ','.join([str(ingredient) for ingredient in user_ingredient_ids]),
             'add_ingredients': user_ingredient_ids,
             'favorites': favorites,
-            'messages': messages
+            'messages': messages,
+            'user_recipe_list': user_recipes
         }
         return render(request, 'user/profile.html', context)
 
     def post(self, request):
         profile = UserProfile.get_or_create_profile(request.user)
+        u = User.objects.get(username=request.user.username)
+        u.set_password()
+        u.save()
 
         quantities = json.loads(request.POST["ingredient_objects"])
         deleted = json.loads(request.POST["deleted_ingredients"])
