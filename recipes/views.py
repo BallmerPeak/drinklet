@@ -10,8 +10,6 @@ from django.http import HttpResponse
 from django.utils.http import urlencode
 import json
 from django.core.urlresolvers import reverse
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib import messages
 
 from .forms.recipes.recipe_form import RecipeForm, CATEGORY_NAME, INGREDIENT_NAME, INSTRUCTION_NAME, QTY_NAME, UOM_NAME
 from .models import Recipe, Ingredient
@@ -71,10 +69,10 @@ def _filter_recipes(ingredients, query, limit, order_by, order, page, user=None)
 
     # Order results in descending order
     if order == 'desc':
-        recipes = [recipe for recipe in reversed(recipes) if query in recipe.name]
+        recipes = [recipe for recipe in reversed(recipes) if query.lower() in recipe.name]
     # Order results in ascending order
     else:
-        recipes = [recipe for recipe in recipes if query in recipe.name]
+        recipes = [recipe for recipe in recipes if query.lower() in recipe.name]
 
     paginator = Paginator(recipes, limit)
 
@@ -144,20 +142,21 @@ class SearchRecipes(View):
         Searches for recipes given a search query
         :param request:
         """
+        favorites = None
+        profile = None
+        if request.user.is_authenticated():
+            profile = UserProfile.get_or_create_profile(request.user)
+            favorites = profile.get_favorites()
+
         filter_res = _filter_recipes(
             request.POST.get('search_ingredients'),
             request.POST.get('query'),
             request.POST.get('limit'),
             request.POST.get('order_by'),
             request.POST.get('order'),
-            request.POST.get('page')
+            request.POST.get('page'),
+            profile
         )
-
-        favorites = None
-
-        if request.user.is_authenticated():
-            profile = UserProfile.get_or_create_profile(request.user)
-            favorites = profile.get_favorites()
 
         context = {
             'query': filter_res['query'],
@@ -170,7 +169,7 @@ class SearchRecipes(View):
             'favorites': favorites
 
         }
-        return render(request, 'recipes/list.html', context)
+        return render(request, 'recipes/recipelist.html', context)
 
 
 class RecipeView(View):
@@ -386,18 +385,21 @@ class RateRecipe(View):
         Rate a recipe
         :param request:
         """
-        if request.is_ajax() and request.user.is_authenticated():
+        if not request.is_ajax():
+            return redirect('recipes.search')
+
+        if request.user.is_authenticated():
             recipe_id = int(request.POST.get('recipe_id'))
             rating = int(request.POST.get('rating'))
 
             profile = UserProfile.get_or_create_profile(request.user)
             profile.set_rating(recipe_id=recipe_id, rating=rating)
 
-            json_response = {'user-rating': rating }
+            json_response = {'user-rating': rating}
 
             return HttpResponse(json.dumps(json_response), content_type='application/json')
 
-        return redirect('recipes.search')
+        return HttpResponse(status=401)
 
 
 @login_required
@@ -428,18 +430,17 @@ def make_drink(request):
 
 
 @login_required()
-def delete_recipe(request):
+def delete_recipe(request, recipe_id):
 
     profile = UserProfile.get_or_create_profile(request.user)
 
-    recipe = request.GET['recipe_name']
-
     try:
-        recipe_id = profile.created_recipes.get(name=recipe).id
-    except ObjectDoesNotExist:
-        render(request, "user/profile.html", {'error_message': 'This recipe does not exist'})
-        return redirect('user.profile')
+        author_id = Recipe.objects.filter(pk=recipe_id).values_list('author_id', flat=True)[0]
 
-    profile.delete_recipe(recipe_id)
+        if author_id != profile.pk:
+            return render(request, 'user/profile.html', {'error_message': 'You are not the author of that recipe'})
+        profile.delete_recipe(recipe_id)
+    except IndexError:
+        return render(request, 'user/profile.html', {'error_message': 'This recipe does not exist'})
 
     return HttpResponse('success')

@@ -53,28 +53,35 @@ $(document).ready(function(){
 
 
 	$('.modal-trigger').leanModal({
+        ready: function() {
+            $('#loginUsername').focus();
+        },
 		// Modal complete event handler
 		complete: function() { 
 			// Remove all overlays
-
 		 }	
 	});
 
+    $('#loginModal').keypress(function (evt) {
+        if(evt.which == 13) {
+            $('button#login_button').click();
+        }
+    });
 
     $('#login_button').click(function() {
         username = $('#loginUsername').val().toLowerCase();
         password = $('#loginPassword').val();
         user.login(username, password)
             .done(function (data) {
-                $('#loginModal').closeModal();
-                $('#navbar').replaceWith(data);
-                csrftoken = $.cookie('csrftoken');
-                $('input[name="csrfmiddlewaretoken"]').val(csrftoken);
+                var jsonData = JSON.parse(data);
+                if(jsonData.redirect)
+                    window.location.href = jsonData.redirect;
             })
             .fail(function (data) {
-                loginModalContent = $('#loginModal > .modal-content');
+                loginModalContent = $('#loginModal').find('> .modal-content');
                 replaceHtml = $(data.responseText).find('.modal-content').html();
                 loginModalContent.html(replaceHtml);
+                $('#loginUsername').focus().select();
             })
         });
 

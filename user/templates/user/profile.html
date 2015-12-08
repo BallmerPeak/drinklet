@@ -12,9 +12,9 @@
         <h3 class="black-text">Profile</h3>
         <hr>
 
-         {% if messages %}
+        {% if messages %}
             {% for message in messages %}
-            <h6 class="green-text">{{message}}</h6>
+                <h6 class="green-text">{{message}}</h6>
             {%endfor%}
             <hr>
         {% endif %}
@@ -39,25 +39,27 @@
             <div id="pantryIngredients" class="col s12">
                 {% include 'ingredients/pantry.html' %}
             </div>
-            <div id="favoriteRecipes" class="col s12">
-                <!-- Display a list of User's Favorited Recipes -->
-                {% for recipe in profile.get_favorite %}
-                    <!-- Add the Recipe Row template -->
-                    {% include 'recipes/recipeRow.html' %}
-                {% empty %}
-                    <!-- User doesn't have any Favorited Recipes -->
-                    There are no Favorite Recipes.
-                {% endfor %}
-            </div>
-            <div id="createdRecipes" class="col s12">
-                <!-- Display a list of User's Created Recipes  -->
-                {% for recipe in profile.get_created_recipes %}
-                    <!-- Add the Recipe Row template -->
-                    {% include 'recipes/recipeRow.html' %}
-                {% empty %}
-                    <!-- User doesn't have any Create Recipes -->
-                    There are no Created Recipes.
-                {% endfor %}
+            <div id="list-wrapper">
+                <div id="favoriteRecipes" class="col s12">
+                    <!-- Display a list of User's Favorited Recipes -->
+                    {% for recipe in profile.get_favorites %}
+                        <!-- Add the Recipe Row template -->
+                        {% include 'recipes/recipeRow.html' %}
+                    {% empty %}
+                        <!-- User doesn't have any Favorited Recipes -->
+                        There are no Favorite Recipes.
+                    {% endfor %}
+                </div>
+                <div id="createdRecipes" class="col s12">
+                    <!-- Display a list of User's Created Recipes  -->
+                    {% for recipe in profile.get_created_recipes %}
+                        <!-- Add the Recipe Row template -->
+                        {% include 'recipes/recipeRow.html' %}
+                    {% empty %}
+                        <!-- User doesn't have any Create Recipes -->
+                        There are no Created Recipes.
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>

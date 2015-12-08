@@ -1,0 +1,48 @@
+<div id="list-wrapper">
+{% if results and results.object_list %}
+    <!-- Add the pagination at the bottom of the list -->
+    {% include 'recipes/pagination.html' %}
+    <!-- There are results that can be reordered -->
+    <div class="row">
+        <div class="col s12 m4">
+            <a id="orderNameButton" class="col s12 waves-effect waves-light btn blue">
+                Order Name
+                <i class="material-icons right">
+                    {% if order == 'desc' %}
+                        trending_down
+                    {% else %}
+                        trending_up
+                    {% endif %}
+                </i>
+            </a>
+        </div>
+        <div class="col s12 m4">
+        <a id="orderRatingButton" class="col s12 waves-effect waves-light btn blue">
+          Order Rating
+          {% if order_by == 'ratings' %}
+          <i class="material-icons right">
+            {% if order == 'desc' %}
+              trending_down
+            {% else %}
+              trending_up
+            {% endif %}
+          </i>
+          {% endif %}
+        </a>
+      </div>
+    </div>
+    <!-- Add this page's objects -->
+    <div class="row">
+        {% for recipe in results.object_list %}
+            <!-- Add a row for each recipe -->
+            {% include 'recipes/recipeRow.html' %}
+        {% endfor %}
+    </div>
+
+    <!-- Add the pagination at the bottom of the list -->
+    {% include 'recipes/pagination.html' %}
+{% else %}
+    <!-- There are no results, inform the user -->
+    <p> There are no recipes to display. </p>
+{% endif %}
+</div>

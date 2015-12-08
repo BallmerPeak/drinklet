@@ -5,6 +5,7 @@ $(document).ready(function() {
 	 * Namespace for the functions that handle listing recipes
 	 */
 	(function RecipeList() {
+        var $listWrapper = $('div#list-wrapper');
 		/**
 		 * @method init
 		 * First things that happen when DOM is loaded
@@ -33,7 +34,9 @@ $(document).ready(function() {
 		 * Handle setting the value of a hidden field to list of ingredient ids
 		 */
 		function getSelectedIngredients() {
-			$("#search_ingredients").val($("#ingredientList").val());
+            var ingredients = $('#ingredientList').val();
+			$("#search_ingredients").val(ingredients);
+            return ingredients;
 		}
 
 		/**
@@ -92,13 +95,31 @@ $(document).ready(function() {
 		 * @event #searchButton.click
 		 * Grab the list of ingredients from ingredientList
 		 */
-		$("#searchButton").click(getSelectedIngredients);
+        $("#searchButton").click(function(evt) {
+            var postData = {}, newList;
+            evt.preventDefault();
+			postData.ingredients = getSelectedIngredients();
+            postData.page = $('#page').val();
+            postData.limit = $('#limit').val();
+            postData.query = $('#query').val();
+            postData.order = $('#order').val();
+            postData.order_by = $('#order_by').val();
+
+            $.post('/', postData)
+                .done(function (html) {
+                    newList = $(html).html();
+                    $('div#list-wrapper').html(newList);
+                    $('.modal-trigger').leanModal();
+                    RecipeCard()
+                });
+		});
+
 
 		/**
 		 * @event #orderNameButton.click
 		 * Set order_by to "name", toggle the order, and rerun the search
 		 */
-		$("#orderNameButton").click(function() {
+		$listWrapper.on('click', 'a#orderNameButton', function() {
 			$("#order_by").val("name");
 			toggleOrder();
 		});
@@ -107,7 +128,7 @@ $(document).ready(function() {
 		 * @event #orderRatingButton.click
 		 * Set order_by to "ratings", toggle the order, and rerun the search
 		 */
-		$("#orderRatingButton").click(function() {
+		$listWrapper.on('click', 'a#orderRatingButton', function() {
 			$("#order_by").val("ratings");
 			toggleOrder();
 		});
@@ -128,7 +149,7 @@ $(document).ready(function() {
 		 * @event #firstNumber.click
 		 * Navigate to the first page.
 		 */
-		$(".firstNumber").click(function() {
+		$listWrapper.on('click', 'a.firstNumber', function() {
 			handleNavigation(1);
 		});
 
@@ -136,7 +157,7 @@ $(document).ready(function() {
 		 * @event #lastNumber.click
 		 * Navigate to the last page.
 		 */
-		$(".lastNumber").click(function() {
+		$listWrapper.on('click', 'a.lastNumber', function() {
 			handleNavigation($("#numPages").val());
 		});
 
@@ -144,7 +165,7 @@ $(document).ready(function() {
 		 * @event #previousArrow.click
 		 * Navigate to the previous page.
 		 */
-		$(".previousArrow").click(function() {
+		$listWrapper.on('click', 'a.previousArrow', function() {
 			handleNavigation(parseInt($("#thisPage").val())-1);
 		});
 
@@ -152,7 +173,7 @@ $(document).ready(function() {
 		 * @event #previousNumber.click
 		 * Navigate to the previous page.
 		 */
-		$(".previousNumber").click(function() {
+		$listWrapper.on('click', 'a.previousNumber', function() {
 			handleNavigation(parseInt($("#thisPage").val())-1);
 		});
 
@@ -160,7 +181,7 @@ $(document).ready(function() {
 		 * @event #nextArrow.click
 		 * Navigate to the next page.
 		 */
-		$(".nextArrow").click(function() {
+		$listWrapper.on('click', 'a.nextArrow', function() {
 			handleNavigation(parseInt($("#thisPage").val())+1);
 		});
 
@@ -168,7 +189,7 @@ $(document).ready(function() {
 		 * @event #nextNumber.click
 		 * Navigate to the next page.
 		 */
-		$(".nextNumber").click(function() {
+		$listWrapper.on('click', 'a.nextNumber', function() {
 			handleNavigation(parseInt($("#thisPage").val())+1);
 		});
 
