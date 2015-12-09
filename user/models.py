@@ -6,7 +6,7 @@ from django.db.models import ExpressionWrapper, Value, BooleanField, Case, When
 from recipes.models import Recipe, RecipeIngredients
 from ingredients.models import Ingredient
 from django.core.validators import MaxValueValidator
-
+from notifications.tasks import create_notification
 
 # Create your models here.
 
@@ -33,6 +33,8 @@ class UserProfile(models.Model):
             self.favorites.remove(favorite)
         else:
             self.favorites.add(favorite)
+
+        self._create_user_notification()
 
         return self.get_favorites()
 
@@ -72,16 +74,14 @@ class UserProfile(models.Model):
         UserIngredients._delete_user_ingredient(self, ingredient_id)
         user_ingredients = UserIngredients.objects.filter(user=self)
 
+        self._create_user_notification()
+
         return self._create_dict(user_ingredients, 'ingredient_id', 'quantity')
 
-    def update_user_ingredient_quantity(self, ingredient_id, quantity):
-        # Call user ingredients to update the quantity of the ingredient with the given id
-        # with the given quantity
-        return UserIngredients._update_quantity(self, ingredient_id, quantity)
-
-    @staticmethod
-    def bulk_update_user_ingredient_quantity(user_ingredients):
+    def bulk_update_user_ingredient_quantity(self, user_ingredients):
         bulk_update(user_ingredients, update_fields=['quantity'])
+
+        self._create_user_notification()
 
     def create_recipe(self, recipe_name, instructions, ingredients):
         new_ingredients = []
@@ -98,6 +98,8 @@ class UserProfile(models.Model):
 
         recipe = Recipe._add_recipe(recipe_name, instructions, recipe_ingredients, self)
 
+        self._create_user_notification()
+
         return recipe
 
     def delete_recipe(self, recipe_id):
@@ -105,6 +107,8 @@ class UserProfile(models.Model):
         recipe._delete_recipe()
 
         self.refresh_from_db()
+
+        self._create_user_notification()
 
         return self
 
@@ -129,6 +133,14 @@ class UserProfile(models.Model):
             )
         )
         return Recipe.get_recipes_by_ingredients(ingredient_ids, user_ingredients, recipes)
+
+    def _create_user_notification(self):
+        user_info = {'pk': self.pk}
+
+        try:
+            create_notification.delay(user_info)
+        except OSError:
+            create_notification(user_info)
 
     # def get_recipe(self, get_filter_dict):
     #     user_ingredients = self.useringredients_set.select_related('ingredient')
@@ -187,14 +199,6 @@ class UserIngredients(models.Model):
                                                                                       quantity=self.quantity)
 
     @classmethod
-    def _update_quantity(cls, user, ingredient_id, qty):
-        user_ingredient = UserIngredients.objects.get(user=user, ingredient=ingredient_id)
-        user_ingredient.quantity = qty
-        user_ingredient.save()
-
-        return user_ingredient
-
-    @classmethod
     def _add_user_ingredients(cls, user, ingredient_ids):
         ingredients = list(Ingredient.objects.in_bulk(ingredient_ids).values())
         user_ingredients = []
@@ -212,6 +216,11 @@ class RecipeComment(models.Model):
     user = models.ForeignKey(UserProfile)
     recipe = models.ForeignKey(Recipe)
     comment_text = models.CharField(max_length=500)
+    timestamp = models.DateTimeField(auto_created=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+        unique_together = (('user', 'recipe'),)
 
     def __str__(self):
         return "Author:{user} -> Recipe:{recipe} -> Comment:({comment})".format(user=self.user, recipe=self.recipe,

@@ -1,11 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.views.generic import View
-from django.core.context_processors import csrf
-
-import json
 
 from user.models import UserProfile
-from .models import Ingredient
 
 
 class AddIngredients(View):
