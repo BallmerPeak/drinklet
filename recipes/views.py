@@ -148,13 +148,15 @@ class SearchRecipes(View):
             profile = UserProfile.get_or_create_profile(request.user)
             favorites = profile.get_favorites()
 
+        filter_info = json.loads(request.POST['data'])
+
         filter_res = _filter_recipes(
-            request.POST.get('search_ingredients'),
-            request.POST.get('query'),
-            request.POST.get('limit'),
-            request.POST.get('order_by'),
-            request.POST.get('order'),
-            request.POST.get('page'),
+            filter_info['search_ingredients'],
+            filter_info['query'],
+            filter_info['limit'],
+            filter_info['order_by'],
+            filter_info['order'],
+            filter_info['page'],
             profile
         )
 
