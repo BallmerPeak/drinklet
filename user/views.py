@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.views import AuthenticationForm
+from django.contrib.auth.views import AuthenticationForm, password_change, password_change_done
 from django.views.generic import View
 from user import forms
 from django.http import HttpResponseRedirect, HttpResponse
@@ -78,9 +78,6 @@ class Profile(View):
 
     def post(self, request):
         profile = UserProfile.get_or_create_profile(request.user)
-        u = User.objects.get(username=request.user.username)
-        u.set_password()
-        u.save()
 
         quantities = json.loads(request.POST["ingredient_objects"])
         deleted = json.loads(request.POST["deleted_ingredients"])
@@ -120,6 +117,11 @@ class Profile(View):
             'favorites': favorites
         }
         return render(request, 'user/profile.html', context)
+
+
+    def change_password(request):
+        u = User.objects.get(username=request.user)
+
 
 
 class Login(View):

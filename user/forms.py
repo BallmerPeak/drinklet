@@ -36,6 +36,20 @@ class RegisterForm(AuthForm):
             self.add_error('pwd', self.error['password_mismatch'])
 
 
+class ChangePasswordForm(forms.Form):
+    old_pwd = forms.CharField(widget=forms.PasswordInput())
+    new_pwd = forms.CharField(widget=forms.PasswordInput())
+    confirm_new_pwd = forms.CharField(widget=forms.PasswordInput())
+    error = {'password_mismatch': "Passwords don't match"}
+
+    def clean(self):
+        data1 = self.cleaned_data.get('old_pwd')
+        data2 = self.cleaned_data.get('new_pwd')
+        data3 = self.cleaned_data.get('confirm_new_pwd')
+
+        if data2 and data3 and data2 != data3:
+            self.add_error('pwd', self.error['password_mismatch'])
+
 
 
 
