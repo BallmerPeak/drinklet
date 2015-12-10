@@ -98,12 +98,16 @@ $(document).ready(function() {
         $("#searchButton").click(function(evt) {
             var postData = {}, newList;
             evt.preventDefault();
-			postData.ingredients = getSelectedIngredients();
+			postData.search_ingredients = getSelectedIngredients();
             postData.page = $('#page').val();
             postData.limit = $('#limit').val();
             postData.query = $('#query').val();
             postData.order = $('#order').val();
             postData.order_by = $('#order_by').val();
+
+			postData = {
+                'data': JSON.stringify(postData)
+            }
 
             $.post('/', postData)
                 .done(function (html) {

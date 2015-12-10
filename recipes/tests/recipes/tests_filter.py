@@ -1,3 +1,5 @@
+import json
+
 from django.test import TransactionTestCase, Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -99,7 +101,8 @@ class RecipeFilterTest(TransactionTestCase):
         self.assertEqual(len(context['results'].object_list), 3)
 
     def test_no_values_post(self):
-        response = self.c.post(reverse('recipes.search'))
+        data = json.dumps({})
+        response = self.c.post(reverse('recipes.search'), {'data': data}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         context = list(response.context[-1])[1]
         self.assertEqual(context['query'], self.query)
         self.assertEqual(context['search_ingredients'], self.ingredients)
@@ -109,25 +112,25 @@ class RecipeFilterTest(TransactionTestCase):
         self.assertEqual(len(context['results'].object_list), 3)
 
     def test_ingredients_is_bad_str(self):
-        response = self.c.post(reverse('recipes.search'),{
-            'search_ingredients': 'bad string'
-        })
+        data = json.dumps({'search_ingredients': 'bad string'})
+        response = self.c.post(reverse('recipes.search'), {'data': data}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         context = list(response.context[-1])[1]
         self.assertEqual(context['search_ingredients'], self.ingredients)
         self.assertEqual(len(context['results'].object_list), 3)
 
     def test_ingredients_is_matching(self):
-        response = self.c.post(reverse('recipes.search'),{
-            'search_ingredients': '%d,%d,%d' % (self.pineapple_juice_id, self.white_rum_id, self.coconut_cream_id)
+        data = json.dumps({
+            'search_ingredients': '{},{},{}'.format(self.pineapple_juice_id, self.white_rum_id, self.coconut_cream_id)
         })
+        response = self.c.post(reverse('recipes.search'), {'data': data}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         context = list(response.context[-1])[1]
-        self.assertEqual(context['search_ingredients'], [self.pineapple_juice_id, self.white_rum_id, self.coconut_cream_id])
+        self.assertListEqual([self.pineapple_juice_id, self.white_rum_id, self.coconut_cream_id],
+                             context['search_ingredients'])
         self.assertEqual(len(context['results'].object_list), 1)
 
     def test_ingredients_is_not_matching(self):
-        response = self.c.post(reverse('recipes.search'),{
-            'search_ingredients': '%d,%d' % (self.gin_id, self.white_rum_id)
-        })
+        data = json.dumps({'search_ingredients': '{},{}'.format(self.gin_id, self.white_rum_id)})
+        response = self.c.post(reverse('recipes.search'), {'data': data}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         try:
             context = list(response.context[-1])[1]
         except KeyError:
@@ -137,18 +140,16 @@ class RecipeFilterTest(TransactionTestCase):
         self.assertEqual(len(context['results'].object_list), 0)
 
     def test_query_is_matching(self):
-        response = self.c.post(reverse('recipes.search'),{
-            'query': 'gin'
-        })
+        data = json.dumps({'query': 'gin'})
+        response = self.c.post(reverse('recipes.search'), {'data': data}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         context = list(response.context[-1])[1]
         self.assertEqual(context['query'], 'gin')
         self.assertEqual(len(context['results'].object_list), 1)
         self.assertEqual(context['results'].object_list[0], self.gin_vodka)
 
     def test_query_is_not_matching(self):
-        response = self.c.post(reverse('recipes.search'),{
-            'query': 'abc'
-        })
+        data = json.dumps({'query': 'abc'})
+        response = self.c.post(reverse('recipes.search'), {'data': data}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         try:
             context = list(response.context[-1])[1]
         except KeyError:
@@ -158,10 +159,8 @@ class RecipeFilterTest(TransactionTestCase):
         self.assertEqual(len(context['results'].object_list), 0)
 
     def test_order_by_name_asc(self):
-        response = self.c.post(reverse('recipes.search'),{
-            'order_by': 'name',
-            'order': 'asc'
-        })
+        data = json.dumps({'order_by': 'name', 'order': 'asc'})
+        response = self.c.post(reverse('recipes.search'), {'data': data}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         context = list(response.context[-1])[1]
         self.assertEqual(context['order_by'], 'name')
         self.assertEqual(context['order'], 'asc')
@@ -171,10 +170,8 @@ class RecipeFilterTest(TransactionTestCase):
         self.assertEqual(context['results'].object_list[2], self.screwdriver)
 
     def test_order_by_name_desc(self):
-        response = self.c.post(reverse('recipes.search'),{
-            'order_by': 'name',
-            'order': 'desc'
-        })
+        data = json.dumps({'order_by': 'name', 'order': 'desc'})
+        response = self.c.post(reverse('recipes.search'), {'data': data}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         context = list(response.context[-1])[1]
         self.assertEqual(context['order_by'], 'name')
         self.assertEqual(context['order'], 'desc')
@@ -184,10 +181,8 @@ class RecipeFilterTest(TransactionTestCase):
         self.assertEqual(context['results'].object_list[2], self.gin_vodka)
 
     def test_order_by_ratings_asc(self):
-        response = self.c.post(reverse('recipes.search'),{
-            'order_by': 'ratings',
-            'order': 'asc'
-        })
+        data = json.dumps({'order_by': 'ratings', 'order': 'asc'})
+        response = self.c.post(reverse('recipes.search'), {'data': data}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         context = list(response.context[-1])[1]
         self.assertEqual(context['order_by'], 'ratings')
         self.assertEqual(context['order'], 'asc')
@@ -197,10 +192,8 @@ class RecipeFilterTest(TransactionTestCase):
         self.assertEqual(context['results'].object_list[2], self.gin_vodka)
 
     def test_order_by_ratings_desc(self):
-        response = self.c.post(reverse('recipes.search'),{
-            'order_by': 'ratings',
-            'order': 'desc'
-        })
+        data = json.dumps({'order_by': 'ratings', 'order': 'desc'})
+        response = self.c.post(reverse('recipes.search'), {'data': data}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         context = list(response.context[-1])[1]
         self.assertEqual(context['order_by'], 'ratings')
         self.assertEqual(context['order'], 'desc')

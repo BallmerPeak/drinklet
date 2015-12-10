@@ -28,7 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = (
@@ -39,9 +38,11 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'djcelery',
     'user',
     'ingredients',
     'recipes',
+    'notifications',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -122,3 +123,13 @@ STATIC_ROOT = 'staticfiles'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+
+# Celery Settings
+BROKER_URL = os.environ.get('CLOUDAMQP_URL', '')
+CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
+
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_ENABLE_UTC = True
+

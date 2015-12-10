@@ -84,8 +84,19 @@ class Profile(View):
         for removedIngredient in deleted:
             profile.delete_user_ingredient(removedIngredient.get("id"))
 
-        for submission in quantities:
-            profile.update_user_ingredient_quantity(submission.get("id"), submission.get("quantity"))
+        user_ingredient_info = {
+            info['id']: info['quantity']
+            for info in quantities
+        }
+        user_ingredients_ids = user_ingredient_info.keys()
+        user_ingredients = list(profile.useringredients_set.filter(
+            ingredient_id__in=user_ingredients_ids).select_related('ingredient'))
+
+        for user_ingredient in user_ingredients:
+            ingredient_id = user_ingredient.ingredient_id
+            user_ingredient.quantity = user_ingredient_info[ingredient_id]
+
+        profile.bulk_update_user_ingredient_quantity(user_ingredients)
 
         ingredients = profile.ingredients.values()
         ingredient_quantity = []

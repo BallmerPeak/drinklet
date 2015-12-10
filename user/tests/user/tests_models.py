@@ -225,7 +225,7 @@ class UserProfileTestCase(TestCase):
         delete_nonexistent_ingredient(ingredient_dict)
         delete_from_empty_field()
 
-    def test_update_user_ingredient_quantity(self):
+    def test_bulk_update_user_ingredient_quantity(self):
         vodka = UserIngredients.objects.get(ingredient=self.vodka)
         gin = UserIngredients.objects.get(ingredient=self.gin)
         pineapple_juice = UserIngredients.objects.get(ingredient=self.pineapple)
@@ -238,9 +238,11 @@ class UserProfileTestCase(TestCase):
         self.assertEqual(10, gin.quantity)
         self.assertEqual(2, pineapple_juice.quantity)
 
-        self.profile.update_user_ingredient_quantity(vodka.ingredient.id, 15)
-        self.profile.update_user_ingredient_quantity(gin.ingredient.id, 5)
-        self.profile.update_user_ingredient_quantity(pineapple_juice.ingredient.id, 1)
+        vodka.quantity = 15
+        gin.quantity = 5
+        pineapple_juice.quantity = 1
+
+        self.profile.bulk_update_user_ingredient_quantity([vodka, gin, pineapple_juice])
 
         vodka.refresh_from_db()
         gin.refresh_from_db()
