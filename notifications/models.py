@@ -18,13 +18,18 @@ class Notification(models.Model):
         ordering = ['-timestamp']
 
     def __str__(self):
-        return 'Profile: {user}-->Type: {type}-->Notification: {notify}'.format(user=self.user, type=self.type,
-                                                                                notify=self.notification[:10])
+        return 'Profile: {user}-->Ingredient: {ing}-->Notification: {notify}'.format(user=self.user,
+                                                                                     ing=self.ingredient,
+                                                                                     notify=self.notification[:14])
+
+    @classmethod
+    def get_notification(cls, user):
+        return cls.objects.filter(user=user)
 
     @classmethod
     def _get_low_notification_message(cls, ingredient_id):
         ing_name = Ingredient.objects.filter(pk=ingredient_id).only('name')[0].name
-        return 'You are low on ingredient: {}'.format(ing_name)
+        return 'Low Ingredient: {}'.format(ing_name)
 
     @classmethod
     def create_low_ingredient_notifications(cls, user, ingredient_ids):
