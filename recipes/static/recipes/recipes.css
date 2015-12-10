@@ -61,3 +61,7 @@ body {
 .recipe-card-rating>i:hover {
 	color: black !important;
 }
+
+.missing-recipe {
+	background-color: #FFF5F5;
+}

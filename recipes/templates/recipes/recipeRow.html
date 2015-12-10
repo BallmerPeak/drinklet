@@ -1,5 +1,9 @@
 <div class="col l6 m8 offset-m2 s12 card-wrapper">
+    {% if user and user.is_authenticated and recipe.missing_ingredients %}
+    <div class="card missing-recipe">
+    {% else %} 
     <div class="card">
+    {% endif %}
         <div class="card-image">
             <div class="row">
                 {% if user and user.is_authenticated and not recipe.is_author %}
@@ -34,11 +38,25 @@
 
             <div class="row">
                 <div class="recipe-card-top-ingredients">
-                    {% for recipeIngredient in recipe.recipeingredients_set.all %}
+                    {% if user and user.is_authenticated and recipe.missing_ingredients %}
+                        {% for recipeIngredient in recipe.recipeingredients_set.all %}
+                            <div class="col s6 m6 l4 center
+                                {% for ingid, _ in recipe.missing_ingredients %}
+                                {% if ingid == recipeIngredient.ingredient.id %}
+                                red-text
+                                {% endif %}
+                                {% endfor %}
+                            ">                                
+                                <h5>{{ recipeIngredient.ingredient.name }}</h5>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        {% for recipeIngredient in recipe.recipeingredients_set.all %}
                         <div class="col s6 m6 l4 center">
                             <h5>{{ recipeIngredient.ingredient.name }}</h5>
                         </div>
-                    {% endfor %}
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>
