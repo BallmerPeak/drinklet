@@ -8,5 +8,5 @@ urlpatterns = [
     url(r'^login$', Login.as_view(), name='user.login'),
     url(r'^logout$', logout_view, name='user.logout'),
     url(r'^profile$', login_required(Profile.as_view()), name='user.profile'),
-    url(r'^change-password$', change_password, name='profile.change_password'),
+    url(r'^change_password$', change_password, name='user.change_password'),
 ]

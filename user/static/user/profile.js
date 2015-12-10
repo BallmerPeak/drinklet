@@ -1,8 +1,31 @@
 /**
  * Created by Bradley on 11/21/2015.
  */
+
+var password = function () {
+    var myGod, jqxhr;
+
+    myGod = function (oldPassword, newPassword, confirmNewPassword) {
+        if(newPassword != confirmNewPassword){
+            $('error').text("New password fields do not match");
+        }
+        jqxhr = $.post('change_password',
+            {
+                'pwd1': oldPassword,
+                'pwd2': newPassword,
+                'pwd3': confirmNewPassword
+            });
+
+        return jqxhr;
+    };
+
+    return {
+        'password': pwd
+    };
+}();
 // Wait until the DOM is ready
 $(document).ready(function() {
+    var pwd1, pwd2, pwd3, passwordModalContent, replaceHtml
     /**
      * @class UserProfile
      * Namespace for the functions that handle user profile
@@ -36,12 +59,12 @@ $(document).ready(function() {
                         noClear = false;
                         // Create button for clearing ingredients list
                         clearButton = $("<div />",{'class': 'col s1'})
-                                            .append("<br>")
-                                            .append($('<a />',{'id': 'clearIngredients', 'class': 'btn-floating btn-small blue'})
-                                                    .append($('<i />',{'class': 'large material-icons'})
-                                                            .append('delete')
-                                                        )
-                                                );
+                            .append("<br>")
+                            .append($('<a />',{'id': 'clearIngredients', 'class': 'btn-floating btn-small blue'})
+                                .append($('<i />',{'class': 'large material-icons'})
+                                    .append('delete')
+                            )
+                        );
                         /**
                          * @event clearButton.click
                          * Clear the list of ingredients and remove self
@@ -50,11 +73,12 @@ $(document).ready(function() {
                         $("#ingredientListContainer").toggleClass("s12 s10");
                         $("#ingredientListContainer").toggleClass("m4 m3");
                         $("#ingredientListContainer").after(clearButton);
-                    } 
+                    }
                 }
 
             });
         }
+
 
         /**
          * @method getSelectedIngredients
@@ -117,4 +141,32 @@ $(document).ready(function() {
 
         init();
     })();
+
+    $('.modal-trigger').leanModal({
+        ready: function() {
+            $('#oldPassword').focus();
+        },
+        // Modal complete event handler
+        complete: function() {
+            // Remove all overlays
+        }
+    });
+
+    $('#confirm_button').click(function() {
+        pwd1 = $('#oldPassword').val();
+        pwd2 = $('#newPassword').val();
+        pwd3 = $('#confirmNewPassword').val();
+        password.myGod(pwd1, pwd2, pwd3)
+            .done(function (data) {
+                var jsonData = JSON.parse(data);
+                if(jsonData.redirect)
+                    window.location.href = jsonData.redirect;
+            })
+            .fail(function (data) {
+                passwordModalContent = $('#passwordModal').find('> .modal-content');
+                replaceHtml = $(data.responseText).find('.modal-content').html();
+                passwordModalContent.html(replaceHtml);
+                $('#oldPassword').focus().select();
+            })
+    });
 });

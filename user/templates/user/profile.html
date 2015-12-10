@@ -7,18 +7,19 @@
     <script src="{% static 'user/profile.js' %}"></script>
     <script src="{% static 'recipes/card.js' %}"></script>
     <script src="{% static 'recipes/recipeRow.js' %}"></script>
+    {% include 'user/changepassword.html' %}
 
     <div class="container">
         <h3 class="black-text">Profile</h3>
         <hr>
-
-        {% if messages %}
-            {% for message in messages %}
-                <h6 class="green-text">{{message}}</h6>
-            {%endfor%}
-            <hr>
-        {% endif %}
-
+        <div id="message-wrapper">
+            {% if messages %}
+                {% for message in messages %}
+                    <h6 class="green-text">{{message}}</h6>
+                {%endfor%}
+                <hr>
+            {% endif %}
+        </div>
         <!-- Display User's Account Details -->
         <h5 class="activator grey-text text-darken-4">Account Details</h5>
         <div class="card grey lighten-5">
@@ -27,31 +28,7 @@
                 <br>
                 <span class="black-text">Email:</span> <span class="grey-text text-darken-1">{{ profile.user.email }}</span>
             </div>
-        </div>
-        <div class="form">
-            <div class="row center-align">
-                <div class="col s8 input-field">
-                    <input id="oldPassword" name="oldpwd" type="password" class="validate">
-                    <label class="active" for="loginPassword">Old Password</label>
-                </div>
-            </div>
-            <div class="row center-align">
-                <div class="col s8 input-field">
-                    <input id="newPassword" name = "pwd" type="password" class="validate">
-                    <label for="newPassword">New Password</label>
-                    {{form.pwd.errors}}
-                </div>
-             </div>
-              <div class="row center-align">
-                <div class="col s8 input-field">
-                  <input id="newConfirmPassword" name = "pwd2" type="password" class="validate">
-                  <label for="newConfirmPassword">Confirm New Password</label>
-                  {{form.pwd2.errors}}
-                </div>
-              </div>
-        </div>
-        <div class="modal-footer">
-            <button id = "regBut" name="submitPasswordChange" class="waves-effect waves-light btn blue">Change Password</button>
+            <a class="modal-trigger" rel="passwordModal" href="#passwordModal">Change Password</a>
         </div>
         <div class="row">
             <div class="col s12">

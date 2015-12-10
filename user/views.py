@@ -130,9 +130,13 @@ class Profile(View):
         return render(request, 'user/profile.html', context)
 
 
-    def change_password(request):
-        u = User.objects.get(username=request.user)
-
+def change_password(request):
+    u = User.objects.get(username=request.user)
+    if not User.check_password(u, request.POST['pwd']):
+        return HttpResponse('error', status=401)
+    if User.check_password(u, request.POST['pwd']) and request.POST['pwd2'] == request.POST['pwd3']:
+            newpwd = "blah"
+    return HttpResponse('error')
 
 
 class Login(View):
