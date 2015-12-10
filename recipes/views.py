@@ -108,8 +108,10 @@ class SearchRecipes(View):
         if request.user.is_authenticated():
             profile = UserProfile.get_or_create_profile(request.user)
 
+        search_ingredients = request.session.pop('recipe_search_ingredients', [])
+
         filter_res = _filter_recipes(
-            [],
+            search_ingredients,
             "",
             request.GET.get('limit'),
             request.GET.get('order_by'),
@@ -129,7 +131,7 @@ class SearchRecipes(View):
             'limit': filter_res['limit'],
             'order_by': filter_res['order_by'],
             'order': filter_res['order'],
-            'search_ingredients': [],
+            'search_ingredients': filter_res['search_ingredients'],
             'categories': Ingredient.get_all_ingredients(),
             'results': filter_res['results'],
             'favorites': favorites,
@@ -148,15 +150,18 @@ class SearchRecipes(View):
             profile = UserProfile.get_or_create_profile(request.user)
             favorites = profile.get_favorites()
 
-        filter_info = json.loads(request.POST['data'])
+        if request.is_ajax():
+            filter_info = json.loads(request.POST['data'])
+        else:
+            filter_info = request.POST
 
         filter_res = _filter_recipes(
-            filter_info['search_ingredients'],
-            filter_info['query'],
-            filter_info['limit'],
-            filter_info['order_by'],
-            filter_info['order'],
-            filter_info['page'],
+            filter_info.get('search_ingredients'),
+            filter_info.get('query'),
+            filter_info.get('limit'),
+            filter_info.get('order_by'),
+            filter_info.get('order'),
+            filter_info.get('page'),
             profile
         )
 
@@ -171,7 +176,11 @@ class SearchRecipes(View):
             'favorites': favorites
 
         }
-        return render(request, 'recipes/recipelist.html', context)
+        if request.is_ajax():
+            return render(request, 'recipes/recipelist.html', context)
+        else:
+            request.session['recipe_search_ingredients'] = filter_res.get('search_ingredients', [])
+            return redirect(reverse('recipes.search'))
 
 
 class RecipeView(View):
