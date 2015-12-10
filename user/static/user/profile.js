@@ -2,27 +2,24 @@
  * Created by Bradley on 11/21/2015.
  */
 
-var password = function () {
-    var myGod, jqxhr;
+var user = function () {
+    var login, jqxhr;
 
-    myGod = function (oldPassword, newPassword, confirmNewPassword) {
-        if(newPassword != confirmNewPassword){
-            $('error').text("New password fields do not match");
-        }
-        jqxhr = $.post('change_password',
+    login = function (username, password) {
+        jqxhr = $.post('/user/login',
             {
-                'pwd1': oldPassword,
-                'pwd2': newPassword,
-                'pwd3': confirmNewPassword
+                'username': username,
+                'password': password
             });
 
         return jqxhr;
     };
 
     return {
-        'password': pwd
+        'login': login
     };
 }();
+
 // Wait until the DOM is ready
 $(document).ready(function() {
     var pwd1, pwd2, pwd3, passwordModalContent, replaceHtml
@@ -139,34 +136,36 @@ $(document).ready(function() {
          */
         $("#addIngredientsButton").click(getSelectedIngredients);
 
+        $('.modal-trigger').leanModal({
+            ready: function() {
+                $('#oldPassword').focus();
+            },
+            // Modal complete event handler
+            complete: function() {
+                // Remove all overlays
+            }
+        });
+
+        $('#confirm_button').click(function() {
+            pwd1 = $('#oldPassword').val();
+            pwd2 = $('#newPassword').val();
+            pwd3 = $('#confirmNewPassword').val();
+            var jqxhr;
+            jqxhr = $.post('change_password',
+                    {
+                        'pwd1': pwd1,
+                        'pwd2': pwd2,
+                        'pwd3': pwd3
+                    });
+
+                return jqxhr;
+            return {
+                'login': login
+            };
+        });
+
         init();
     })();
 
-    $('.modal-trigger').leanModal({
-        ready: function() {
-            $('#oldPassword').focus();
-        },
-        // Modal complete event handler
-        complete: function() {
-            // Remove all overlays
-        }
-    });
 
-    $('#confirm_button').click(function() {
-        pwd1 = $('#oldPassword').val();
-        pwd2 = $('#newPassword').val();
-        pwd3 = $('#confirmNewPassword').val();
-        password.myGod(pwd1, pwd2, pwd3)
-            .done(function (data) {
-                var jsonData = JSON.parse(data);
-                if(jsonData.redirect)
-                    window.location.href = jsonData.redirect;
-            })
-            .fail(function (data) {
-                passwordModalContent = $('#passwordModal').find('> .modal-content');
-                replaceHtml = $(data.responseText).find('.modal-content').html();
-                passwordModalContent.html(replaceHtml);
-                $('#oldPassword').focus().select();
-            })
-    });
 });
