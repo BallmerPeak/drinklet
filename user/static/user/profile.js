@@ -2,24 +2,6 @@
  * Created by Bradley on 11/21/2015.
  */
 
-var user = function () {
-    var login, jqxhr;
-
-    login = function (username, password) {
-        jqxhr = $.post('/user/login',
-            {
-                'username': username,
-                'password': password
-            });
-
-        return jqxhr;
-    };
-
-    return {
-        'login': login
-    };
-}();
-
 // Wait until the DOM is ready
 $(document).ready(function() {
     var pwd1, pwd2, pwd3, passwordModalContent, replaceHtml
@@ -60,8 +42,8 @@ $(document).ready(function() {
                             .append($('<a />',{'id': 'clearIngredients', 'class': 'btn-floating btn-small blue'})
                                 .append($('<i />',{'class': 'large material-icons'})
                                     .append('delete')
-                            )
-                        );
+                                )
+                            );
                         /**
                          * @event clearButton.click
                          * Clear the list of ingredients and remove self
@@ -152,16 +134,32 @@ $(document).ready(function() {
             pwd3 = $('#confirmNewPassword').val();
             var jqxhr;
             jqxhr = $.post('change_password',
-                    {
-                        'pwd1': pwd1,
-                        'pwd2': pwd2,
-                        'pwd3': pwd3
-                    });
+                {
+                    'pwd1': pwd1,
+                    'pwd2': pwd2,
+                    'pwd3': pwd3
+                });
 
-                return jqxhr;
-            return {
-                'login': login
-            };
+            jqxhr.done(
+                function(data) {
+                    /*
+                    1) Close the modal ($('#passwordModal').close())
+                    2) Either
+                        a) extract a rendered success message from the data parameter (should be in data.responseText)
+                        or
+                        b) create your own success message html element using jquery (check google for how to do that)
+                       I recommend passing rendered success message from view and doing (a), but either works.
+                    3) Then append the success message to the message-wrapper div.
+                    */
+                }
+            ).fail(
+                function(data) {
+                    /*
+                    You can pretty much use the same logic I used for fail in form.js but change some ids and variable
+                    names. 
+                     */
+                }
+            );
         });
 
         init();
