@@ -12,14 +12,24 @@
     <div class="container">
         <h3 class="black-text">Profile</h3>
         <hr>
-        <div id="message-wrapper">
-            {% if messages %}
-                {% for message in messages %}
-                    <h6 class="green-text">{{message}}</h6>
-                {%endfor%}
-                <hr>
-            {% endif %}
-        </div>
+
+        <ul id="chgPwSuccess" class="collection green lighten-2" hidden="hidden">
+            <li class="collection-item valign-wrapper green lighten-2 white-text">
+                <i class="material-icons valign left">done</i>
+            </li>
+        </ul>
+
+        {% if messages %}
+            <ul class="collection green lighten-2">
+            {% for message in messages %}
+                <li class="collection-item valign-wrapper green lighten-2 white-text">
+                    <i class="material-icons valign left">done</i>
+                    {{message}}
+                </li>
+            {%endfor%}
+            </ul>
+        {% endif %}
+
         <!-- Display User's Account Details -->
         <h5 class="activator grey-text text-darken-4">Account Details</h5>
         <div class="card grey lighten-5">
@@ -27,8 +37,10 @@
                 <span class="black-text">Username:</span> <span class="grey-text text-darken-1">{{ profile.user.username }}</span>
                 <br>
                 <span class="black-text">Email:</span> <span class="grey-text text-darken-1">{{ profile.user.email }}</span>
+                <br>
+                <a id="changePw" class="modal-trigger" rel="passwordModal" href="#passwordModal">Change Password</a>
             </div>
-            <a class="modal-trigger" rel="passwordModal" href="#passwordModal">Change Password</a>
+
         </div>
         <div class="row">
             <div class="col s12">

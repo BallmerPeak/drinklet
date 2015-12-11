@@ -5,13 +5,13 @@ from django.views.generic import View
 from user import forms
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from user.models import UserProfile
 from user.models import UserIngredients
 from ingredients.models import Ingredient
+from django.contrib.auth import update_session_auth_hash
 
 import json
-from django.core.exceptions import ObjectDoesNotExist
 
 
 # Create your views here.
@@ -42,6 +42,7 @@ class Profile(View):
         recipe_edit_success_message = request.GET.get('success_message', '')
         if recipe_edit_success_message:
             messages.append(recipe_edit_success_message)
+
         ingredients = profile.ingredients.values()
         ingredient_quantity = []
         for e in ingredients:
@@ -98,45 +99,35 @@ class Profile(View):
 
         profile.bulk_update_user_ingredient_quantity(user_ingredients)
 
-        ingredients = profile.ingredients.values()
-        ingredient_quantity = []
-        for e in ingredients:
-            for ingredient in UserIngredients.objects.all().values():
-                ingredient_id = ingredient.get("ingredient_id")
-                if ingredient_id == e.get("id"):
-                    item = {"id": ingredient_id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
-                    ingredient_quantity.append(item)
-        favorites = profile.get_favorites()
-
-        # Get list of ids corresponding to user's ingredients
-        user_ingredient_ids = profile.ingredients.values_list('id', flat=True)
-
-        # Get a category bucketed list of ingredients that the user does not have
-        categories = {}
-        for category, category_ingredients in Ingredient.get_all_ingredients().items():
-            categories[category] = []
-            for ingredient in category_ingredients:
-                if ingredient.id not in user_ingredient_ids:
-                    categories[category].append(ingredient)
-
-        context = {
-            'profile': profile,
-            'categories': categories,
-            'user_ingredients': ingredient_quantity,
-            'search_ingredients': ','.join([str(ingredient) for ingredient in user_ingredient_ids]),
-            'add_ingredients': list(profile.ingredients.values_list('id', flat=True)),
-            'favorites': favorites
-        }
-        return render(request, 'user/profile.html', context)
+        return redirect(reverse('user.profile'))
 
 
 def change_password(request):
     u = User.objects.get(username=request.user)
-    if not User.check_password(u, request.POST['pwd']):
-        return HttpResponse('error', status=401)
-    if User.check_password(u, request.POST['pwd']) and request.POST['pwd2'] == request.POST['pwd3']:
-            newpwd = "blah"
-    return HttpResponse('error')
+    oldPwd = request.POST['oldpwd']
+    newPwd = request.POST['newpwd']
+    confirmPwd = request.POST['confirmpwd']
+
+    if not User.check_password(u, oldPwd):
+        return HttpResponse("Your old password was entered incorrectly. "
+                                "Please enter it again.", status=401)
+    if not newPwd == confirmPwd:
+        return HttpResponse("The two password fields didn't match.", status=401)
+
+    if newPwd == "" or oldPwd == "" or confirmPwd == "":
+        return HttpResponse("You cannot have an empty password", status=401)
+
+    if newPwd == oldPwd or confirmPwd == oldPwd:
+        return HttpResponse("You cannot change to the same password", status=401)
+
+    if User.check_password(u, oldPwd) and newPwd == confirmPwd:
+        User.set_password(u, newPwd)
+        u.save()
+        update_session_auth_hash(request, u)
+    pwsuccess = {
+        'redirect': reverse('user.profile')
+    }
+    return HttpResponse(json.dumps(pwsuccess))
 
 
 class Login(View):

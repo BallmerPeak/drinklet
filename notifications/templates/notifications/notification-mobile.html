@@ -1,0 +1,26 @@
+<li class="no-padding">
+    <ul class="collapsible collapsible-accordion">
+        <li>
+            <a class="collapsible-header">Notifications
+                {% if unread > 0 %}
+                    <span class="blue new badge">{{ unread }}</span>
+                {% endif %}
+            </a>
+            <div class="collapsible-body">
+                <ul>
+                    <li>
+                        <a class="blue-text text-darken-3">Low Ingredients</a>
+                        <ul>
+                            <li class="divider"></li>
+                            {% for notification in notifications %}
+                                <li><a href="{% url 'user.profile' %}">{{ notification.ingredient }}</a></li>
+                            {% empty %}
+                                <li>You have no notifications</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</li>

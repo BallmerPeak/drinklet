@@ -1,0 +1,17 @@
+<!-- Dropdown Trigger -->
+<li><a class='dropdown-button' href='#' data-activates='notification-dropdown'>Notifications
+    {% if unread > 0 %}
+        <span class="blue new badge">{{ unread }}</span>
+    {% endif %}
+</a></li>
+
+<!-- Dropdown Structure -->
+<ul id='notification-dropdown' class='dropdown-content'>
+    <li><a href="#" class="blue-text text-darken-3">Low Ingredients</a></li>
+    <li class="divider"></li>
+    {% for notification in notifications %}
+        <li><a href="{% url 'user.profile' %}">{{ notification.ingredient }}</a></li>
+    {% empty %}
+        <li>You have no notifications</li>
+    {% endfor %}
+</ul>

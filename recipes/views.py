@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
@@ -69,10 +67,35 @@ def _filter_recipes(ingredients, query, limit, order_by, order, page, user=None)
 
     # Order results in descending order
     if order == 'desc':
-        recipes = [recipe for recipe in reversed(recipes) if query.lower() in recipe.name]
-    # Order results in ascending order
-    else:
-        recipes = [recipe for recipe in recipes if query.lower() in recipe.name]
+        recipes = reversed(recipes)
+
+    # Further filter by recipe name, ingredients, and author
+    recipes_by_recipe_name = []
+    recipes_by_ingredients = []
+    recipes_by_author = []
+    for recipe in recipes:
+        # Check if the recipe name has the query parameter
+        if query.lower() in recipe.name:
+            recipes_by_recipe_name.append(recipe)
+
+        # Check if the recipe author has the query parameter
+        if query.lower() in recipe.author.user.username:
+            recipes_by_author.append(recipe)
+
+        # Check if any of the recipe's ingredients have the query parameter
+        for recipe_ingredient in recipe.recipeingredients_set.all():
+            if query.lower() in recipe_ingredient.ingredient.name:
+                recipes_by_ingredients.append(recipe)
+                break
+
+    # Make sets out of the lists for making my one liner below shorter
+    in_by_name = set(recipes_by_recipe_name)
+    in_by_ingredient = set(recipes_by_ingredients)
+    in_by_author = set(recipes_by_author)
+
+    # Combining sets into a list with unique 
+    recipes = recipes_by_recipe_name + list(set(recipes_by_ingredients + list(in_by_author - in_by_ingredient)) - in_by_name)
+
 
     paginator = Paginator(recipes, limit)
 

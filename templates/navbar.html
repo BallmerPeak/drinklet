@@ -1,6 +1,7 @@
 {% load staticfiles %}
 
 <div id="navbar">
+    {% if user.is_authenticated %}<div id="is-logged-in"></div>{% endif %}
     <nav class="indigo">
         <div class="container">
             <div class="nav-wrapper">
@@ -17,6 +18,9 @@
                 </ul>
                 <ul class="right hide-on-med-and-down">
                     {% if user.is_authenticated %}
+                        <div class="left" id="notification-wrapper">
+                        {% include 'notifications/notification.html' %}
+                        </div>
                         <li><a class="modal-trigger" href="{% url 'user.logout' %}">Logout</a></li>
                     {% else %}
                         <li><a class="modal-trigger" rel="loginModal" href="#loginModal">Login</a></li>
@@ -25,9 +29,13 @@
                 </ul>
                 <ul class="side-nav" id="mobile-list">
                     <li><a href="{% url 'recipes.search' %}">Search</a></li>
-                    <li><a href="{% url 'user.profile' %}">Profile</a></li>
                     {% if user.is_authenticated %}
+                        <li><a href="{% url 'user.profile' %}">Profile</a></li>
                         <li><a class="modal-trigger" href="{% url 'user.logout' %}">Logout</a></li>
+                        <li class="divider"></li>
+                        <div id="notification-mobile-wrapper">
+                        {% include 'notifications/notification-mobile.html' %}
+                        </div>
                     {% else %}
                         <li><a class="modal-trigger" rel="loginModal" href="#loginModal">Login</a></li>
                         <li><a class="modal-trigger" rel="registerModal" href="#registerModal">Register</a></li>

@@ -10,8 +10,14 @@
         <div class="col s8 offset-s2 input-field">
           <input id="regUsername" name = "username" type="text" class="validate">
           <label for="regUsername">Username</label>
-
-          {{form.username.errors}}
+          {% if form.username.errors %}
+            <ul class="collection red lighten-2">
+                <li class="collection-item valign-wrapper red lighten-2 white-text">
+                    <i class="material-icons valign left">error_outline</i>
+                    {{form.username.errors}}
+                </li>
+            </ul>
+          {% endif %}
         </div>
       </div>
       <!-- Email Field -->
@@ -19,7 +25,14 @@
         <div class="col s8 offset-s2 input-field">
           <input id="regEmail" name = "email" type="email" class="validate">
           <label for="regEmail">Email</label>
-          {{form.email.errors}}
+          {% if form.email.errors %}
+            <ul class="collection red lighten-2">
+                <li class="collection-item valign-wrapper red lighten-2 white-text">
+                    <i class="material-icons valign left">error_outline</i>
+                    {{form.email.errors}}
+                </li>
+            </ul>
+          {% endif %}
         </div>
       </div>
       <!-- Password Field -->
@@ -27,7 +40,14 @@
         <div class="col s8 offset-s2 input-field">
           <input id="regPassword" name = "pwd" type="password" class="validate">
           <label for="regPassword">Password</label>
-          {{form.pwd.errors}}
+          {% if form.pwd.errors %}
+            <ul class="collection red lighten-2">
+                <li class="collection-item valign-wrapper red lighten-2 white-text">
+                    <i class="material-icons valign left">error_outline</i>
+                    {{form.pwd.errors}}
+                </li>
+            </ul>
+          {% endif %}
         </div>
       </div>
       <!-- Password Confirmation Field -->
@@ -35,7 +55,14 @@
         <div class="col s8 offset-s2 input-field">
           <input id="regConfirmPassword" name = "pwd2" type="password" class="validate">
           <label for="regConfirmPassword">Confirm Password</label>
-          {{form.pwd2.errors}}
+          {% if form.pwd2.errors %}
+            <ul class="collection red lighten-2">
+                <li class="collection-item valign-wrapper red lighten-2 white-text">
+                    <i class="material-icons valign left">error_outline</i>
+                    {{form.pwd2.errors}}
+                </li>
+            </ul>
+          {% endif %}
         </div>
       </div>
 

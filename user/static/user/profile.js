@@ -4,7 +4,19 @@
 
 // Wait until the DOM is ready
 $(document).ready(function() {
-    var pwd1, pwd2, pwd3, passwordModalContent, replaceHtml
+    var pwd1, pwd2, pwd3, passwordModalContent, replaceHtml;
+
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    if (getParameterByName("password_change")) {
+        $('#chgPwSuccess').show().find('li').append(" Password Successfully Changed.");
+    }
+
     /**
      * @class UserProfile
      * Namespace for the functions that handle user profile
@@ -42,8 +54,8 @@ $(document).ready(function() {
                             .append($('<a />',{'id': 'clearIngredients', 'class': 'btn-floating btn-small blue'})
                                 .append($('<i />',{'class': 'large material-icons'})
                                     .append('delete')
-                                )
-                            );
+                            )
+                        );
                         /**
                          * @event clearButton.click
                          * Clear the list of ingredients and remove self
@@ -118,15 +130,24 @@ $(document).ready(function() {
          */
         $("#addIngredientsButton").click(getSelectedIngredients);
 
-        $('.modal-trigger').leanModal({
+        $('#changePw').leanModal({
             ready: function() {
-                $('#oldPassword').focus();
+                $('#chg_pw_errors').hide();
+                $('#oldPassword').val("").focus();
+                $('#newPassword').val("");
+                $('#confirmNewPassword').val("");
             },
             // Modal complete event handler
             complete: function() {
                 // Remove all overlays
             }
         });
+
+        $('#passwordModal').keypress(function (evt) {
+        if(evt.which == 13) {
+            $('button#confirm_button').click();
+        }
+    });
 
         $('#confirm_button').click(function() {
             pwd1 = $('#oldPassword').val();
@@ -135,29 +156,22 @@ $(document).ready(function() {
             var jqxhr;
             jqxhr = $.post('change_password',
                 {
-                    'pwd1': pwd1,
-                    'pwd2': pwd2,
-                    'pwd3': pwd3
+                    'oldpwd': pwd1,
+                    'newpwd': pwd2,
+                    'confirmpwd': pwd3
                 });
 
             jqxhr.done(
                 function(data) {
-                    /*
-                    1) Close the modal ($('#passwordModal').close())
-                    2) Either
-                        a) extract a rendered success message from the data parameter (should be in data.responseText)
-                        or
-                        b) create your own success message html element using jquery (check google for how to do that)
-                       I recommend passing rendered success message from view and doing (a), but either works.
-                    3) Then append the success message to the message-wrapper div.
-                    */
+                    var jsonData = JSON.parse(data);
+                    if(jsonData.redirect)
+                        window.location.href = jsonData.redirect + "?password_change=true";
                 }
             ).fail(
                 function(data) {
-                    /*
-                    You can pretty much use the same logic I used for fail in form.js but change some ids and variable
-                    names. 
-                     */
+                    var errorIcon = '<i class="material-icons valign left">error_outline</i>';
+                    $('#chg_pw_errors').show().find('li').html(errorIcon + data.responseText);
+                    $('#oldPassword').focus().select();
                 }
             );
         });
