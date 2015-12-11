@@ -139,13 +139,36 @@ class RecipeFilterTest(TransactionTestCase):
         self.assertEqual(context['search_ingredients'], [self.gin_id, self.white_rum_id])
         self.assertEqual(len(context['results'].object_list), 0)
 
-    def test_query_is_matching(self):
+    def test_query_is_matching_recipe_name(self):
         data = json.dumps({'query': 'gin'})
         response = self.c.post(reverse('recipes.search'), {'data': data}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         context = list(response.context[-1])[1]
         self.assertEqual(context['query'], 'gin')
         self.assertEqual(len(context['results'].object_list), 1)
         self.assertEqual(context['results'].object_list[0], self.gin_vodka)
+
+    def test_query_is_matching_author_name(self):
+        data = json.dumps({'query': 'testuser'})
+        response = self.c.post(reverse('recipes.search'), {'data': data}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        context = list(response.context[-1])[1]
+        self.assertEqual(context['query'], 'testuser')
+        self.assertEqual(len(context['results'].object_list), 3)
+        for recipe in context['results'].object_list:
+            self.assertEqual(recipe.author.user.username, 'testuser')
+
+    def test_query_is_matching_an_ingredient(self):
+        data = json.dumps({'query': 'gin'})
+        response = self.c.post(reverse('recipes.search'), {'data': data}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        context = list(response.context[-1])[1]
+        self.assertEqual(context['query'], 'gin')
+        self.assertEqual(len(context['results'].object_list), 1)
+        self.assertEqual(context['results'].object_list[0], self.gin_vodka)
+        has_ingredient = False
+        for recipe_ingredient in context['results'].object_list[0].recipeingredients_set.all():
+            if 'gin' in recipe_ingredient.ingredient.name:
+                has_ingredient = True
+                break
+        self.assertTrue(has_ingredient)
 
     def test_query_is_not_matching(self):
         data = json.dumps({'query': 'abc'})
