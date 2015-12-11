@@ -13,10 +13,14 @@
         <hr>
 
         {% if messages %}
+            <ul class="collection green lighten-2">
             {% for message in messages %}
-                <h6 class="green-text">{{message}}</h6>
+                <li class="collection-item valign-wrapper green lighten-2 white-text">
+                    <i class="material-icons valign left">done</i>
+                    {{message}}
+                </li>
             {%endfor%}
-            <hr>
+            </ul>
         {% endif %}
 
         <!-- Display User's Account Details -->

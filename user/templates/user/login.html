@@ -2,6 +2,16 @@
 <div id="loginModal" class="modal modal-fixed-footer">
     <div class="modal-content">
         <div class="form">
+            {% if form.non_field_errors %}
+                <ul class="collection red lighten-2">
+                    {% for error in form.non_field_errors %}
+                        <li class="collection-item valign-wrapper red lighten-2 white-text">
+                            <i class="material-icons valign left">error_outline</i>
+                            {{error}}
+                        </li>
+                    {%endfor%}
+                </ul>
+            {% endif %}
             <!-- Username Field -->
             <div class="row center-align">
                 <div class="col s8 offset-s2 input-field">
@@ -15,13 +25,6 @@
                     <input id="loginPassword" type="password" class="validate">
                     <label class="active" for="loginPassword">Password</label>
                 </div>
-            </div>
-            <div class="row center-align">
-
-                {% if form.errors %}
-                    <h4 class="red-text">Your username and/or password are incorrect. Please try again.</h4>
-                {% endif %}
-
             </div>
         </div>
 

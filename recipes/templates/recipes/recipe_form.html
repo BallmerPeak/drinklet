@@ -11,13 +11,21 @@
         <hr>
 
         {% if error_message %}
-            <h6 class="red-text">{{error_message}}</h6>
-            <hr>
+            <ul class="collection red lighten-2">
+                <li class="collection-item valign-wrapper red lighten-2 white-text">
+                    <i class="material-icons valign left">error_outline</i>
+                    {{error_message}}
+                </li>
+            </ul>
         {% endif %}
 
         {% if success_message %}
-            <h6 class="green-text">{{success_message}}</h6>
-            <hr>
+            <ul class="collection green lighten-2">
+                <li class="collection-item valign-wrapper green lighten-2 white-text">
+                    <i class="material-icons valign left">done</i>
+                    {{success_message}}
+                </li>
+            </ul>
         {% endif %}
 
 
