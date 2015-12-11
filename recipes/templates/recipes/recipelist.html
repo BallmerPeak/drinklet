@@ -43,6 +43,12 @@
     {% include 'recipes/pagination.html' %}
 {% else %}
     <!-- There are no results, inform the user -->
-    <p> There are no recipes to display. </p>
+    <p> No recipes were found matching your search. </p>
+    {% if user.is_authenticated %}
+        <a href="{% url 'recipes.create' %}" class="btn waves-effect waves-light blue">
+            Create Recipe
+            <i class="material-icons right">add</i>
+        </a>
+    {% endif %}
 {% endif %}
 </div>
