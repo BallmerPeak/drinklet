@@ -64,4 +64,40 @@ body {
 
 .missing-recipe {
 	background-color: #FFF5F5;
+=======
+/*Comments*/
+.recipe-card-comment {
+    display:none;
+}
+
+.input-field textarea:focus {
+ border-bottom: 1px solid #3f51b5 !important;
+ box-shadow: 0 0px 0 0 red !important;
+
+
+}
+   /* label focus color */
+textarea:focus+label {
+     color: grey !important;
+}
+
+.edit-comment{
+    cursor:pointer;
+    margin-right:10px;
+}
+.delete-comment{
+    cursor:pointer;
+}
+.success-message{
+    position:relative ;
+}
+.error-message{
+    position:relative ;
+}
+.error-display{
+    float:right;
+    margin-right:40px;
+    color:red;
+    font-size:12px;
+    text-align:center;
 }

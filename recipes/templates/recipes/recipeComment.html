@@ -1,0 +1,47 @@
+      {%if success_message%}
+      <div class = 'success-message blue-text'> <h6> {{success_message}} </h6> </div>
+      {%endif%}
+      {%if error_message%}
+      <div class = 'error-message red-text' > <h6> {{error_message}} </h6> </div>
+      {%endif%}
+
+      <span class="card-title grey-text text-darken-4" >Reviews <i class="material-icons right">close</i></span>
+      <div class="row">
+      <form class="col s12 m12 l12">
+        <div class="row">
+          <div class="input-field col s10 m10 l10 ">
+            <textarea  id="comment" class="materialize-textarea write-comment col offset-s2" length="500"></textarea>
+            <label for="comment">{{labeltype}}</label>
+                <a class="waves-effect {{classtype}} waves-teal btn-flat col offset-s12" data-username = "{{user.username}}"   style = "display:none">{{buttontype}}</a>
+
+
+          </div>
+        </div>
+      </form>
+      </div>
+    <div class = "row">
+        <div class = "col s12 m12 l12">
+            <ul class="collection">
+                {%for username, comment in comments%}
+                <li class="collection-item " id = {{username}}>
+                  <span class="title blue-text right">{{username}}</span>
+                    {%if dup == username%}
+                    <a class = 'error-display'>You posted this comment.Edit or delete</a>
+                    {%endif%}
+                         <div>
+                             {%if user.username == username %}
+                             <a class = 'edit-comment'><i class="tiny grey-text material-icons">mode_edit</i></a>
+                               <a class = 'delete-comment'><i class="tiny grey-text material-icons">delete</i></a>
+                             {%else%}
+                              <a style = "visibility:hidden">Fill</a>
+                             {%endif%}
+                         </div>
+
+                  <p>{{comment}}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+

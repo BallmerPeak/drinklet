@@ -1,4 +1,4 @@
-// Wait until the DOM is ready
+    // Wait until the DOM is ready
 $(document).ready(function() {
 
     $('select').material_select();
