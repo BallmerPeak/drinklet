@@ -44,11 +44,16 @@ class Profile(View):
 
         ingredients = profile.ingredients.values()
         ingredient_quantity = []
-        for e in ingredients:
-            for ingredient in UserIngredients.objects.all().values():
-                id = ingredient.get("ingredient_id")
-                if id == e.get("id"):
-                    item = {"id": id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
+        for ingredient in ingredients:
+            for user_ingredient in UserIngredients.objects.all().values():
+                id = user_ingredient.get("ingredient_id")
+                if id == ingredient.get("id"):
+                    item = {
+                        "id": id,
+                        "name": ingredient.get("name"),
+                        "quantity": user_ingredient.get("quantity"),
+                        "uom": ingredient.get("uom")
+                    }
                     ingredient_quantity.append(item)
         favorites = profile.get_favorites()
 
