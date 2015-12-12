@@ -30,9 +30,7 @@ $(document).ready(function() {
 
                 comment_card = card.find('.recipe-card-comment');
                 comment_card.show();
-
-
-
+                console.log(data);
 
             }).fail(function(jqXHR, textStatus){
                 console.log(textStatus);

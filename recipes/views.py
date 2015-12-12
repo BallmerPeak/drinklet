@@ -505,8 +505,6 @@ class CommentRecipe(View):
             })
 
 
-
-
         try:
             recipe = Recipe.objects.get(name=recipe_name)
 
@@ -538,6 +536,7 @@ class CommentRecipe(View):
                 return render(request, "user/profile.html", {'error_message': 'This recipe does not exist'})
 
             instance = RecipeComment(user = user,recipe = recipe)
+
             form_dic = {}
             form_dic.update({
                              'comment_text':request.POST.get('comment_text')
@@ -548,7 +547,6 @@ class CommentRecipe(View):
                 f.save()
                 self.context = {'success_message':'Comment successfully saved'}
             else:
-                print(f.errors['comment_text'])
                 if 'Dup' in str(f.errors['comment_text']):
                     self.context = {'dup':user.user.username}
 

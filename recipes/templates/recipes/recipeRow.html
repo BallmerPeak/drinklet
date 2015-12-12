@@ -1,7 +1,7 @@
 <div class="col l6 m8 offset-m2 s12 card-wrapper">
     {% if user and user.is_authenticated and recipe.missing_ingredients %}
     <div class="card missing-recipe">
-    {% else %} 
+    {% else %}
     <div class="card">
     {% endif %}
         <div class="card-image">
@@ -22,8 +22,8 @@
 
                 </div>
 
-                <div class="recipe-card-comments right">
-                    <i class="material-icons left blue-text">comment</i>
+                <div class="recipe-card-comments activator right" >
+                    <i class="material-icons left blue-text" data-recipename="{{recipe.name}}">comment</i>
                 </div>
                 {% if recipe.is_author %}
                     <div class="recipe-card-edit right">
@@ -33,16 +33,6 @@
                         <a class="modal-trigger" href="#delete-modal-{{ recipe.id }}"><i class="material-icons blue-text left">delete</i></a>
                     </div>
                 {% endif %}
-        <div class="recipe-card-comments right">
-          <i class="material-icons  activator left blue-text" data-recipename="{{recipe.name}}">comment</i>
-        </div>
-        {% if recipe.is_author %}
-        <div class="recipe-card-edit right">
-            <a href="{% url 'recipes.edit' recipe.id %}"><i class="material-icons left blue-text">edit</i></a>
-        </div>
-        {% endif %}
-      </div>
-
 
             </div>
 
@@ -56,7 +46,7 @@
                                 red-text
                                 {% endif %}
                                 {% endfor %}
-                            ">                                
+                            ">
                                 <h5>{{ recipeIngredient.ingredient.name }}</h5>
                             </div>
                         {% endfor %}
@@ -78,17 +68,7 @@
           <span class="right">Created By: {{ recipe.author }}</span>
       </span>
         </div>
-        <div class="card-reveal white-text blue">
-      </div>
-    </div>
-    <div class="card-content white-text indigo activator">
-      <span class="card-title ">
-        {{ recipe.name | title }}
-        <i class="material-icons activator right">more_vert</i>
-      </span>
-    </div>
-<!---->
-    <div class="card-reveal card-recipe white-text blue" >
+        <div class="card-reveal card-recipe white-text blue">
       <span class="card-title">
         {{ recipe.name }}
         <i class="material-icons right">close</i>
@@ -124,6 +104,10 @@
                 <a class="waves-effect waves-light btn blue darken-3 recipe-card-make-drink" name="make_drink_button" data-id="{{ recipe.id }}">Make Drink!</a>
             </div>
         </div>
+        <div  class = "card-reveal recipe-card-comment black-text white  " data-recipename="{{recipe.name}}"  id = "comments">
+            {%include 'recipes/recipeComment.html' %}
+
+        </div>
         {% if recipe.is_author %}
             <div id="delete-modal-{{ recipe.id }}" class="modal">
                 <div class="modal-content">
@@ -132,15 +116,6 @@
                 </div>
                 <div class="modal-footer">
                     <button id="delete_id_{{ recipe.id }}" class="delete-recipe waves-effect waves-light btn blue modal-action modal-close">Delete</button>
-      </div>
-      <div class="row">
-        <a class="waves-effect waves-light btn blue darken-3 recipe-card-make-drink" name="make_drink_button" data-id="{{ recipe.id }}">Make Drink!</a>
-      </div>
-    </div>
-    <div  class = "card-reveal recipe-card-comment black-text white  " data-recipename="{{recipe.name}}"  id = "comments">
-
-      {% include 'recipes/recipeComment.html'%}
-    </div>
 
                     <a class="waves-effect waves-blue btn-flat modal-action modal-close">Cancel</a>
                 </div>
