@@ -1,7 +1,9 @@
 var comments_init = function () {
+    var postComment, editComment, deleteComment;
+
     function displayComments(data){
         var recipename = $(this).data('recipename'),
-            card, recipeelement, comment_card, postComment, editComment, deleteComment;
+            card, recipeelement, comment_card;
 
 
         /*Find elements */
@@ -49,7 +51,7 @@ var comments_init = function () {
 
     }
 
-    var postComment = function () {
+    postComment = function () {
 
         var card = $(this).closest('.card'),
             comment_card = $(this).closest('.recipe-card-comment'),
@@ -89,7 +91,7 @@ var comments_init = function () {
 
     };
 
-    var editComment = function () {
+    editComment = function () {
 
         var card = $(this).closest('.card'),
             comment_card = $(this).closest('.recipe-card-comment'),
@@ -119,7 +121,7 @@ var comments_init = function () {
 
     };
 
-    var deleteComment = function () {
+    deleteComment = function () {
 
         var card = $(this).closest('.card'),
             comment_card = $(this).closest('.recipe-card-comment'),

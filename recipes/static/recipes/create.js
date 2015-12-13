@@ -151,12 +151,25 @@ $(document).ready(function() {
             return jStub.prop("outerHTML");
         }
 
+        function clearInputs(wrapper) {
+            var $inputWrapper = $('#recipe-form').clone().find(wrapper),
+                $input = $inputWrapper.children().first();
+
+            $input.find('input:text').attr('list', '').removeAttr('value').end()
+                .find('select').children().slice(1).removeAttr('selected').end()
+                .find('label').removeAttr('class');
+
+            $input.find('input[type="number"]').removeAttr('value');
+
+            return $input;
+        }
+
         /**
          * @method captureInputHTML
          * Returns the inner html for the given wrapper id
          */
         function captureInputHTML(wrapper) {
-            return $(wrapper).children().first().prop('outerHTML');
+            return clearInputs(wrapper).prop('outerHTML');
         }
 
         /**
