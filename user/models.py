@@ -6,7 +6,7 @@ from django.db.models import ExpressionWrapper, Value, BooleanField, Case, When
 from recipes.models import Recipe, RecipeIngredients
 from ingredients.models import Ingredient
 from django.core.validators import MaxValueValidator
-from notifications.tasks import create_notification
+from notifications.tasks import create_notification, remove_orphaned_notifications
 
 # Create your models here.
 
@@ -31,10 +31,10 @@ class UserProfile(models.Model):
 
         if is_favorite:
             self.favorites.remove(favorite)
+            self._remove_orphaned_notifications()
         else:
             self.favorites.add(favorite)
-
-        self._create_user_notification()
+            self._create_user_notification()
 
         return self.get_favorites()
 
@@ -108,7 +108,7 @@ class UserProfile(models.Model):
 
         self.refresh_from_db()
 
-        self._create_user_notification()
+        self._remove_orphaned_notifications()
 
         return self
 
@@ -141,6 +141,14 @@ class UserProfile(models.Model):
             create_notification.delay(user_info)
         except OSError:
             create_notification(user_info)
+
+    def _remove_orphaned_notifications(self):
+        user_info = {'pk': self.pk}
+
+        try:
+            remove_orphaned_notifications.delay(user_info)
+        except OSError:
+            remove_orphaned_notifications(user_info)
 
     # def get_recipe(self, get_filter_dict):
     #     user_ingredients = self.useringredients_set.select_related('ingredient')

@@ -79,3 +79,21 @@ def create_notification(user_info):
         Notification.create_low_ingredient_notifications(user, low_ingredients)
     if good_ingredients:
         Notification.remove_low_ingredient_notifications(user, good_ingredients)
+
+
+@shared_task
+def remove_orphaned_notifications(user_info):
+    user_profile = apps.get_model('user', 'userprofile')
+    try:
+        user = user_profile.objects.get(pk=user_info['pk'])
+    except user_profile.DoesNotExist:
+        return 'Unit Test result'
+
+    fav_created_recipe_ing = get_fav_created_recipe_ing(user)
+    user_notifications = get_user_notifications(user)
+
+    user_notification_ing = set(ingredient_id for ingredient_id, _ in user_notifications.items())
+    orphaned_notifications = user_notification_ing - set(ingredient_id for ingredient_id, _ in fav_created_recipe_ing)
+
+    if orphaned_notifications:
+        Notification.remove_low_ingredient_notifications(user, orphaned_notifications)
