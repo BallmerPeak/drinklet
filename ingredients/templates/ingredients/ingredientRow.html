@@ -8,7 +8,8 @@
             </div>
             <!-- Quantity -->
             <div class="col s3 input-field">
-                <input type="number" value="{{ ingredient.quantity }}" class="validate" name="{{ ingredient.name }}_quantity" id="{{ ingredient.id }}_quantity" required/>
+                <input type="number" value="{{ ingredient.quantity }}" class="validate" name="{{ ingredient.name }}_quantity"
+                       id="{{ ingredient.id }}_quantity" min="0.01" max="999999.99" step="0.01" required/>
                 <label>{{ ingredient.uom }}</label>
             </div>
             <div>

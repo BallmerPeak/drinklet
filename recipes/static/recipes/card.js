@@ -4,7 +4,7 @@
  * Namespace for the functions that handle Recipe Card behavior
  */
 var RecipeCard = function () {
-    var $listWrapper;
+    var toggleFavoriteIcon, toggleFavorite, deleteRecipe;
     // html for filled in star
     var html_rating_star = '<i class="material-icons orange-text">star</i>';
     // html for empty star
@@ -17,19 +17,19 @@ var RecipeCard = function () {
      * @method toggleFavoriteIcon
      * Toggles between filled in heart and empty heart on hover
      */
-    function toggleFavoriteIcon() {
+    toggleFavoriteIcon = function () {
         if($(this).html().trim() == 'favorite'){
             $(this).html('favorite_border');
         } else {
             $(this).html('favorite');
         }
-    }
+    };
 
     /**
      * @method toggleFavorite
      * Sends POST to server to favorite/unfavorite the recipe
      */
-    function toggleFavorite() {
+    toggleFavorite = function () {
         // if it's currently unfavorited and becoming favorited
         if($(this).html().trim() == 'favorite'){
             $(this).html('favorite_border');
@@ -46,7 +46,7 @@ var RecipeCard = function () {
                 is_favorite: true
             });
         }
-    }
+    };
 
     /**
      * @method displayRatings
@@ -131,7 +131,7 @@ var RecipeCard = function () {
         });
     };
 
-    function deleteRecipe() {
+    deleteRecipe = function () {
         var $deleteButton = $(this),
             idIndex = 'delete_id_'.length,
             $recipe = $deleteButton.closest('.card-wrapper'),
@@ -141,15 +141,8 @@ var RecipeCard = function () {
             .done(function () {
                 $recipe.remove();
             });
-    }
+    };
 
-    $listWrapper = $('div#list-wrapper');
-    //sets the hover event when favorite heart is hovered
-    $listWrapper.on('mouseenter mouseleave', '.recipe-card-favorite > i', toggleFavoriteIcon);
-    //sets the onclick event to POST to server when a user favorites/unfavorites
-    $listWrapper.on('click', '.recipe-card-favorite > i', toggleFavorite);
-    //sets the onclick event to POST to server when a user deletes a recipe
-    $listWrapper.on('click', 'button.delete-recipe', deleteRecipe);
     // display the appropriate amount and type of stars for rating
     displayRatings();
     //set the onclick events to POST to server when a user rates
@@ -158,12 +151,20 @@ var RecipeCard = function () {
     $('.recipe-card-delete').find('.modal-trigger').leanModal();
 
     return {
-        'setRatings': setRatings,
-        'displayRatings': displayRatings,
-        'updateRatings': updateRating
+        'deleteRecipe': deleteRecipe,
+        'toggleFavoriteIcon': toggleFavoriteIcon,
+        'toggleFavorite': toggleFavorite
     };
 };
 
 $(document).ready(function() {
-    RecipeCard();
+    var recipeCard = RecipeCard();
+
+    var $listWrapper = $('div#list-wrapper');
+    //sets the hover event when favorite heart is hovered
+    $listWrapper.on('mouseenter mouseleave', '.recipe-card-favorite > i', recipeCard.toggleFavoriteIcon);
+    //sets the onclick event to POST to server when a user favorites/unfavorites
+    $listWrapper.on('click', '.recipe-card-favorite > i', recipeCard.toggleFavorite);
+    //sets the onclick event to POST to server when a user deletes a recipe
+    $listWrapper.on('click', 'button.delete-recipe', recipeCard.deleteRecipe);
 });
