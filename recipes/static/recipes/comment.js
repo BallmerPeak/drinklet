@@ -74,7 +74,12 @@ $(document).ready(function() {
                 console.log(status);
 
                 if (xhr.status == 207){
-                    document.getElementById(username).scrollIntoView();
+                    //document.getElementById(username).scrollIntoView();
+                    $(comment_card).animate({
+                        scrollTop: $("#"+username).offset().top},
+                        'slow');
+
+
                 }
                 fademessages();
                 //console.log(data);
@@ -115,7 +120,7 @@ $(document).ready(function() {
         }
 
         function deleteComment(){
-            console.log('IN');
+
             card = $(this).closest('.card');
             comment_card = $(this).closest('.recipe-card-comment');
             recipename = comment_card.data('recipename');
@@ -158,11 +163,15 @@ $(document).ready(function() {
             cardTitle.closest('.recipe-card-comment').find('.post-comment').show();
 
         });
-        $(document).on('blur','.recipe-card-comment #comment',function(){
-            cardTitle = $(this).closest('.recipe-card-comment').find('span:first') ;
-            cardTitle.show();
+        $(document).on('blur','.recipe-card-comment form',function(){
+            $(this).delay(400).queue(function(){
+                    cardTitle = $(this).closest('.recipe-card-comment').find('span:first') ;
+                    cardTitle.show();
 
-            cardTitle.closest('.recipe-card-comment').find('.post-comment').hide();
+                    cardTitle.closest('.recipe-card-comment').find('.post-comment').hide();
+                    $(this).clearQueue();
+            });
+
         });
         /*   Events for post data*/
         $(document).on('click','.post-edit-comment',editComment);
