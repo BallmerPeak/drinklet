@@ -104,3 +104,7 @@ textarea:focus+label {
 .filler{
     margin-top:30px;
 }
+
+.author {
+	margin-right: 20px;
+}
