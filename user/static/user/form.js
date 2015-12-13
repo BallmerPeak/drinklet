@@ -93,8 +93,9 @@ $(document).ready(function(){
 
         $.post('user/register', {'username':username,'pwd':pwd1,'pwd2':pwd2,'email':email})
             .done(function (data) {
-                $('#registerModal').closeModal();
-                $('#navbar').replaceWith(data);
+                var jsonData = JSON.parse(data);
+                if(jsonData.redirect)
+                    window.location.href = jsonData.redirect;
             })
             .fail(function (data) {
                 registerModalContent = $('#registerModal > .modal-content');

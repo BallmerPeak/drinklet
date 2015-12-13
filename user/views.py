@@ -29,7 +29,10 @@ class Register(View):
             UserProfile.get_or_create_profile(user)
             login(request, user)
 
-            return render(request, 'navbar.html')
+            redirect_info = {
+                'redirect': reverse('user.profile')
+            }
+            return HttpResponse(json.dumps(redirect_info))
         else:
             return HttpResponse(render(request, 'user/register.html', {'form': form}), status=401)
 
@@ -144,10 +147,10 @@ class Login(View):
         self.form = AuthenticationForm(None, request.POST)
         if self.form.is_valid():
             login(request, self.form.get_user())
-            redirect = {
+            redirect_info = {
                 'redirect': reverse('user.profile')
             }
-            return HttpResponse(json.dumps(redirect))
+            return HttpResponse(json.dumps(redirect_info))
 
         context = {
             'form': self.form
