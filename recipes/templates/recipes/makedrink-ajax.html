@@ -1,0 +1,17 @@
+<div>
+    <div id="make-drink-num">{{ num_can_make }}</div>
+
+    <div id="pantry-wrapper">
+        {% if user_ingredients %}
+            <div class="row">
+                {% for ingredient in user_ingredients %}
+                    <!-- Add the Ingredient Row template -->
+                    {% include 'ingredients/ingredientRow.html' %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- User doesn't have any ingredients -->
+            <p>You have no selected ingredients.</p>
+        {% endif %}
+    </div>
+</div>

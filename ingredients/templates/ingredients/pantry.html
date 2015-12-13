@@ -40,6 +40,7 @@
         {% csrf_token %}
         <input type="hidden" id="ingredient_objects" name="ingredient_objects" value="[]"/>
         <input type="hidden" id="deleted_ingredients" name="deleted_ingredients" value="[]"/>
+        <div id="pantry-wrapper">
         {% if user_ingredients %}
             <div class="row">
                 {% for ingredient in user_ingredients %}
@@ -51,6 +52,7 @@
             <!-- User doesn't have any ingredients -->
             <p>You have no selected ingredients.</p>
         {% endif %}
+        </div>
         <div class="col s12 m4">
             <button type="submit" name="submitIngredients" class="col s12 waves-effect waves-light btn blue">
                 Update Pantry

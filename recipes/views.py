@@ -466,7 +466,30 @@ def make_drink(request):
 
     profile.bulk_update_user_ingredient_quantity(user_ingredients)
 
-    return HttpResponse('success')
+    user_ingredients = profile.useringredients_set.select_related('ingredient')
+    ingredient_quantity = [
+        {
+            'id': user_ingredient.ingredient_id,
+            'name': user_ingredient.ingredient.name,
+            'quantity': user_ingredient.quantity,
+            'uom': user_ingredient.ingredient.uom
+        }
+        for user_ingredient in user_ingredients
+    ]
+
+    all_recipes = profile.get_all_recipes()
+    num_can_make = 0
+    recipe_id = int(recipe_id)
+    for recipe in all_recipes:
+        if recipe.pk == recipe_id:
+            num_can_make = recipe.num_can_make
+
+    context = {
+        'user_ingredients': ingredient_quantity,
+        'num_can_make': num_can_make
+    }
+
+    return render(request, 'recipes/makedrink-ajax.html', context)
 
 
 @login_required()

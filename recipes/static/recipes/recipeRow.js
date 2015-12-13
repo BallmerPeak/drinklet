@@ -12,22 +12,18 @@ $(document).ready(function() {
          * @method toggleOrder
          * Handle toggling the order and rerunning the search
          */
-        function submitRecipe(recipeid) {
-            $.ajax({
+        function submitRecipe(recipeid, element) {
+            var jqxhr = $.ajax({
                 type: "POST",
                 url: "/makedrink",
                 data: {
                     'recipe': recipeid
                 }
-            }).success(function(data){
-                var path = window.location.pathname;
-                if (path === '/user/profile'){
-                    window.location.reload();
-                }
-                console.log(data);
-            }).fail(function(jqXHR, textStatus){
-                console.log(textStatus);
             });
+
+            jqxhr.that = element;
+
+            return jqxhr;
         }
 
         /**
@@ -35,7 +31,28 @@ $(document).ready(function() {
          * Toggle the order and rerun the search
          */
         $("a[name='make_drink_button']").click(function() {
-            submitRecipe($(this).data("id"));
+            var that = this;
+            submitRecipe($(that).data("id"), that)
+                .done(function (data, status, jqxhr) {
+                    var $makeDrinkButton = $(jqxhr.that),
+                        $replacementHtml = $(data),
+                        numLeft, ingredients,
+                        $pantry;
+
+                    numLeft = $replacementHtml.find('#make-drink-num').html();
+                    ingredients = $replacementHtml.find('#pantry-wrapper').html();
+                    if (numLeft > 0) {
+                        $makeDrinkButton.closest('.row').find('.num-left').html('Drinks left = ' + numLeft);
+                    } else {
+                        $makeDrinkButton.closest('.row').remove();
+                    }
+                    $pantry = $('#pantry-wrapper');
+
+                    if($pantry.length) {
+                        $pantry.html(ingredients);
+                        $pantry.find('label').addClass('active');
+                    }
+                })
         });
     })();
 });

@@ -118,7 +118,7 @@ $(document).ready(function() {
             return true;
         });
 
-        $('.delete-button').click(function(){
+        $('#pantry-wrapper').on('click', '.delete-button', function(){
             var row = $(this).parents('.ingredient-input');
             row.addClass('deleted');
             row.hide();
