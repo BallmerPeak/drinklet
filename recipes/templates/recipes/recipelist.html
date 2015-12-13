@@ -7,6 +7,7 @@
         <div class="col s12 m4">
             <a id="orderNameButton" class="col s12 waves-effect waves-light btn blue">
                 Order Name
+                {% if order_by == 'name' %}
                 <i class="material-icons right">
                     {% if order == 'desc' %}
                         trending_down
@@ -14,22 +15,23 @@
                         trending_up
                     {% endif %}
                 </i>
+                {% endif %}
             </a>
         </div>
         <div class="col s12 m4">
-        <a id="orderRatingButton" class="col s12 waves-effect waves-light btn blue">
-          Order Rating
-          {% if order_by == 'ratings' %}
-          <i class="material-icons right">
-            {% if order == 'desc' %}
-              trending_down
-            {% else %}
-              trending_up
-            {% endif %}
-          </i>
-          {% endif %}
-        </a>
-      </div>
+            <a id="orderRatingButton" class="col s12 waves-effect waves-light btn blue">
+                Order Rating
+                {% if order_by == 'ratings' %}
+                <i class="material-icons right">
+                    {% if order == 'desc' %}
+                        trending_down
+                    {% else %}
+                        trending_up
+                    {% endif %}
+                </i>
+                {% endif %}
+            </a>
+          </div>
     </div>
     <!-- Add this page's objects -->
     <div class="row">
