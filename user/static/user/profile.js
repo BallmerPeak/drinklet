@@ -23,7 +23,9 @@ $(document).ready(function() {
      */
     (function UserProfile() {
         var noClear = true,
-            clearButton = null;
+            clearButton = null,
+            deleted_ingredients = [];
+
         /**
          * @method init
          * First things that happen when DOM is loaded
@@ -97,9 +99,8 @@ $(document).ready(function() {
 
         $('#pantry_form').submit(function() {
             var ingredients = [];
-            var deleted = [];
 
-            $('.ingredient-input:not(.deleted)').each(function() {
+            $('.ingredient-input').each(function() {
                 var self = $(this);
                 var ingredient_id = self.data("id"),
                     ingredient_name = self.data("name"),
@@ -107,21 +108,16 @@ $(document).ready(function() {
                 ingredients.push({ "id": ingredient_id, "name": ingredient_name, "quantity": ingredient_quantity});
             });
 
-            $('.deleted').each(function() {
-                var self = $(this);
-                var ingredient_id = self.data("id");
-                deleted.push({ "id": ingredient_id});
-            });
-
-            $('#deleted_ingredients').val(JSON.stringify(deleted));
+            $('#deleted_ingredients').val(JSON.stringify(deleted_ingredients));
             $('#ingredient_objects').val(JSON.stringify(ingredients));
             return true;
         });
 
         $('#pantry-wrapper').on('click', '.delete-button', function(){
-            var row = $(this).parents('.ingredient-input');
-            row.addClass('deleted');
-            row.hide();
+            var row = $(this).parents('.ingredient-input'),
+                ingredient_id = row.data("id");
+            row.remove();
+            deleted_ingredients.push({ "id": ingredient_id });
         });
 
         /**
