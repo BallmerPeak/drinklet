@@ -107,14 +107,14 @@ $(document).ready(function() {
 
 			postData = {
                 'data': JSON.stringify(postData)
-            }
+            };
 
             $.post('/', postData)
                 .done(function (html) {
                     newList = $(html).html();
                     $('div#list-wrapper').html(newList);
-                    $('.modal-trigger').leanModal();
-                    RecipeCard()
+                    RecipeCard();
+					comments_init();
                 });
 		});
 

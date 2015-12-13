@@ -30,7 +30,7 @@ $(document).ready(function() {
          * @event #orderNameButton.click
          * Toggle the order and rerun the search
          */
-        $("a[name='make_drink_button']").click(function() {
+        $('#list-wrapper').on('click', '.recipe-card-make-drink', function() {
             var that = this;
             submitRecipe($(that).data("id"), that)
                 .done(function (data, status, jqxhr) {
