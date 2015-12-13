@@ -14,7 +14,7 @@ class Ingredient(models.Model):
     @classmethod
     def get_all_ingredients(cls):
         ret_dict = {}
-        ingredients = cls.objects.all().only('name')
+        ingredients = cls.objects.all()
         categories = ingredients.values_list('category', flat=True).distinct()
         for category in categories:
             ret_dict[category] = ingredients.filter(category=category)

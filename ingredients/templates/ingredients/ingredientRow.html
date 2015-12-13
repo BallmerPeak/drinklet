@@ -7,9 +7,9 @@
                {{ ingredient.name }}
             </div>
             <!-- Quantity -->
-            <div class="col s3">
-                <input type="text" value="{{ ingredient.quantity }}" name="{{ ingredient.name }}_quantity" id="{{ ingredient.id }}_quantity"/>
-                <label>Quantity</label>
+            <div class="col s3 input-field">
+                <input type="number" value="{{ ingredient.quantity }}" class="validate" name="{{ ingredient.name }}_quantity" id="{{ ingredient.id }}_quantity" required/>
+                <label>{{ ingredient.uom }}</label>
             </div>
             <div>
                 <button type="button" class="waves-effect waves-light btn blue delete-button" name="deleteIngredient" >Delete</button>

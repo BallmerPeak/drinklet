@@ -216,7 +216,7 @@ class RecipeComment(models.Model):
     user = models.ForeignKey(UserProfile)
     recipe = models.ForeignKey(Recipe)
     comment_text = models.CharField(max_length=500)
-    timestamp = models.DateTimeField(auto_created=True)
+    timestamp = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-timestamp']

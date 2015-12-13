@@ -154,6 +154,8 @@ var RecipeCard = function () {
     displayRatings();
     //set the onclick events to POST to server when a user rates
     setRatings();
+    // Initializing the delete recipe modals
+    $('.recipe-card-delete').find('.modal-trigger').leanModal();
 
     return {
         'setRatings': setRatings,

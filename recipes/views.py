@@ -8,10 +8,16 @@ from django.http import HttpResponse
 from django.utils.http import urlencode
 import json
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
+from django.contrib.messages import get_messages
 
 from .forms.recipes.recipe_form import RecipeForm, CATEGORY_NAME, INGREDIENT_NAME, INSTRUCTION_NAME, QTY_NAME, UOM_NAME
+from .forms.recipes.recipe_comment import RecipeCommentForm,EditRecipeCommentForm
 from .models import Recipe, Ingredient
-from user.models import UserProfile
+from user.models import UserProfile,RecipeComment
+
+
 
 
 def _filter_recipes(ingredients, query, limit, order_by, order, page, user=None):
@@ -478,3 +484,128 @@ def delete_recipe(request, recipe_id):
         return render(request, 'user/profile.html', {'error_message': 'This recipe does not exist'})
 
     return HttpResponse('success')
+
+class CommentRecipe(View):
+
+    context = {}
+    def get(self,request):
+        messages = []
+        try:
+            recipe_name = request.GET['recipe_name']
+            self.context = {}
+        except :
+            recipe_name = request.POST['recipe_name']
+
+
+        messages = get_messages(request)
+
+        for message in messages:
+            self.context.update({
+                message.extra_tags:message.message
+            })
+
+
+        try:
+            recipe = Recipe.objects.get(name=recipe_name)
+
+        except ObjectDoesNotExist:
+            return render(request, "user/profile.html", {'error_message': 'This recipe does not exist'})
+
+        status = 200;
+        if 'dup' in self.context:
+            status = 207;
+        self.context.update({
+            'buttontype':'POST',
+            'labeltype':'Write...',
+            'classtype': 'post-comment',
+            'comments': [(str(recipe_comment.user),recipe_comment.comment_text) for  recipe_comment in recipe.recipecomment_set.all()]
+
+        } )
+
+        return render(request,"recipes/recipeComment.html",self.context,status=status)
+
+
+    def post(self,request):
+        if request.user.is_authenticated:
+            recipe_name = request.POST['recipe_name']
+            user = UserProfile.get_or_create_profile(request.user)
+            try:
+                recipe = Recipe.objects.get(name=recipe_name)
+
+            except ObjectDoesNotExist:
+                return render(request, "user/profile.html", {'error_message': 'This recipe does not exist'})
+
+            instance = RecipeComment(user = user,recipe = recipe)
+
+            form_dic = {}
+            form_dic.update({
+                             'comment_text':request.POST.get('comment_text')
+            })
+            f = RecipeCommentForm(form_dic,instance=instance)
+
+            if f.is_valid():
+                f.save()
+                self.context = {'success_message':'Comment successfully saved'}
+            else:
+                if 'Dup' in str(f.errors['comment_text']):
+                    self.context = {'dup':user.user.username}
+
+                self.context.update({'error_message':f.errors['comment_text']})
+        else:
+            return redirect('recipes.search')
+
+        return self.get(self.request)
+
+@login_required()
+def edit_comment(request):
+    recipe_name = request.POST['recipe_name']
+    user = UserProfile.get_or_create_profile(request.user)
+    try:
+        recipe = Recipe.objects.get(name=recipe_name)
+
+    except ObjectDoesNotExist:
+        return render(request, "user/profile.html", {'error_message': 'This recipe does not exist'})
+
+    form_dic = {}
+    form_dic.update({
+                         'comment_text':request.POST.get('comment_text')
+        })
+    f = EditRecipeCommentForm(form_dic)
+
+    if f.is_valid():
+        try:
+            recipe.recipecomment_set.get(user = user).delete()
+            instance = RecipeComment(user = user,recipe = recipe, comment_text = f.cleaned_data['comment_text'])
+            instance.save()
+            messages.add_message(request, messages.INFO, "Comment successfully saved",extra_tags='success_message')
+        except KeyError:
+            return (request,'recipes/recipeComment.html',{'error_message':'Comment does not exist'})
+    else:
+        messages.add_message(request, messages.INFO,"Failed to save comment " + ", ".join(f.errors.values()),extra_tags = 'error_message' )
+
+
+    return redirect('/comment/?{}'.format(urlencode({'recipe_name' : recipe_name})))
+
+@login_required()
+def delete_comment(request):
+    recipe_name = request.POST['recipe_name']
+    user = UserProfile.get_or_create_profile(request.user)
+    try:
+        recipe = Recipe.objects.get(name=recipe_name)
+
+    except ObjectDoesNotExist:
+        return render(request, "user/profile.html", {'error_message': 'This recipe does not exist'})
+
+
+    try:
+        recipe.recipecomment_set.get(user = user).delete()
+
+        messages.add_message(request, messages.INFO, "Comment successfully deleted",extra_tags='success_message')
+    except ObjectDoesNotExist:
+        return (request,'recipes/recipeComment.html',{'error_message':'Comment does not exist'})
+
+
+    return redirect('/comment/?{}'.format(urlencode({'recipe_name' : recipe_name})))
+
+
+

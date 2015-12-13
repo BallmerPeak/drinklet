@@ -7,7 +7,6 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from user.models import UserProfile
-from user.models import UserIngredients
 from ingredients.models import Ingredient
 from django.contrib.auth import update_session_auth_hash
 
@@ -43,26 +42,31 @@ class Profile(View):
         if recipe_edit_success_message:
             messages.append(recipe_edit_success_message)
 
-        ingredients = profile.ingredients.values()
-        ingredient_quantity = []
-        for e in ingredients:
-            for ingredient in UserIngredients.objects.all().values():
-                id = ingredient.get("ingredient_id")
-                if id == e.get("id"):
-                    item = {"id": id, "name": e.get("name"), "quantity": ingredient.get("quantity")}
-                    ingredient_quantity.append(item)
+        user_ingredients = profile.useringredients_set.select_related('ingredient')
+        ingredient_quantity = [
+            {
+                'id': user_ingredient.ingredient_id,
+                'name': user_ingredient.ingredient.name,
+                'quantity': user_ingredient.quantity,
+                'uom': user_ingredient.ingredient.uom
+            }
+            for user_ingredient in user_ingredients
+        ]
+
         favorites = profile.get_favorites()
 
         # Get list of ids corresponding to user's ingredients
         user_ingredient_ids = profile.ingredients.values_list('id', flat=True)
 
         # Get a category bucketed list of ingredients that the user does not have
-        categories = {}
-        for category, category_ingredients in Ingredient.get_all_ingredients().items():
-            categories[category] = []
-            for ingredient in  category_ingredients:
-                if(not ingredient.id in user_ingredient_ids):
-                    categories[category].append(ingredient)
+        unowned_ingredients = Ingredient.objects.exclude(pk__in=user_ingredient_ids)
+        ingredient_categories = unowned_ingredients.values_list('category', flat=True).distinct()
+
+        categories = {
+            category: unowned_ingredients.filter(category=category)
+            for category in ingredient_categories
+        }
+
         user_recipes = profile.get_all_recipes()
 
         context = {

@@ -35,33 +35,37 @@
     </form>
 </div>
 <br>
-{% if user_ingredients %}
-    <div class="row">
-        {% for ingredient in user_ingredients %}
-            <!-- Add the Ingredient Row template -->
-            {% include 'ingredients/ingredientRow.html' %}
-        {% endfor %}
-    </div>
-{% else %}
-    <!-- User doesn't have any ingredients -->
-    <p>You have no selected ingredients.</p>
-{% endif %}
 <div class="row">
-    <form class="col s12 m4" id="pantry_form" action="{% url 'user.profile' %}" method="POST">
+    <form class="col s12" id="pantry_form" action="{% url 'user.profile' %}" method="POST">
         {% csrf_token %}
         <input type="hidden" id="ingredient_objects" name="ingredient_objects" value="[]"/>
         <input type="hidden" id="deleted_ingredients" name="deleted_ingredients" value="[]"/>
-        <button type="submit" name="submitIngredients" class="col s12 waves-effect waves-light btn blue">
-            Update Pantry
-            <i class="material-icons right">send</i>
-        </button>
+        {% if user_ingredients %}
+            <div class="row">
+                {% for ingredient in user_ingredients %}
+                    <!-- Add the Ingredient Row template -->
+                    {% include 'ingredients/ingredientRow.html' %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- User doesn't have any ingredients -->
+            <p>You have no selected ingredients.</p>
+        {% endif %}
+        <div class="col s12 m4">
+            <button type="submit" name="submitIngredients" class="col s12 waves-effect waves-light btn blue">
+                Update Pantry
+                <i class="material-icons right">send</i>
+            </button>
+        </div>
     </form>
-    <form id="search-recipes-form" class="col s12 m4" action="{% url 'recipes.search' %}" method="POST">
+    <form id="search-recipes-form" class="col s12" action="{% url 'recipes.search' %}" method="POST">
         {% csrf_token %}
         <input type="hidden" id="search_ingredients" name="search_ingredients" value="{{ search_ingredients }}"/>
-        <button id="searchButton" class="col s12  btn waves-effect waves-light blue" type="submit" name="action">
-          Search 
-          <i class="material-icons right">search</i>
-        </button>
+        <div class="col s12 m4">
+            <button id="searchButton" class="col s12 btn waves-effect waves-light blue" type="submit" name="action">
+              Search 
+              <i class="material-icons right">search</i>
+            </button>
+        </div>
     </form>
 </div>
