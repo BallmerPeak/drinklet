@@ -19,9 +19,19 @@
                 <ul class="right hide-on-med-and-down">
                     {% if user.is_authenticated %}
                         <div class="left" id="notification-wrapper">
-                        {% include 'notifications/notification.html' %}
+                            {% include 'notifications/notification.html' %}
                         </div>
-                        <li><a class="modal-trigger" href="{% url 'user.logout' %}">Logout</a></li>
+
+                        <!-- Dropdown Trigger -->
+                        <li><a class='dropdown-button' href='#' data-activates='user-dropdown' data-beloworigin="true">
+                            <i class="material-icons left">account_circle</i>
+                            {{ user.username | title }}
+                        </a></li>
+
+                        <!-- Dropdown Structure -->
+                        <ul id='user-dropdown' class='dropdown-content'>
+                            <li><a href="{% url 'user.logout' %}" class="blue-text text-darken-3">Logout</a></li>
+                        </ul>
                     {% else %}
                         <li><a class="modal-trigger" rel="loginModal" href="#loginModal">Login</a></li>
                         <li><a class="modal-trigger" rel="registerModal" href="#registerModal">Register</a></li>
@@ -34,7 +44,7 @@
                         <li><a class="modal-trigger" href="{% url 'user.logout' %}">Logout</a></li>
                         <li class="divider"></li>
                         <div id="notification-mobile-wrapper">
-                        {% include 'notifications/notification-mobile.html' %}
+                            {% include 'notifications/notification-mobile.html' %}
                         </div>
                     {% else %}
                         <li><a class="modal-trigger" rel="loginModal" href="#loginModal">Login</a></li>
