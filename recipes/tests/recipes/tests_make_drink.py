@@ -65,7 +65,7 @@ class MakeDrinkTestCase(TestCase):
     def test_success(self):
         request = self.factory.post('recipes/makedrink', {'recipe': Recipe.objects.get(name='gin and vodka').id})
         request.user = self.user
-        self.assertEqual(make_drink(request).content, b'success')
+        self.assertEqual(make_drink(request).status_code, 200)
 
     def test_user_doesnt_have_ingredient(self):
         request = self.factory.post('recipes/makedrink', {'recipe': Recipe.objects.get(name='screwdriver').id})
