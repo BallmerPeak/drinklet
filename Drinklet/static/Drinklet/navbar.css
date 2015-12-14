@@ -44,3 +44,62 @@ nav li>div {
 .chosen-container-multi .chosen-choices .search-choice .search-choice-close {
 	margin: 5px;
 }
+
+/* Login/Register */
+@media only screen and (min-width: 0px) {
+	#loginModal, #registerModal {
+		width: 90%;
+	}
+}
+
+@media only screen and (min-width: 700px) {
+	#loginModal, #registerModal {
+		width: 80%;
+	}
+}
+
+@media only screen and (min-width: 800px) {
+	#loginModal, #registerModal {
+		width: 70%;
+	}
+}
+
+@media only screen and (min-width: 900px) {
+	#loginModal, #registerModal {
+		width: 60%;
+	}
+}
+
+@media only screen and (min-width: 992px) {
+	#loginModal, #registerModal {
+		width: 55%;
+	}
+}
+
+@media only screen and (min-width: 1100px) {
+	#loginModal, #registerModal {
+		width: 50%;
+	}
+}
+
+@media only screen and (min-width: 1250px) {
+	#loginModal, #registerModal {
+		width: 45%;
+	}
+}
+
+@media only screen and (min-width: 1500px) {
+	#loginModal, #registerModal {
+		width: 40%;
+	}
+}
+
+@media only screen and (min-width: 1650px) {
+	#loginModal, #registerModal {
+		width: 35%;
+	}
+}
+
+#loginModal, #registerModal {
+	padding-top: 35px;
+}
