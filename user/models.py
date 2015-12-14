@@ -223,7 +223,7 @@ class UserIngredients(models.Model):
 class RecipeComment(models.Model):
     user = models.ForeignKey(UserProfile)
     recipe = models.ForeignKey(Recipe)
-    comment_text = models.CharField(max_length=500)
+    comment_text = models.CharField(max_length=1000)
     timestamp = models.DateTimeField(auto_now=True)
 
     class Meta:

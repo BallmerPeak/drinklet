@@ -54,7 +54,8 @@
             <div class="row">
                 <div class="col s10 m6 l6 offset-s1 offset-m3 offset-l3 input-field">
                     <label class="active" for="recipe_name">Name of Recipe</label>
-                    <input id="recipe_name" name="recipe_name" type="text" class="validate" required value="{{ form.get_name | title}}">
+                    <input id="recipe_name" name="recipe_name" type="text" class="validate" required
+                           value="{{ form.get_name | title}}" length="50" maxlength="50"/>
                 </div>
             </div>
 

@@ -6,10 +6,10 @@ from ingredients.models import Ingredient
 
 class Recipe(models.Model):
     # from user.models import UserProfile
-    name = models.CharField(max_length=30, unique=True)
+    name = models.CharField(max_length=50, unique=True)
     ratings_sum = models.PositiveIntegerField(default=0)
     num_ratings = models.PositiveIntegerField(default=0)
-    instructions_blob = models.CharField(max_length=1000)
+    instructions_blob = models.CharField(max_length=4000)
     author = models.ForeignKey('user.UserProfile', related_name='created_recipes')
     ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredients', related_name='recipe_ingredients')
 

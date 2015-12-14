@@ -178,6 +178,7 @@ $(document).ready(function() {
          */
         function appendInput(parent, child) {
             $(parent).append(child);
+            $(child).find('input.length-input').characterCounter();
         }
 
         /**

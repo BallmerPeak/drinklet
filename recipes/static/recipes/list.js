@@ -115,6 +115,7 @@ $(document).ready(function() {
                     $('div#list-wrapper').html(newList);
                     RecipeCard();
 					comments_init();
+					$('textarea.write-comment').characterCounter();
                 });
 		});
 

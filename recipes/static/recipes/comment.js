@@ -33,6 +33,7 @@ var comments_init = function () {
             comment_card = card.find('.recipe-card-comment');
             comment_card.show();
             console.log(data);
+            card.find('textarea.write-comment').characterCounter();
 
         }).fail(function(jqXHR, textStatus){
             console.log(textStatus);
@@ -80,11 +81,10 @@ var comments_init = function () {
                 $(comment_card).animate({
                         scrollTop: $("#"+username).offset().top},
                     'slow');
-
-
             }
             fademessages();
             //console.log(data);
+            card.find('textarea.write-comment').characterCounter();
         }).fail(function(jqXHR, textStatus){
             console.log(textStatus);
         });
@@ -115,6 +115,7 @@ var comments_init = function () {
 
             fademessages();
             //console.log(data);
+            card.find('textarea.write-comment').characterCounter();
         }).fail(function(jqXHR, textStatus){
             console.log(textStatus);
         });
@@ -141,6 +142,7 @@ var comments_init = function () {
             comment_card.show();
             fademessages();
             console.log(data);
+            card.find('textarea.write-comment').characterCounter();
         }).fail(function(jqXHR, textStatus){
             console.log(textStatus);
         });

@@ -4,9 +4,9 @@ from django.db import models
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=30, unique=True)
+    name = models.CharField(max_length=50, unique=True)
     category = models.CharField(max_length=30)
-    uom = models.CharField(max_length=10)
+    uom = models.CharField(max_length=20)
 
     def __str__(self):
         return self.name

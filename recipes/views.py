@@ -541,7 +541,8 @@ class CommentRecipe(View):
             'buttontype':'POST',
             'labeltype':'Write...',
             'classtype': 'post-comment',
-            'comments': [(str(recipe_comment.user),recipe_comment.comment_text) for  recipe_comment in recipe.recipecomment_set.all()]
+            'comments': [(str(recipe_comment.user), recipe_comment.comment_text, recipe_comment.timestamp)
+                         for recipe_comment in recipe.recipecomment_set.all()]
 
         } )
 
