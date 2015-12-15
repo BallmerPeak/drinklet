@@ -17,10 +17,10 @@ UOM_INDEX = len(UOM_NAME)
 
 class RecipeForm(forms.Form):
     recipe_name = forms.CharField(max_length=30)
-    ingredient = forms.CharField(max_length=30)
+    ingredient = forms.CharField(max_length=50)
     ingredient_qty = forms.DecimalField(decimal_places=2)
-    instruction = forms.CharField(max_length=100)
-    uom = forms.CharField(max_length=10)
+    instruction = forms.CharField(max_length=200)
+    uom = forms.CharField(max_length=20)
     ingr_index = 1
     inst_index = 1
 
@@ -57,19 +57,19 @@ class RecipeForm(forms.Form):
             self.ingr_index = len(ingredient_list) + 1
 
             for key in instruction_list:
-                self.fields[key] = forms.CharField(max_length=100)
+                self.fields[key] = forms.CharField(max_length=200)
 
             for key in qty_list:
                 self.fields[key] = forms.DecimalField(decimal_places=2)
 
             for key in ingredient_list:
-                self.fields[key] = forms.CharField(max_length=30)
+                self.fields[key] = forms.CharField(max_length=50)
 
             for key in category_list:
                 self.fields[key] = forms.ChoiceField(choices=self._get_category_choices())
 
             for key in uom_list:
-                self.fields[key] = forms.CharField(max_length=10)
+                self.fields[key] = forms.CharField(max_length=20)
 
     def clean(self):
         cleaned_data = super(RecipeForm, self).clean()

@@ -82,7 +82,8 @@
                                 <label class="{% if instruction.instruction %}active {% endif %}" for="{{ instruction.field_name }}">
                                     <span>Step</span></label>
                                 <input class="col s11" id="{{ instruction.field_name }}" type="text"
-                                       name="{{ instruction.field_name }}" value="{{ instruction.instruction }}" required>
+                                       name="{{ instruction.field_name }}" value="{{ instruction.instruction }}"
+                                       length="200" maxlength="200" required>
                                 <a class="instruction-remove disabled btn-floating btn waves-effect waves-light blue right">
                                     <i class="material-icons">remove</i></a>
                             </div>
